@@ -1,0 +1,21 @@
+{
+	"name": "annotated_text",
+	"erdAbbreviation": "<an_txt>",
+	"dtdAbbreviation": "{AnT}",
+	"useSample": false,
+	"parentType": "string",
+	"defaultValues": {
+		"minLength": "",
+		"maxLength": "",
+		"pattern": "",
+		"default": "",
+		"primaryKey": false,
+		"relationshipType": "",
+		"parentRelationship": "",
+		"childRelationships": [],
+		"foreignCollection": "",
+		"foreignField": [],
+		"enum": [],
+		"sample": ""
+	}
+}

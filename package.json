@@ -1,0 +1,25 @@
+{
+	"name": "ElasticsearchV7plus",
+	"version": "0.0.2",
+	"versionDate": "2020-12-11",
+	"author": "hackolade",
+	"engines": {
+		"hackolade": "4.3.0",
+		"hackoladePlugin": "1.0.0"
+	},
+	"contributes": {
+		"target": {
+			"applicationTarget": "ELASTICSEARCHv7plus",
+			"title": "Elasticsearch v7 and above",
+			"versions": [
+				"7.x"
+			]
+		},
+		"features": {
+			"disableMultipleTypes": true,
+			"enableReverseEngineering": true,
+			"enableForwardEngineering": true
+		}
+	},
+	"description": "Hackolade plugin for Elasticsearch v7 and above"
+}

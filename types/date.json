@@ -1,0 +1,19 @@
+{
+	"name": "date",
+	"erdAbbreviation": "<date>",
+	"dtdAbbreviation": "{dt}",
+	"parentType": "string",
+	"sample": "2018/03/15",
+	"useSample": true,
+	"defaultValues": {
+		"index": true,
+		"relationshipType": "",
+		"parentRelationship": "",
+		"childRelationships": [],
+		"foreignCollection": "",
+		"foreignField": [],
+		"default": "",
+		"format": "",
+		"sample": ""
+	}
+}

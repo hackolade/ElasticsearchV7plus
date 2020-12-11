@@ -1,0 +1,11 @@
+{
+	"extension": "txt",
+	"filterName": "Plain text",
+	"namePrefix": "Elasticsearch Mapping",
+	"hasUpdateScript": true,
+	"level": {
+		"entity": false,
+		"container": true
+	},
+	"resolvedDefinitions": true
+}

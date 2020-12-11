@@ -1,0 +1,133 @@
+{
+	"name": "geoshape-multipolygon",
+	"parentType": "document",
+	"properties": [{
+		"name": "type",
+		"type": "string",
+		"sample": "multipolygon"
+	}, {
+		"name": "coordinates",
+		"type": "array",
+		"properties": [{
+			"type": "array",
+			"properties": [{
+				"type": "array",
+				"properties": [{
+					"type": "array",
+					"properties": [{
+						"type": "number"
+					}, {
+						"type": "number"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "number"
+					}, {
+						"type": "number"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "number"
+					}, {
+						"type": "number"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "number"
+					}, {
+						"type": "number"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "number"
+					}, {
+						"type": "number"
+					}]
+				}]
+			}]
+		}, {
+			"type": "array",
+			"properties": [{
+				"type": "array",
+				"properties": [{
+					"type": "array",
+					"properties": [{
+						"type": "number"
+					}, {
+						"type": "number"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "number"
+					}, {
+						"type": "number"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "number"
+					}, {
+						"type": "number"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "number"
+					}, {
+						"type": "number"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "number"
+					}, {
+						"type": "number"
+					}]
+				}]
+			}, {
+				"type": "array",
+				"properties": [{
+					"type": "array",
+					"properties": [{
+						"type": "number"
+					}, {
+						"type": "number"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "number"
+					}, {
+						"type": "number"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "number"
+					}, {
+						"type": "number"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "number"
+					}, {
+						"type": "number"
+					}]
+				}, {
+					"type": "array",
+					"properties": [{
+						"type": "number"
+					}, {
+						"type": "number"
+					}]
+				}]
+			}]
+		}]
+	}]
+}

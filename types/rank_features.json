@@ -1,0 +1,28 @@
+{
+	"name": "rank_features",
+	"erdAbbreviation": "<RFs>",
+	"dtdAbbreviation": "{RFs}",
+	"parentType": "document",
+	"default": false,
+	"defaultValues": {
+		"primaryKey": false,
+		"relationshipType": "",
+		"parentRelationship": "",
+		"childRelationships": [],
+		"foreignCollection": "",
+		"foreignField": [],
+		"enabled": true,
+		"properties": [],
+		"dependencies": [],
+		"minProperties": "",
+		"maxProperties": "",
+		"additionalProperties": false,
+		"enum": [],
+		"subtype": "rank_feature"
+	},
+	"subtypes": {
+		"rank_feature": {
+			"childValueType": "rank_feature"
+		}
+	}
+}

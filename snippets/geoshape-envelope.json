@@ -1,0 +1,31 @@
+{
+	"name": "geoshape-envelope",
+	"parentType": "document",
+	"properties": [{
+		"name": "type",
+		"type": "string",
+		"sample": "envelope"
+	}, {
+		"name": "coordinates",
+		"type": "array",
+		"properties": [{
+			"type": "array",
+			"properties": [{
+				"type": "number",
+				"sample": -45.0
+			}, {
+				"type": "number",
+				"sample": 45.0
+			}]
+		}, {
+			"type": "array",
+			"properties": [{
+				"type": "number",
+				"sample": 45.0
+			}, {
+				"type": "number",
+				"sample": -45.0
+			}]
+		}]
+	}]
+}

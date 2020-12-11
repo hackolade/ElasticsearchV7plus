@@ -1,0 +1,134 @@
+[
+	{
+		"lowerTab": "Connection",
+		"structure": [
+			{
+				"inputLabel": "Name",
+				"inputKeyword": "name",
+				"inputType": "text",
+				"inputPlaceholder": "Name"
+				
+			},
+			{
+				"inputLabel": "Connection type",
+				"inputKeyword": "connectionType",
+				"inputType": "select",
+				"description": "",
+				"options": [{
+					"value": "Direct connection", 
+					"label": "Direct connection"
+				}, {
+					"value": "Replica set or Sharded cluster",
+					"label": "Replica set or Sharded cluster"
+				}],
+				"defaultValue": "Direct connection" 
+			},
+			{
+				"inputLabel": "Host",
+				"inputKeyword": "host",
+				"inputType": "text",
+				"dependency": {
+					"key": "connectionType",
+					"value": "Direct connection"
+				}
+			},
+			{
+				"inputLabel": "Port",
+				"inputKeyword": "port",
+				"inputType": "numeric",
+				"dependency": {
+					"key": "connectionType",
+					"value": "Direct connection"
+				}
+			},
+			{
+				"inputLabel": "Hosts",
+				"inputKeyword": "hosts",
+				"inputType": "dynamicListInput",
+				"description": "",
+				"dependency": {
+					"key": "connectionType",
+					"value": "Replica set or Sharded cluster"
+				},
+				"modalTitle": "Add new host",
+				"modalInputs": [
+					{
+						"inputLabel": "Address",
+						"inputKeyword": "host",
+						"inputType": "text",
+						"inputPlaceholder": "Address",
+						"description": ""
+					},
+					{
+						"inputLabel": "Port",
+						"inputKeyword": "port",
+						"inputType": "text",
+						"inputPlaceholder": "Port",
+						"description": ""
+					}
+				]
+			},
+			{
+				"inputLabel": "Protocol",
+				"inputKeyword": "protocol",
+				"inputType": "select",
+				"options": [{
+					"value": "http",
+					"label": "http"
+				}, {
+					"value": "https",
+					"label": "https"
+				}],
+				"defaultValue": "http"
+			},
+			{
+				"inputLabel": "Path",
+				"inputKeyword": "path",
+				"inputType": "text"
+			}
+		]
+	},
+	{
+		"lowerTab": "Authentication",
+		"structure": [
+			{
+				"inputLabel": "User Name",
+				"inputKeyword": "username",
+				"inputType": "text",
+				"inputPlaceholder": "User Name"
+				
+			},
+			{
+				"inputLabel": "Password",
+				"inputKeyword": "password",
+				"inputType": "password",
+				"inputTooltip": "Password",
+				"isHiddenKey": true,
+				"defaultValue": ""
+			}
+		]
+	},
+	{
+		"lowerTab": "SSL",
+		"structure": [
+			{
+				"inputLabel": "Enable SSL",
+				"inputKeyword": "is_ssl",
+				"inputType": "checkbox"
+				
+			},
+			{
+				"inputLabel": "Authority Certificate",
+				"inputKeyword": "ca",
+				"inputType": "file",
+				"extensions": ["pem", "crt", "key"],
+				"isHiddenKey": true
+			},
+			{
+				"inputLabel": "Reject Unauthorized",
+				"inputKeyword": "rejectUnauthorized",
+				"inputType": "checkbox"
+			}
+		]
+	}
+]

@@ -1,0 +1,26 @@
+{
+	"name": "sparse_vector",
+	"erdAbbreviation": "<sv>",
+	"dtdAbbreviation": "{SV}",
+	"parentType": "document",
+	"useSample": false,
+	"defaultValues": {
+		"properties": [],
+		"primaryKey": false,
+		"relationshipType": "",
+		"parentRelationship": "",
+		"childRelationships": [],
+		"foreignCollection": "",
+		"foreignField": [],
+		"additionalItems": false,
+		"minItems": "",
+		"maxItems": "",
+		"uniqueItems": true,
+		"subtype": "number"
+	},
+	"subtypes": {
+		"number": {
+			"childValueType": "number"
+		}
+	}
+}

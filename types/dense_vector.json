@@ -1,0 +1,27 @@
+{
+	"name": "dense_vector",
+	"erdAbbreviation": "<dv>",
+	"dtdAbbreviation": "{DV}",
+	"parentType": "array",
+	"useSample": false,
+	"defaultValues": {
+		"properties": [],
+		"primaryKey": false,
+		"relationshipType": "",
+		"parentRelationship": "",
+		"childRelationships": [],
+		"foreignCollection": "",
+		"foreignField": [],
+		"additionalItems": false,
+		"minItems": "",
+		"maxItems": "",
+		"uniqueItems": true,
+		"subtype": "number",
+		"dims": 3
+	},
+	"subtypes": {
+		"number": {
+			"childValueType": "number"
+		}
+	}
+}

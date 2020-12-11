@@ -1,0 +1,28 @@
+{
+	"name": "completion",
+	"erdAbbreviation": "<comp>",
+	"dtdAbbreviation": "{...}",
+	"parentType": "document",
+	"defaultValues": {
+		"relationshipType": "",
+		"parentRelationship": "",
+		"childRelationships": [],
+		"foreignCollection": "",
+		"foreignField": [],
+		"properties": [],
+		"dependencies": [],
+		"minProperties": "",
+		"maxProperties": "",
+		"additionalProperties": false,
+		"enum": [],
+		"analyzer": "simple",
+		"preserve_separators": true,
+		"preserve_position_increments": true,
+		"max_input_length": 50,
+		"subType": "object",
+		"subTypes": [
+			{ "name": "object", "snippet": "completionObject" },
+			{ "name": "array", "snippet": "completionArray" }
+		]
+	}
+}

@@ -1,0 +1,39 @@
+{
+	"model": {
+		"modelName": "New model",
+		"dbVersion": "6.x",
+		"dbVendor": "Elasticsearch",
+		"port": 9200
+	},
+	"container": {
+		"name": "New index",
+		"indexes": [],
+		"number_of_shards": 5,
+		"number_of_replicas": 1
+	},
+	"collection": {
+		"collectionName": "New type",
+		"collectionUsers": [],
+		"collation": {},
+		"dynamic": "true"
+	},
+	"field": {
+		"name": "New field",
+		"dynamic": "true"
+	},
+	"patternField": {
+		"name": "^New Pattern Field$"
+	},
+	"multipleField": {
+		"primaryKey": false
+	},
+	"subschema": {},
+	"arrayItem": {},
+	"choice": {},
+	"relationship": {},
+	"user": {},
+	"view": {
+		"viewOn": "",
+		"pipeline": ""
+	}
+}

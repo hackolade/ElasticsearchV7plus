@@ -1,0 +1,21 @@
+{
+	"name": "mapper-murmur3",
+	"erdAbbreviation": "<mm3>",
+	"dtdAbbreviation": "{mm3}",
+	"useSample": false,
+	"parentType": "string",
+	"defaultValues": {
+		"minLength": "",
+		"maxLength": "",
+		"pattern": "",
+		"default": "",
+		"primaryKey": false,
+		"relationshipType": "",
+		"parentRelationship": "",
+		"childRelationships": [],
+		"foreignCollection": "",
+		"foreignField": [],
+		"enum": [],
+		"sample": ""
+	}
+}

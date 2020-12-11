@@ -1,0 +1,16 @@
+{
+	"name": "completionArray",
+	"parentType": "array",
+	"properties": [{
+		"type": "object",
+		"properties": [{
+			"name": "input",
+			"type": "string",
+			"required": true
+		}, {
+			"name": "weight",
+			"type": "number",
+			"required": false
+		}]
+	}]
+}

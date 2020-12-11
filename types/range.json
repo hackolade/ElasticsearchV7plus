@@ -1,0 +1,21 @@
+{
+	"name": "range",
+	"erdAbbreviation": "<ran>",
+	"dtdAbbreviation": "{x-y}",
+	"parentType": "document",
+	"defaultValues": {
+		"index": true,
+		"relationshipType": "",
+		"parentRelationship": "",
+		"childRelationships": [],
+		"foreignCollection": "",
+		"foreignField": [],
+		"properties": [],
+		"dependencies": [],
+		"minProperties": "",
+		"maxProperties": "",
+		"additionalProperties": false,
+		"enum": [],
+		"mode": "integer_range"
+	}
+}
