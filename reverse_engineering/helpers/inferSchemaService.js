@@ -30,6 +30,14 @@ function getDocumentKindDataFromInfer(data, targetProbability) {
 			return;
 		}
 
+		if (
+			documentKind.probability === probability
+			&&
+			documentKind.key === 'type'
+		) {
+			return;
+		}
+
 		documentKind.probability = probability;
 		documentKind.key = key;
 	});
