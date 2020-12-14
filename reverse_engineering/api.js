@@ -393,11 +393,21 @@ const getDocuments = async ({ client, indexName, recordSamplingSettings }) => {
 	return await search(client, indexName, countData)
 };
 
+const isSystemIndex = (indexName) => {
+	if (indexName[0] === '.') {
+		return true;
+	} else if (/^apm\-[0-9]+\.[0-9]+\.[0-9]+/i.test(indexName)) {
+		return true;
+	} else {
+		return false;
+	}
+};
+
 const getIndexes = (client, includeSystemCollection) => {
 	return client.indices.getMapping()
 		.then(data => {
 			return Object.keys(data).filter(indexName => {
-				if (!includeSystemCollection && indexName[0] === '.') {
+				if (!includeSystemCollection && isSystemIndex(indexName)) {
 					return false;
 				} else {
 					return true;
