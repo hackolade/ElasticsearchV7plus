@@ -4,7 +4,7 @@
 	"namePrefix": "Elasticsearch Mapping",
 	"hasUpdateScript": true,
 	"level": {
-		"entity": false,
+		"entity": true,
 		"container": true
 	},
 	"resolvedDefinitions": true
