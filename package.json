@@ -1,10 +1,10 @@
 {
 	"name": "ElasticsearchV7plus",
-	"version": "0.0.2",
-	"versionDate": "2020-12-11",
+	"version": "0.1.0",
+	"versionDate": "2020-12-22",
 	"author": "hackolade",
 	"engines": {
-		"hackolade": "4.3.0",
+		"hackolade": "4.3.1",
 		"hackoladePlugin": "1.0.0"
 	},
 	"contributes": {
