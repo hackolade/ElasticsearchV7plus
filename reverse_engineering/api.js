@@ -271,7 +271,7 @@ module.exports = {
 
 						return getIndexTypeData({
 							...schemaData,
-							documents: documentsByType[typeName],
+							documents: documentsByType[typeName] || [],
 							typeName,
 						});
 					}).filter(shouldPackageBeAdded.bind(null, _, includeEmptyCollection));
