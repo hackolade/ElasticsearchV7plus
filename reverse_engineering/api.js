@@ -359,7 +359,6 @@ const getIndexTypeData = ({
 const getCount = (client, indexName) => new Promise((resolve, reject) => {
 	client.count({
 		index: indexName,
-		type: '',
 	}, (err, response) => {
 		if (err) {
 			reject(err);
