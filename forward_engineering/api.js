@@ -111,7 +111,8 @@ module.exports = {
 		try {
 			const dao = new ElasticSearchDao(data);
 			try {
-				await dao.insertExampleDocumentsInBulk();
+				const {script, entitiesData} = data;
+				await dao.applyToInstance(script, entitiesData);
 				await dao.close();
 				return cb(null);
 			} catch (e) {
