@@ -2,6 +2,7 @@ const {ElasticSearchClientFactory} = require('./client_factory');
 const readline = require('readline');
 const fs = require('fs');
 const kibanaParser = require('../../script_parser/kibana_script_parser');
+const curlParser = require('../../script_parser/curl_script_parser');
 
 class ElasticSearchDao {
 
@@ -34,8 +35,6 @@ class ElasticSearchDao {
         this._insertExampleDocuments = this._insertExampleDocuments.bind(this);
         this._insertExampleDocument = this._insertExampleDocument.bind(this);
         this._insertExampleDocumentsFromFile = this._insertExampleDocumentsFromFile.bind(this);
-        this._executeKibanaScript = this._executeKibanaScript.bind(this);
-        this._executeCurlScript = this._executeCurlScript.bind(this);
         this.close = this.close.bind(this);
     }
 
@@ -62,26 +61,14 @@ class ElasticSearchDao {
     /**
      * @param script {string}
      */
-    async _executeCurlScript(script) {
-        return null;
-    }
-
-    /**
-     * @param script {string}
-     */
-    async _executeKibanaScript(script) {
-        const parsedScript = kibanaParser.parseKibanaScript(script);
-        return null;
-    }
-
-    /**
-     * @param script {string}
-     */
     async _executeScript(script) {
+        let parsedData;
         if (script.startsWith('curl')) {
-            return await this._executeCurlScript(script);
+            parsedData = curlParser.parseCurlScript(script);
+        } else {
+            parsedData = kibanaParser.parseKibanaScript(script);
         }
-        return await this._executeKibanaScript(script);
+        throw new Error(JSON.stringify(parsedData, null, 2));
     }
 
     /**
