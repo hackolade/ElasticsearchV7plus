@@ -111,11 +111,11 @@ module.exports = {
 	async applyToInstance(data, logger, cb, app) {
 		try {
 			const client = ElasticSearchClientFactory.getByConnectionInfo(data);
-			const dao = new ElasticSearchService(client);
+			const elasticSearchService = new ElasticSearchService(client);
 			try {
 				const {script, entitiesData} = data;
-				await dao.applyToInstance(script, entitiesData);
-				await dao.close();
+				await elasticSearchService.applyToInstance(script, entitiesData);
+				await elasticSearchService.close();
 				return cb(null);
 			} catch (e) {
 				return cb({
@@ -123,6 +123,20 @@ module.exports = {
 					stack: e.stack,
 				});
 			}
+		} catch (e) {
+			return cb({
+				message: e.message,
+				stack: e.stack,
+			});
+		}
+	},
+
+	async testConnection(data, logger, cb, app) {
+		try {
+			const client = ElasticSearchClientFactory.getByConnectionInfo(data);
+			const elasticSearchService = new ElasticSearchService(client);
+			await elasticSearchService.testConnection();
+			return cb(null);
 		} catch (e) {
 			return cb({
 				message: e.message,

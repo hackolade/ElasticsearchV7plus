@@ -18,6 +18,7 @@ class ElasticSearchService {
         this._insertExampleDocuments = this._insertExampleDocuments.bind(this);
         this._insertExampleDocument = this._insertExampleDocument.bind(this);
         this._insertExampleDocumentsFromFile = this._insertExampleDocumentsFromFile.bind(this);
+        this.testConnection = this.testConnection.bind(this);
         this.close = this.close.bind(this);
     }
 
@@ -39,6 +40,10 @@ class ElasticSearchService {
                 return this._insertExampleDocuments(JSON.parse(jsonData), filePath);
             });
         await Promise.all(insertDocumentsPromises);
+    }
+
+    async testConnection() {
+        await this._client.ping(undefined, { requestTimeout: 5000 });
     }
 
     /**
