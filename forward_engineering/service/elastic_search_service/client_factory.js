@@ -42,7 +42,32 @@ class ElasticSearchClientFactory {
      * }}
      * @throws Error
      * */
+    static #applyDefaults(connectionInfo) {
+        connectionInfo.protocol = connectionInfo.protocol || 'http';
+        connectionInfo.connectionType = connectionInfo.connectionType || ConnectionType.DIRECT_CONNECTION;
+    }
+
+    /**
+     * @param connectionInfo {{
+     *     connectionType: string,
+     *     username: string,
+     *     password: string,
+     *     protocol: string,
+     *     host?: string,
+     *     port?: number,
+     *     path?: string,
+     *     hosts?: Array<{
+     *         host: string,
+     *         port: string,
+     *     }>,
+     *     is_ssl: boolean,
+     *     ca?: string,
+     *     rejectUnauthorized?: boolean,
+     * }}
+     * @throws Error
+     * */
     static getByConnectionInfo(connectionInfo) {
+        ElasticSearchClientFactory.#applyDefaults(connectionInfo);
 
         /**
          * @return {{

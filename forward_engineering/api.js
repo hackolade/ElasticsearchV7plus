@@ -29,6 +29,20 @@ const getScriptAndSampleResponse = (script, sample) => {
 	]
 }
 
+/**
+ * @param error {Error}
+ * @return {{
+ *     message: string,
+ *     stack: string | undefined,
+ * }}
+ * */
+const extractNonSensitiveInfoFromError = (error) => {
+	return {
+		message: error.message,
+		stack: error.stack,
+	}
+}
+
 module.exports = {
 	generateScript(data, logger, cb, app) {
 		const { jsonSchema, modelData, entityData, isUpdateScript, jsonData } = data;
@@ -118,16 +132,14 @@ module.exports = {
 				await elasticSearchService.close();
 				return cb(null);
 			} catch (e) {
-				return cb({
-					message: e.message,
-					stack: e.stack,
-				});
+				const error = extractNonSensitiveInfoFromError(e);
+				logger.log('error', error, 'Apply to instance', data.hiddenKeys);
+				return cb(error);
 			}
 		} catch (e) {
-			return cb({
-				message: e.message,
-				stack: e.stack,
-			});
+			const error = extractNonSensitiveInfoFromError(e);
+			logger.log('error', error, 'Apply to instance', data.hiddenKeys);
+			return cb(error);
 		}
 	},
 
@@ -138,10 +150,9 @@ module.exports = {
 			await elasticSearchService.testConnection();
 			return cb(null);
 		} catch (e) {
-			return cb({
-				message: e.message,
-				stack: e.stack,
-			});
+			const error = extractNonSensitiveInfoFromError(e);
+			logger.log('error', error, 'Apply to instance', data.hiddenKeys);
+			return cb(error);
 		}
 	},
 
