@@ -4,7 +4,7 @@
   "description": "",
   "author": "Hackolade",
   "dependencies": {
-    "@elastic/elasticsearch": "^8.6.0"
+    "@elastic/elasticsearch": "^7.17.0"
   },
   "installed": true
 }

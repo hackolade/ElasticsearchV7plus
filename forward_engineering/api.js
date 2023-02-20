@@ -1,6 +1,7 @@
 const helper = require('../helper/helper.js');
 const schemaHelper = require('../helper/schemaHelper.js');
-const { ElasticSearchDao } = require("./dao/elastic_search_dao");
+const { ElasticSearchService} = require("./service/elastic_search_service");
+const {ElasticSearchClientFactory} = require("./service/elastic_search_service/client_factory");
 
 const getSampleGenerationOptions = (app, data) => {
 	const _ = app.require('lodash');
@@ -109,7 +110,8 @@ module.exports = {
 
 	async applyToInstance(data, logger, cb, app) {
 		try {
-			const dao = new ElasticSearchDao(data);
+			const client = ElasticSearchClientFactory.getByConnectionInfo(data);
+			const dao = new ElasticSearchService(client);
 			try {
 				const {script, entitiesData} = data;
 				await dao.applyToInstance(script, entitiesData);
