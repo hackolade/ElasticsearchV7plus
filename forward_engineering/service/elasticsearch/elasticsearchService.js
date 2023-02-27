@@ -1,7 +1,12 @@
 const readline = require('readline');
 const fs = require('fs');
-const kibanaParser = require('../../script_parser/kibana_script_parser');
-const curlParser = require('../../script_parser/curl_script_parser');
+
+/**
+ * @typedef { import('../../types/scriptParserTypes').ParsedScriptData } ParsedScriptData
+ * @typedef { import('../../types/elasticsearchSampleDataTypes').EntitiesData } EntitiesData
+ * @typedef { import('../../types/elasticsearchSampleDataTypes').JsonData } JsonData
+ * */
+
 
 class ElasticSearchService {
 
@@ -23,17 +28,11 @@ class ElasticSearchService {
     }
 
     /**
-     * @param script {string}
-     * @param entitiesData {{
-     *     [x: string]: {
-     *         name: string,
-     *         jsonData: string,
-     *         filePath?: string
-     *     }
-     * }}
+     * @param scriptData {ParsedScriptData}
+     * @param entitiesData {EntitiesData}
      * */
-    async applyToInstance(script, entitiesData) {
-        await this._executeScript(script);
+    async applyToInstance(scriptData, entitiesData) {
+        await this._executeScript(scriptData);
         const insertDocumentsPromises = Object.values(entitiesData)
             .map((typeData) => {
                 const {filePath, jsonData } = typeData;
@@ -47,35 +46,25 @@ class ElasticSearchService {
     }
 
     /**
-     * @param script {string}
+     * @param scriptData {ParsedScriptData}
      */
-    async _executeScript(script) {
-        let parsedData;
-        if (script.startsWith('curl')) {
-            parsedData = curlParser.parseCurlScript(script);
-        } else {
-            parsedData = kibanaParser.parseKibanaScript(script);
-        }
-        const { body, indexName, httpMethod } = parsedData;
+    async _executeScript(scriptData) {
+        const { body, indexName } = scriptData;
         const existsResponse = await this._client.indices.exists({
             index: indexName,
         });
         if (!existsResponse.body) {
             await this._client.indices.create({
                 index: indexName,
-                method: httpMethod,
                 body,
             });
+        } else {
+            throw new Error(`Index ${indexName} already exists, index update is not supported`);
         }
     }
 
     /**
-     * @param jsonData {{
-     *      _index: string,
-     *      _type?:string,
-     *      _id:string,
-     *      _source: Object
-     * }}
+     * @param jsonData {JsonData}
      */
     async _insertExampleDocument(jsonData) {
         const { _index: indexName, _source: data, _type: typeName } = jsonData;
@@ -97,32 +86,19 @@ class ElasticSearchService {
      * @param filePath {string}
      */
     async _insertExampleDocumentsFromFile(filePath) {
-        return new Promise((resolve, reject) => {
-            const pushSamplePromises = [];
-            const file = readline.createInterface({
-                input: fs.createReadStream(filePath),
-                output: process.stdout,
-                terminal: false
-            });
-            file.on('line', (line) => {
-                try {
-                    const parsedLine = JSON.parse(line);
-                    const pushSamplePromise = this._insertExampleDocument(parsedLine);
-                    pushSamplePromises.push(pushSamplePromise);
-                } catch (e) {
-                    reject(e)
-                }
-            });
-            file.on('close', () => {
-                Promise.all(pushSamplePromises)
-                    .then(() => resolve(true))
-                    .catch(e => reject(e));
-            })
-        })
+        const file = readline.createInterface({
+            input: fs.createReadStream(filePath),
+            output: process.stdout,
+            terminal: false
+        });
+        for await (const line of file) {
+            const parsedLine = JSON.parse(line);
+            await this._insertExampleDocument(parsedLine);
+        }
     }
 
     /**
-     * @param jsonData {Object}
+     * @param jsonData {JsonData}
      * @param filePath {string | undefined}
      */
     async _insertExampleDocuments(jsonData, filePath) {

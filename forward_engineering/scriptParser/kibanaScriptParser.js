@@ -1,11 +1,13 @@
 /**
+ * @typedef { import('../types/scriptParserTypes').ParsedScriptFirstLine } ParsedScriptFirstLine
+ * @typedef { import('../types/scriptParserTypes').ParsedScriptBody } ParsedScriptBody
+ * @typedef { import('../types/scriptParserTypes').ParsedScriptData } ParsedScriptData
+ * */
+
+/**
  * @param script {string}
  * @throws {Error}
- * @return {{
- *     httpMethod: string,
- *     indexName: string,
- *     line: string,
- * }}
+ * @return {ParsedScriptFirstLine}
  */
 const parseFirstLine = (script) => {
     // See the line example below:
@@ -40,21 +42,7 @@ const parseFirstLine = (script) => {
  * @param script {string}
  * @param firstLine {string}
  * @throws {Error}
- * @return {{
- *   settings: {
- *     number_of_shards: number,
- *     number_of_replicas: number
- *   },
- *   mappings: {
- *     properties: {
- *       [typeName: string]: {
- *         type: string,
- *         index: boolean,
- *         index_options: string
- *       }
- *     }
- *   }
- * }}
+ * @return {ParsedScriptBody}
  */
 const parseBody = (script, firstLine) => {
     // We need `${script}` and not script, because script comes with new line breaks, tabulations
@@ -75,25 +63,7 @@ const parseBody = (script, firstLine) => {
 /**
  * @param script {string}
  * @throws {Error}
- * @return {{
- *     httpMethod: string,
- *     indexName: string,
- *     body: {
- *       settings: {
- *          number_of_shards: number,
- *          number_of_replicas: number
- *       },
- *       mappings: {
- *          properties: {
- *              [typeName: string]: {
- *                  type: string,
- *                  index: boolean,
- *                  index_options: string
- *              }
- *          }
- *      }
- *     },
- * }}
+ * @return {ParsedScriptData}
  */
 const parseKibanaScript = (script) => {
     const firstLineParsed = parseFirstLine(script);
