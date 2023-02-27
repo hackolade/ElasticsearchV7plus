@@ -1,11 +1,55 @@
 const helper = require('../helper/helper.js');
 const schemaHelper = require('../helper/schemaHelper.js');
+const { ElasticSearchService} = require("./service/elasticsearch/elasticsearchService");
+const {ElasticSearchClientFactory} = require("./service/elasticsearch/clientFactory");
+const curlParser = require("./scriptParser/curlScriptParser");
+const kibanaParser = require("./scriptParser/kibanaScriptParser");
+
+const getSampleGenerationOptions = (app, data) => {
+	const _ = app.require('lodash');
+	const insertSamplesOption = _.get(data, 'options.additionalOptions', []).find(option => option.id === 'INCLUDE_SAMPLES') || {};
+	const isSampleGenerationRequired = Boolean(insertSamplesOption?.value);
+	// Append to result script if the plugin is invoked from cli and do not append if it's invoked from GUI app
+	const shouldAppendSamplesToTheResultScript = data.options.origin !== 'ui';
+
+	return {
+		isSampleGenerationRequired,
+		shouldAppendSamplesToTheResultScript
+	}
+}
+
+const getScriptAndSampleResponse = (script, sample) => {
+	return [
+		{
+			title: 'Elasticsearsh script',
+			script
+		},
+		{
+			title: 'Sample data',
+			script: sample,
+		},
+	]
+}
+
+/**
+ * @param error {Error}
+ * @return {{
+ *     message: string,
+ *     stack: string | undefined,
+ * }}
+ * */
+const extractNonSensitiveInfoFromError = (error) => {
+	return {
+		message: error.message,
+		stack: error.stack,
+	}
+}
 
 module.exports = {
-	generateScript(data, logger, cb) {
-		const { jsonSchema, modelData, entityData, isUpdateScript } = data;
+	generateScript(data, logger, cb, app) {
+		const { jsonSchema, modelData, entityData, isUpdateScript, jsonData } = data;
 		const containerData = data.containerData || {};
-		let result = "";
+
 		let fieldsSchema = this.getFieldsSchema({
 			jsonSchema: JSON.parse(jsonSchema),
 			internalDefinitions: JSON.parse(data.internalDefinitions),
@@ -15,21 +59,31 @@ module.exports = {
 		let typeSchema = this.getTypeSchema(entityData, fieldsSchema);
 		let mappingScript = this.getMappingScript(containerData, typeSchema);
 
+		let script = "";
 		if (isUpdateScript) {
-			result = this.getCurlScript(mappingScript, modelData, containerData);
+			script = this.getCurlScript(mappingScript, modelData, containerData);
 		} else {
-			result += this.getKibanaScript(mappingScript, containerData);
+			script = this.getKibanaScript(mappingScript, containerData);
 		}
 
-		cb(null, result);
+		const sampleGenerationOptions = getSampleGenerationOptions(app, data);
+		if (!sampleGenerationOptions.isSampleGenerationRequired) {
+			return cb(null, script);
+		}
+		// Append to result script if the plugin is invoked from cli and do not append if it's invoked from GUI app
+		if (sampleGenerationOptions.shouldAppendSamplesToTheResultScript) {
+			// Sampling for CLI is not supported yet
+			return cb(null, script)
+		}
+		return cb(null, getScriptAndSampleResponse(script, jsonData));
 	},
 
-	generateContainerScript(data, logger, cb) {
+	generateContainerScript(data, logger, cb, app) {
 		try {
-			const { containerData, isUpdateScript } = data;
+			const { containerData, isUpdateScript, jsonData } = data;
 			const modelData = (data.modelData || [])[0] || '';
 			const indexData = (containerData || [])[0] || '';
-			let result = "";
+
 			const scripts = data.entities.map(entityId => {
 				return this.getFieldsSchema({
 					jsonSchema: JSON.parse(data.jsonSchema[entityId] || '""'),
@@ -42,19 +96,68 @@ module.exports = {
 			let mappingScript = this.getMappingScript(indexData, {
 				properties: schema,
 			});
-			
+
+			let script = "";
 			if (isUpdateScript) {
-				result = this.getCurlScript(mappingScript, modelData, indexData);
+				script = this.getCurlScript(mappingScript, modelData, indexData);
 			} else {
-				result += this.getKibanaScript(mappingScript, indexData);
+				script = this.getKibanaScript(mappingScript, indexData);
 			}
 
-			cb(null, result);
+			const sampleGenerationOptions = getSampleGenerationOptions(app, data);
+			if (!sampleGenerationOptions.isSampleGenerationRequired) {
+				return cb(null, script);
+			}
+			// Append to result script if the plugin is invoked from cli and do not append if it's invoked from GUI app
+			if (sampleGenerationOptions.shouldAppendSamplesToTheResultScript) {
+				// Sampling for CLI is not supported yet
+				return cb(null, script)
+			}
+			const firstIndexSampleData = (Object.values(jsonData) || [''])[0];
+
+			return cb(null, getScriptAndSampleResponse(script, firstIndexSampleData));
 		} catch (error) {
 			cb({
 				message: error.message,
 				stack: error.stack,
 			});
+		}
+	},
+
+	async applyToInstance(data, logger, cb, app) {
+		try {
+			const client = ElasticSearchClientFactory.getByConnectionInfo(data);
+			const elasticSearchService = new ElasticSearchService(client);
+			const {script, entitiesData} = data;
+
+			let parsedScriptData;
+			if (script.startsWith('curl')) {
+				parsedScriptData = curlParser.parseCurlScript(script);
+			} else {
+				parsedScriptData = kibanaParser.parseKibanaScript(script);
+			}
+
+			await elasticSearchService.applyToInstance(parsedScriptData, entitiesData);
+			await elasticSearchService.close();
+			return cb(null);
+		} catch (e) {
+			const error = extractNonSensitiveInfoFromError(e);
+			logger.log('error', error, 'Apply to instance', data.hiddenKeys);
+			return cb(error);
+		}
+	},
+
+	async testConnection(data, logger, cb, app) {
+		try {
+			const client = ElasticSearchClientFactory.getByConnectionInfo(data);
+			const elasticSearchService = new ElasticSearchService(client);
+			await elasticSearchService.testConnection();
+			await elasticSearchService.close();
+			return cb(null);
+		} catch (e) {
+			const error = extractNonSensitiveInfoFromError(e);
+			logger.log('error', error, 'Apply to instance', data.hiddenKeys);
+			return cb(error);
 		}
 	},
 
@@ -221,7 +324,7 @@ module.exports = {
 	getSettings(indexData) {
 		let settings;
 		let properties = helper.getContainerLevelProperties();
-		
+
 		properties.forEach(propertyName => {
 			if (indexData[propertyName]) {
 				if (!settings) {
