@@ -33,12 +33,10 @@ class ElasticSearchService {
      * */
     async applyToInstance(scriptData, entitiesData) {
         await this._executeScript(scriptData);
-        const insertDocumentsPromises = Object.values(entitiesData)
-            .map((typeData) => {
-                const {filePath, jsonData } = typeData;
-                return this._insertExampleDocuments(JSON.parse(jsonData), filePath);
-            });
-        await Promise.all(insertDocumentsPromises);
+        for (const typeData of Object.values(entitiesData)) {
+            const {filePath, jsonData } = typeData;
+            await this._insertExampleDocuments(JSON.parse(jsonData), filePath);
+        }
     }
 
     async testConnection() {

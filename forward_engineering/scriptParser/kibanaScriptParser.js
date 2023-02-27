@@ -52,7 +52,11 @@ const parseBody = (script, firstLine) => {
     if (scriptAndExampleWithNoLeadingAndTrailingCurlyBrace.length === 0) {
         throw new Error(`Invalid kibana script body: ${scriptBodyWithExampleAsString}`);
     }
-    const scriptBody = scriptAndExampleWithNoLeadingAndTrailingCurlyBrace[0] + '}';
+    let scriptBody = scriptAndExampleWithNoLeadingAndTrailingCurlyBrace[0];
+    if (scriptAndExampleWithNoLeadingAndTrailingCurlyBrace.length > 1) {
+        // It means, there was an example attached to kibana script
+        scriptBody += '}';
+    }
     try {
         return JSON.parse(scriptBody);
     } catch (e) {

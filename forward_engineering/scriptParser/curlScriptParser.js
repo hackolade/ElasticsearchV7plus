@@ -91,9 +91,16 @@ const parseBody = (script, firstLine) => {
     const scriptBodyWithExampleAsString = `${script.substring(firstLine.length)}`;
     const scriptAndExampleWithNoLeadingAndTrailingCurlyBrace = scriptBodyWithExampleAsString.split(/}\n'\n{/g);
     if (scriptAndExampleWithNoLeadingAndTrailingCurlyBrace.length === 0) {
-        throw new Error(`Invalid kibana script body: ${scriptBodyWithExampleAsString}`);
+        throw new Error(`Invalid curl script body: ${scriptBodyWithExampleAsString}`);
     }
-    const scriptBody = scriptAndExampleWithNoLeadingAndTrailingCurlyBrace[0] + '}';
+    let scriptBody = scriptAndExampleWithNoLeadingAndTrailingCurlyBrace[0];
+    if (scriptBody.endsWith("'")) {
+        scriptBody = scriptBody.substring(0, scriptBody.length - 1);
+    }
+    if (scriptAndExampleWithNoLeadingAndTrailingCurlyBrace.length > 1) {
+        // It means, there was an example attached to curl script
+        scriptBody += '}';
+    }
     try {
         return JSON.parse(scriptBody);
     } catch (e) {
