@@ -6,10 +6,7 @@ const SchemaCreator = require('./SchemaCreator');
 const inferSchemaService = require('./helpers/inferSchemaService');
 const versions = require('../package.json').contributes.target.versions;
 
-const MAX_DOCUMENTS = 30000;
-
 let connectionParams = {};
-let saveConnectionInfo = {};
 
 let _client = null;
 
@@ -381,15 +378,21 @@ const search = (client, indexName, size) => new Promise((resolve, reject) => {
 	});
 });
 
+const getSampleDocSize = (count, recordSamplingSettings) => {
+	if (recordSamplingSettings.active === 'absolute') {
+		return Number(recordSamplingSettings.absolute.value);
+	}
+
+	const limit = Math.ceil((count * recordSamplingSettings.relative.value) / 100);
+
+	return Math.min(limit, recordSamplingSettings.maxValue);
+};
+
 const getDocuments = async ({ client, indexName, recordSamplingSettings }) => {
 	const count = await getCount(client, indexName);
-	const per = recordSamplingSettings.relative.value;
-	const size = (recordSamplingSettings.active === 'absolute')
-		? recordSamplingSettings.absolute.value
-		: Math.round(count / 100 * per);
-	const countData = size > MAX_DOCUMENTS ? MAX_DOCUMENTS : size;
+	const size = getSampleDocSize(count, recordSamplingSettings);
 
-	return await search(client, indexName, countData)
+	return await search(client, indexName, size);
 };
 
 const isSystemIndex = (indexName) => {
