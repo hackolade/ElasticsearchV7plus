@@ -1,7 +1,7 @@
 {
 	"name": "ElasticsearchV7plus",
-	"version": "0.1.3",
-	"versionDate": "2023-03-03",
+	"version": "0.1.4",
+	"versionDate": "2023-07-20",
 	"author": "hackolade",
 	"engines": {
 		"hackolade": "4.3.1",
