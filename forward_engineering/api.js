@@ -4,6 +4,7 @@ const { ElasticSearchService} = require("./service/elasticsearch/elasticsearchSe
 const {ElasticSearchClientFactory} = require("./service/elasticsearch/clientFactory");
 const curlParser = require("./scriptParser/curlScriptParser");
 const kibanaParser = require("./scriptParser/kibanaScriptParser");
+const { getIndexSettings } = require('./mappers/indexSettingsMapper.js');
 
 const getSampleGenerationOptions = (app, data) => {
 	const _ = app.require('lodash');
@@ -268,6 +269,8 @@ module.exports = {
 					schema['fields'] = JSON.parse(properties[propName]);
 				} catch (e) {
 				}
+			} else if (propName === 'customAnalyzerName') {
+				schema['analyzer'] = properties[propName];
 			} else if (this.isFieldList(properties[propName])) {
 				const names = schemaHelper.getNamesByIds(
 					properties[propName].map(item => item.keyId),
@@ -305,7 +308,7 @@ module.exports = {
 
 	getMappingScript(indexData, typeSchema) {
 		let mappingScript = {};
-		let settings = this.getSettings(indexData);
+		let settings = getIndexSettings(indexData);
 		let aliases = this.getAliases(indexData);
 
 		if (settings) {
@@ -319,23 +322,6 @@ module.exports = {
 		mappingScript.mappings = typeSchema;
 
 		return mappingScript;
-	},
-
-	getSettings(indexData) {
-		let settings;
-		let properties = helper.getContainerLevelProperties();
-
-		properties.forEach(propertyName => {
-			if (indexData[propertyName]) {
-				if (!settings) {
-					settings = {};
-				}
-
-				settings[propertyName] = indexData[propertyName];
-			}
-		});
-
-		return settings;
 	},
 
 	getAliases(indexData) {
