@@ -211,6 +211,481 @@ making sure that you maintain a proper JSON format.
 				]
 			},
 			{
+				"propertyName": "Analyzers",
+				"propertyTooltip": "The analyzer parameter specifies the analyzer used for text analysis when indexing or searching a text field.",
+				"propertyType": "group",
+				"propertyKeyword": "analyzers",
+				"structure": [
+					{
+						"propertyName": "Name",
+						"propertyKeyword": "name",
+						"propertyTooltip": "The name of the analyzer",
+						"propertyType": "text",
+						"validation": {
+							"minLength": 1
+						}
+					},
+					{
+						"propertyName": "Type",
+						"propertyKeyword": "type",
+						"propertyTooltip": "Select from list of built-in analyzers or custom",
+						"propertyType": "select",
+						"defaultValue": "standard",
+						"options": [
+							"custom",
+							"standard",
+							"simple",
+							"whitespace",
+							"stop",
+							"keyword",
+							"pattern",
+							"fingerprint",
+							"language"
+						],
+						"isTargetProperty": true
+					},
+					{
+						"propertyName": "Language",
+						"propertyKeyword": "language",
+						"propertyTooltip": "The language of the analyzer",
+						"propertyType": "select",
+						"defaultValue": "english",
+						"options": [
+							"english",
+							"french",
+							"arabic",
+							"armenian",
+							"basque",
+							"bengali",
+							"brazilian",
+							"bulgarian",
+							"catalan",
+							"cjk",
+							"czech",
+							"danish",
+							"dutch",
+							"estonian",
+							"finnish",
+							"galician",
+							"german",
+							"greek",
+							"hindi",
+							"hungarian",
+							"indonesian",
+							"irish",
+							"italian",
+							"latvian",
+							"lithuanian",
+							"norwegian",
+							"persian",
+							"portuguese",
+							"romanian",
+							"sorani",
+							"spanish",
+							"swedish",
+							"turkish",
+							"thai"
+						],
+						"dependency": {
+							"key": "type",
+							"value": "language"
+						}
+					},
+					{
+						"propertyName": "Standard analyzer options",
+						"propertyType": "block",
+						"propertyKeyword": "standardAnalyzerOptions",
+						"propertyTooltip": "Standard analyzer options",
+						"groupItemLimit": 1,
+						"structure": [
+							{
+								"propertyName": "Max token length",
+								"propertyKeyword": "maxTokenLength",
+								"propertyValidate": true,
+								"propertyType": "numeric",
+								"valueType": "number",
+								"allowNegative": false
+							},
+							{
+								"propertyName": "Stop words path",
+								"propertyTooltip": "The path to a file containing stop words.",
+								"propertyType": "text",
+								"propertyKeyword": "stopWordsPath"
+							},
+							{
+								"propertyName": "Pre-defined stop words list name",
+								"propertyKeyword": "predefinedStopWordsList",
+								"propertyTooltip": "A pre-defined stop words list like _english_",
+								"propertyType": "text"
+							},
+							{
+								"propertyName": "Stop words",
+								"propertyTooltip": "An array containing a list of stop words",
+								"propertyType": "group",
+								"propertyKeyword": "stopWordsList",
+								"structure": [
+									{
+										"propertyName": "",
+										"propertyKeyword": "stopWord",
+										"propertyTooltip": "A stop word",
+										"propertyType": "text"
+									}
+								]
+							}
+						],
+						"dependency": {
+							"key": "type",
+							"value": "standard"
+						}
+					},
+					{
+						"propertyName": "Stop analyzer options",
+						"propertyType": "block",
+						"propertyKeyword": "stopAnalyzerOptions",
+						"propertyTooltip": "Stop analyzer options",
+						"groupItemLimit": 1,
+						"structure": [
+							{
+								"propertyName": "Stop words path",
+								"propertyTooltip": "The path to a file containing stop words.",
+								"propertyType": "text",
+								"propertyKeyword": "stopWordsPath"
+							},
+							{
+								"propertyName": "Pre-defined stop words list name",
+								"propertyKeyword": "predefinedStopWordsList",
+								"propertyTooltip": "A pre-defined stop words list like _english_",
+								"propertyType": "text"
+							},
+							{
+								"propertyName": "Stop words",
+								"propertyTooltip": "An array containing a list of stop words",
+								"propertyType": "group",
+								"propertyKeyword": "stopWordsList",
+								"structure": [
+									{
+										"propertyName": "",
+										"propertyKeyword": "stopWord",
+										"propertyTooltip": "A stop word",
+										"propertyType": "text"
+									}
+								]
+							}
+						],
+						"dependency": {
+							"key": "type",
+							"value": "stop"
+						}
+					},
+					{
+						"propertyName": "Pattern analyzer options",
+						"propertyType": "block",
+						"propertyKeyword": "patternAnalyzerOptions",
+						"propertyTooltip": "Pattern analyzer options",
+						"groupItemLimit": 1,
+						"structure": [
+							{
+								"propertyName": "Pattern",
+								"propertyTooltip": "A Java regular expression",
+								"propertyType": "text",
+								"propertyKeyword": "pattern"
+							},
+							{
+								"propertyName": "Flags",
+								"propertyTooltip": "Java regular expression flags. Flags should be pipe-separated, eg \"CASE_INSENSITIVE|COMMENTS\".",
+								"propertyType": "text",
+								"propertyKeyword": "flags"
+							},
+							{
+								"propertyName": "Lowercase",
+								"propertyTooltip": "Should terms be lowercased or not.",
+								"propertyType": "checkbox",
+								"propertyKeyword": "lowercase",
+								"defaultValue": true
+							},
+							{
+								"propertyName": "Stop words path",
+								"propertyTooltip": "The path to a file containing stop words.",
+								"propertyType": "text",
+								"propertyKeyword": "stopWordsPath"
+							},
+							{
+								"propertyName": "Pre-defined stop words list name",
+								"propertyKeyword": "predefinedStopWordsList",
+								"propertyTooltip": "A pre-defined stop words list like _english_",
+								"propertyType": "text"
+							},
+							{
+								"propertyName": "Stop words",
+								"propertyTooltip": "An array containing a list of stop words",
+								"propertyType": "group",
+								"propertyKeyword": "stopWordsList",
+								"structure": [
+									{
+										"propertyName": "",
+										"propertyKeyword": "stopWord",
+										"propertyTooltip": "A stop word",
+										"propertyType": "text"
+									}
+								]
+							}
+						],
+						"dependency": {
+							"key": "type",
+							"value": "pattern"
+						}
+					},
+					{
+						"propertyName": "Fingerprint analyzer options",
+						"propertyType": "block",
+						"propertyKeyword": "fingerprintAnalyzerOptions",
+						"propertyTooltip": "Fingerprint analyzer options",
+						"groupItemLimit": 1,
+						"structure": [
+							{
+								"propertyName": "Separator",
+								"propertyTooltip": "The character to use to concatenate the terms. Defaults to a space.",
+								"propertyType": "text",
+								"propertyKeyword": "separator"
+							},
+							{
+								"propertyName": "Max output size",
+								"propertyKeyword": "maxOutputSize",
+								"propertyTooltip": "The maximum token size to emit. Defaults to 255. Tokens larger than this size will be discarded.",
+								"propertyValidate": true,
+								"propertyType": "numeric",
+								"valueType": "number",
+								"allowNegative": false
+							},
+							{
+								"propertyName": "Stop words path",
+								"propertyTooltip": "The path to a file containing stop words.",
+								"propertyType": "text",
+								"propertyKeyword": "stopWordsPath"
+							},
+							{
+								"propertyName": "Pre-defined stop words list name",
+								"propertyKeyword": "predefinedStopWordsList",
+								"propertyTooltip": "A pre-defined stop words list like _english_",
+								"propertyType": "text"
+							},
+							{
+								"propertyName": "Stop words",
+								"propertyTooltip": "An array containing a list of stop words",
+								"propertyType": "group",
+								"propertyKeyword": "stopWordsList",
+								"structure": [
+									{
+										"propertyName": "",
+										"propertyKeyword": "stopWord",
+										"propertyTooltip": "A stop word",
+										"propertyType": "text"
+									}
+								]
+							}
+						],
+						"dependency": {
+							"key": "type",
+							"value": "fingerprint"
+						}
+					},
+					{
+						"propertyName": "Language analyzer options",
+						"propertyType": "block",
+						"propertyKeyword": "languageAnalyzerOptions",
+						"propertyTooltip": "Language analyzer options",
+						"groupItemLimit": 1,
+						"structure": [
+							{
+								"propertyName": "Stop words path",
+								"propertyTooltip": "The path to a file containing stop words.",
+								"propertyType": "text",
+								"propertyKeyword": "stopWordsPath"
+							},
+							{
+								"propertyName": "Pre-defined stop words list name",
+								"propertyKeyword": "predefinedStopWordsList",
+								"propertyTooltip": "A pre-defined stop words list like _english_",
+								"propertyType": "text"
+							},
+							{
+								"propertyName": "Stop words",
+								"propertyTooltip": "An array containing a list of stop words",
+								"propertyType": "group",
+								"propertyKeyword": "stopWordsList",
+								"structure": [
+									{
+										"propertyName": "",
+										"propertyKeyword": "stopWord",
+										"propertyTooltip": "A stop word",
+										"propertyType": "text"
+									}
+								]
+							}
+						],
+						"dependency": {
+							"key": "type",
+							"value": "language"
+						}
+					},
+					{
+						"propertyName": "Custom analyzer options",
+						"propertyType": "block",
+						"propertyKeyword": "customAnalyzerOptions",
+						"propertyTooltip": "Custom analyzer options",
+						"groupItemLimit": 1,
+						"structure": [
+							{
+								"propertyName": "Tokenizer",
+								"propertyTooltip": "A built-in or customised tokenizer.",
+								"propertyType": "select",
+								"propertyKeyword": "tokenizer",
+								"options": [
+									"custom",
+									"standard",
+									"letter",
+									"lowercase",
+									"whitespace",
+									"uax_url_email",
+									"classic",
+									"thai",
+									"ngram",
+									"edge_ngram",
+									"keyword",
+									"pattern",
+									"simple_pattern",
+									"char_group",
+									"char_group",
+									"simple_pattern_split",
+									"path_hierarchy"
+								],
+								"defaultValue": "standard"
+							},
+							{
+								"propertyName": "Custom tokenizer name",
+								"propertyTooltip": "The custom tokenizer name.",
+								"propertyType": "text",
+								"propertyKeyword": "customTokenizerName",
+								"dependency": {
+									"key": "tokenizer",
+									"value": "custom"
+								}
+							},
+							{
+								"propertyName": "Char filters",
+								"propertyTooltip": "An optional array of built-in or customised character filters.",
+								"propertyType": "group",
+								"propertyKeyword": "charFilters",
+								"structure": [
+									{
+										"propertyName": "Filter",
+										"propertyTooltip": "A built-in or custom filter.",
+										"propertyType": "select",
+										"propertyKeyword": "filter",
+										"options": [
+											"custom",
+											"html_strip",
+											"mapping",
+											"pattern_replace"
+										]
+									},
+									{
+										"propertyName": "Custom character filter name",
+										"propertyTooltip": "The custom character filter name.",
+										"propertyType": "text",
+										"propertyKeyword": "customFilterName",
+										"dependency": {
+											"key": "filter",
+											"value": "custom"
+										}
+									}
+								]
+							},
+							{
+								"propertyName": "Filters",
+								"propertyTooltip": "An optional array of built-in or customised token filters.",
+								"propertyType": "group",
+								"propertyKeyword": "filters",
+								"structure": [
+									{
+										"propertyName": "Filter",
+										"propertyTooltip": "A built-in or custom filter.",
+										"propertyType": "select",
+										"propertyKeyword": "filter",
+										"options": [
+											"custom",
+											"apostrophe",
+											"asciifolding",
+											"cjk_bigram",
+											"cjk_width",
+											"classic",
+											"common_grams",
+											"condition",
+											"decimal_digit",
+											"delimited_payload_filter",
+											"dictionary_decompounder",
+											"edge_ngram",
+											"elision",
+											"fingerprint",
+											"flatten_graph",
+											"hunspell",
+											"hyphenation_decompounder",
+											"icu_folding",
+											"keep",
+											"keep_types",
+											"keyword_marker",
+											"kstem",
+											"length",
+											"limit",
+											"lowercase",
+											"ngram",
+											"nor",
+											"pattern_capture",
+											"pattern_replace",
+											"porter_stem",
+											"remove_duplicates",
+											"reverse",
+											"shingle",
+											"snowball",
+											"stemmer",
+											"stemmer_override",
+											"stop",
+											"trim",
+											"truncate",
+											"unique",
+											"uppercase",
+											"word_delimiter"
+										]
+									},
+									{
+										"propertyName": "Custom filter name",
+										"propertyTooltip": "The name of the custom filter.",
+										"propertyType": "text",
+										"propertyKeyword": "customFilterName",
+										"dependency": {
+											"key": "filter",
+											"value": "custom"
+										}
+									}
+								]
+							},
+							{
+								"propertyName": "Position increment gap",
+								"propertyTooltip": "When indexing an array of text values, Elasticsearch inserts a fake \"gap\" between the last term of one value and the first term of the next value to ensure that a phrase query doesn’t match two terms from different array elements. Defaults to 100.",
+								"propertyType": "numeric",
+								"valueType": "integer",
+								"allowNegative": false,
+								"propertyKeyword": "positionIncrementGap"
+							}
+						],
+						"dependency": {
+							"key": "type",
+							"value": "custom"
+						}
+					}
+				]
+			},
+			{
 				"propertyName": "Description",
 				"propertyKeyword": "description",
 				"shouldValidate": false,

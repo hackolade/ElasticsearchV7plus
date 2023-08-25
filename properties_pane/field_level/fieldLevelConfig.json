@@ -154,9 +154,21 @@ making sure that you maintain a proper JSON format.
 					"pattern",
 					"english",
 					"french",
-					"fingerprint"
+					"fingerprint",
+					"custom"
 				],
 				"isTargetProperty": true
+			},
+			{
+				"propertyName": "custom analyzer name",
+				"propertyTooltip": "The name of the custom analyzer",
+				"propertyType": "text",
+				"propertyKeyword": "customAnalyzerName",
+				"isTargetProperty": true,
+				"dependency": {
+					"key": "analyzer",
+					"value": "custom"
+				}
 			},
 			{
 				"propertyName": "boost",
