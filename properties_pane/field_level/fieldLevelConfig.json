@@ -171,6 +171,18 @@ making sure that you maintain a proper JSON format.
 				}
 			},
 			{
+				"propertyName": "search_analyzer",
+				"propertyKeyword": "search_analyzer",
+				"propertyType": "text",
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "search_quote_analyzer",
+				"propertyKeyword": "search_quote_analyzer",
+				"propertyType": "text",
+				"isTargetProperty": true
+			},
+			{
 				"propertyName": "boost",
 				"propertyKeyword": "boost",
 				"propertyValidate": false,
@@ -920,13 +932,31 @@ making sure that you maintain a proper JSON format.
 					"pattern",
 					"english",
 					"french",
-					"fingerprint"
+					"fingerprint",
+					"custom"
 				],
 				"isTargetProperty": true
 			},
 			{
+				"propertyName": "custom analyzer name",
+				"propertyTooltip": "The name of the custom analyzer",
+				"propertyType": "text",
+				"propertyKeyword": "customAnalyzerName",
+				"isTargetProperty": true,
+				"dependency": {
+					"key": "analyzer",
+					"value": "custom"
+				}
+			},
+			{
 				"propertyName": "search_analyzer",
 				"propertyKeyword": "search_analyzer",
+				"propertyType": "text",
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "search_quote_analyzer",
+				"propertyKeyword": "search_quote_analyzer",
 				"propertyType": "text",
 				"isTargetProperty": true
 			},
@@ -973,8 +1003,32 @@ making sure that you maintain a proper JSON format.
 					"pattern",
 					"english",
 					"french",
-					"fingerprint"
+					"fingerprint",
+					"custom"
 				],
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "custom analyzer name",
+				"propertyTooltip": "The name of the custom analyzer",
+				"propertyType": "text",
+				"propertyKeyword": "customAnalyzerName",
+				"isTargetProperty": true,
+				"dependency": {
+					"key": "analyzer",
+					"value": "custom"
+				}
+			},
+			{
+				"propertyName": "search_analyzer",
+				"propertyKeyword": "search_analyzer",
+				"propertyType": "text",
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "search_quote_analyzer",
+				"propertyKeyword": "search_quote_analyzer",
+				"propertyType": "text",
 				"isTargetProperty": true
 			},
 			{
