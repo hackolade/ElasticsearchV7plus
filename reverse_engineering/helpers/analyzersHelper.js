@@ -148,7 +148,6 @@ const combineOptions = (generalOptions, specificOptions) => {
 };
 
 const getConfigForProperty = (configStructure, propertyPath) => {
-	// TODO: check setting custom analyzer on field level
 	const [propertyKeyword, ...rest] = propertyPath;
 	const property = configStructure.find(property => property.propertyKeyword === propertyKeyword);
 	if (!property) {

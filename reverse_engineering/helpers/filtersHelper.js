@@ -9,10 +9,10 @@ const getFilters = filtersData => {
 
 const getFilter = ([name, data]) => {
 	try {
-		const config = JSON.stringify(data);
+		const config = JSON.stringify(data, null, 4);
 		return {
 			name,
-			config,
+			config: config,
 		}
 	} catch (e) {
 		return null;

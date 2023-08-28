@@ -1,6 +1,6 @@
-const { getTokenizers } = require("../../forward_engineering/mappers/tokenizersMapper");
 const { getAnalyzers } = require("./analyzersHelper");
 const { getFilters } = require("./filtersHelper");
+const { getTokenizers } = require("./tokenizersHelper");
 
 const getAnalysisData = (analysisSettings) => {
 	const analyzers = getAnalyzers(analysisSettings.analyzer);
