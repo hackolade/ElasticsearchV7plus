@@ -23,19 +23,19 @@ const getAnalyzer = (analyzerData) => {
 
 	switch (analyzerData.type) {
 		case "custom":
-			return combineOptions([analyzer,getCustomAnalyzer(analyzerData.customAnalyzerOptions)]);
+			return combineOptions([analyzer,getCustomAnalyzer(analyzerData)]);
 		case "standard":
-			return combineOptions([analyzer, getStandardAnalyzer(analyzerData.standardAnalyzerOptions)]);
+			return combineOptions([analyzer, getStandardAnalyzer(analyzerData)]);
 		case "simple":
 		case "whitespace":
 		case "keyword":
 			return analyzer;
 		case "stop":
-			return combineOptions([analyzer, getStopWordsConfig(analyzerData.stopAnalyzerOptions)]);
+			return combineOptions([analyzer, getStopWordsConfig(analyzerData)]);
 		case "pattern":
-			return combineOptions([analyzer, getPatternAnalyzer(analyzerData.patternAnalyzerOptions)]);
+			return combineOptions([analyzer, getPatternAnalyzer(analyzerData)]);
 		case "fingerprint":
-			return combineOptions([analyzer, getFingerprintAnalyzer(analyzerData.fingerprintAnalyzerOptions)]);
+			return combineOptions([analyzer, getFingerprintAnalyzer(analyzerData)]);
 		case "language":
 			return combineOptions([getLanguageAnalyzer(analyzerData)]);
 		default:
@@ -93,13 +93,13 @@ const getLanguageAnalyzer = (analyzerData) => {
 		type: analyzerData.language,
 	};
 
-	return combineOptions([analyzer, getStopWordsConfig(analyzerData.languageAnalyzerOptions)]);
+	return combineOptions([analyzer, getStopWordsConfig(analyzerData)]);
 };
 
 const generalAnalyzerMapper = (analyzerData, mapConfig) => {
 	return Object.keys(mapConfig).reduce((analyzer, analyzerKey) => {
 		const analyzerValue = analyzerData[analyzerKey];
-		if (analyzerValue || analyzerValue === false) {
+		if (analyzerValue || analyzerValue === false || analyzerValue === 0) {
 			analyzer[mapConfig[analyzerKey]] = analyzerValue;
 		}
 		return analyzer;

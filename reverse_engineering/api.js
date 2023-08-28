@@ -4,6 +4,7 @@ const elasticsearch = require('elasticsearch');
 const fs = require('fs');
 const SchemaCreator = require('./SchemaCreator');
 const inferSchemaService = require('./helpers/inferSchemaService');
+const { getAnalysisData } = require('./helpers/analysisSettingsHelper');
 const versions = require('../package.json').contributes.target.versions;
 
 let connectionParams = {};
@@ -515,7 +516,6 @@ function getSchemaMapping(indices, client) {
 
 function getBucketData(mappingData) {
 	let data = {};
-
 	if (mappingData.settings) {
 		let settingContainer = mappingData.settings;
 
@@ -529,6 +529,10 @@ function getBucketData(mappingData) {
 
 		if (settingContainer.number_of_replicas) {
 			data.number_of_replicas = settingContainer.number_of_replicas;
+		}
+
+		if (settingContainer.analysis) {
+			data = { ...data, ...getAnalysisData(settingContainer.analysis) };
 		}
 	}
 
