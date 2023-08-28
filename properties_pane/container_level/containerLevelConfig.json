@@ -750,9 +750,7 @@ making sure that you maintain a proper JSON format.
 						"propertyKeyword": "tokenChars",
 						"propertyType": "details",
 						"template": "textAreaJson",
-						"markdown": false,
 						"propertyTooltip": "Character classes that should be included in a token (letter, digit, whitespace, punctuation, symbol, custom). Elasticsearch will split on characters that don’t belong to the classes specified. Defaults to []",
-						"valueType": "string",
 						"dependency": {
 							"type": "or",
 							"values": [
@@ -854,9 +852,7 @@ making sure that you maintain a proper JSON format.
 						"propertyKeyword": "tokenizeOnChars",
 						"propertyType": "details",
 						"template": "textAreaJson",
-						"markdown": false,
 						"propertyTooltip": "A list containing a list of characters to tokenize the string on. Whenever a character from this list is encountered, a new token is started. This accepts either single characters like e.g. -, or character groups: whitespace, letter, digit, punctuation, symbol.",
-						"valueType": "string",
 						"dependency": {
 							"key": "type",
 							"value": "char_group"
@@ -939,9 +935,7 @@ making sure that you maintain a proper JSON format.
 						"propertyKeyword": "config",
 						"propertyType": "details",
 						"template": "textAreaJson",
-						"markdown": false,
-						"propertyTooltip": "Configurable parameters for the filter",
-						"valueType": "string"
+						"propertyTooltip": "Configurable parameters for the filter"
 					}
 				]
 			},
@@ -965,9 +959,7 @@ making sure that you maintain a proper JSON format.
 						"propertyKeyword": "config",
 						"propertyType": "details",
 						"template": "textAreaJson",
-						"markdown": false,
-						"propertyTooltip": "Configurable parameters for the filter",
-						"valueType": "string"
+						"propertyTooltip": "Configurable parameters for the filter"
 					}
 				]
 			},
