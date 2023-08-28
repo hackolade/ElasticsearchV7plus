@@ -15,118 +15,109 @@ const getTokenizer = ([name, data]) => {
 
 	switch (data.type) {
 		case 'standard':
-			return combineOptions(tokenizer, getStandardTokenizer(data));// TODO: start here
-
-		case 'simple':
-		case 'whitespace':
+		case "whitespace":
+		case "uax_url_email":
+		case "classic":
+			return combineOptions(tokenizer, getSharedTokenizerWithMaxTokenLength(data));
+		case "ngram":
+		case "edge_ngram":
+			return combineOptions(tokenizer, getNgramTokenizer(data));
 		case 'keyword':
-			return tokenizer;
-		case 'stop':
-			return combineOptions(tokenizer, getStopWordsConfig(data));
+			return combineOptions(tokenizer, getKeywordTokenizer(data));
 		case 'pattern':
-			return combineOptions(tokenizer, getPatternAnalyzer(data));
-		case 'fingerprint':
-			return combineOptions(tokenizer, getFingerprintAnalyzer(data));
+			return combineOptions(tokenizer, getPatternTokenizer(data));
+		case "simple_pattern":
+		case "simple_pattern_split":
+			return combineOptions(tokenizer, getSimplePatternTokenizer(data));
+		case 'char_group':
+			return combineOptions(tokenizer, getCharGroupTokenizer(data));
+		case 'path_hierarchy':
+			return combineOptions(tokenizer, getPathHierarchyTokenizer(data));
 		default:
-			return combineOptions(tokenizer, getLanguageAnalyzer(data));
+			return null;
 	}
 };
 
-const getCustomAnalyzer = data => {
-	const builtInTokenizers = getConfigForProperty(containerLevelConfig[0].structure, [
-		'analyzers',
-		'tokenizer',
-	]).options.filter(option => option !== 'custom');
-	const tokenizer = builtInTokenizers.includes(data.tokenizer) ? data.tokenizer : 'custom';
-	const customTokenizerName = tokenizer === 'custom' ? data.tokenizer : null;
-	const filters = mapGroupArray(
-		data.filter,
-		'filter',
-		'customFilterName',
-		getConfigForProperty(containerLevelConfig[0].structure, ['analyzers', 'filters', 'filter']).options.filter(
-			option => option !== 'custom',
-		),
-	);
-	const charFilters = mapGroupArray(
-		data.char_filter,
-		'filter',
-		'customCharFilterName',
-		getConfigForProperty(containerLevelConfig[0].structure, ['analyzers', 'charFilters', 'filter']).options.filter(
-			option => option !== 'custom',
-		),
-	);
-
-	const analyzer = {
-		tokenizer,
-		...(customTokenizerName && { customTokenizerName }),
-		...(Array.isArray(filters) && filters.length > 0 && { filters }),
-		...(Array.isArray(charFilters) && charFilters.length > 0 && { charFilters }),
-		...(data.position_increment_gap >= 0 && { positionIncrementGap: data.position_increment_gap }),
-	};
-
-	return analyzer;
-};
-
-const getStandardTokenizer = data => {
-	const tokenizer = generalAnalyzerMapper(data, {
+const getSharedTokenizerWithMaxTokenLength = data => {
+	const tokenizer = generalTokenizerMapper(data, {
 		'max_token_length': 'maxTokenLength',
 	});
 
-	return { ...tokenizer, ...getStopWordsConfig(data) };
+	return tokenizer;
 };
 
-const getPatternAnalyzer = data => {
-	const analyzer = generalAnalyzerMapper(data, {
-		pattern: 'pattern',
-		flags: 'flags',
-		lowercase: 'lowercase',
+const getNgramTokenizer = data => {
+	const tokenizer = generalTokenizerMapper(data, {
+		min_gram: 'minGram',
+		max_gram: 'maxGram',
+		token_chars: 'tokenChars',
+		custom_token_chars: 'customTokenChars',
+	}, ['token_chars']);
+
+	return tokenizer;
+};
+
+const getKeywordTokenizer = data => {
+	const tokenizer = generalTokenizerMapper(data, {
+		buffer_size: 'bufferSize',
 	});
 
-	return { ...analyzer, ...getStopWordsConfig(data) };
+	return tokenizer;
 };
 
-const getFingerprintAnalyzer = data => {
-	const analyzer = generalAnalyzerMapper(data, {
-		separator: 'separator',
-		max_output_size: 'maxOutputSize',
+const getPatternTokenizer = data => {
+	const tokenizer = generalTokenizerMapper(data, {
+		pattern: "pattern",
+		flags: "flags",
+		group: "group",
 	});
 
-	return { ...analyzer, ...getStopWordsConfig(analyzerOptions) };
+	return tokenizer;
 };
 
-const getLanguageAnalyzer = data => {
-	const analyzer = {
-		type: 'language',
-		'language': data.type,
-	};
+const getSimplePatternTokenizer = data => {
+	const tokenizer = generalTokenizerMapper(data, {
+		pattern: "lucenePattern",
+	});
 
-	return { ...analyzer, ...getStopWordsConfig(data) };
+	return tokenizer;
 };
 
-const getStopWordsConfig = analyzerData => {
-	const predefinedStopWordsList = typeof analyzerData.stopwords === 'string' ? analyzerData.stopwords : null;
-	const stopWordsList = Array.isArray(analyzerData.stopwords)
-		? analyzerData.stopwords.map(stopWord => ({ stopWord }))
-		: null;
-	const stopWordsPath = typeof analyzerData.stopwords_path === 'string' ? analyzerData.stopwords_path : null;
+const getCharGroupTokenizer = data => {
+	const tokenizer = generalTokenizerMapper(data, {
+		max_token_length: "maxTokenLength",
+		tokenize_on_chars: "tokenizeOnChars",
+	}, ['tokenize_on_chars']);
 
-	if (stopWordsPath) {
-		return { stopWordsPath };
-	}
-	if (predefinedStopWordsList) {
-		return { predefinedStopWordsList };
-	}
-	if (stopWordsList) {
-		return { stopWordsList };
-	}
-	return null;
+	return tokenizer;
 };
 
-const generalAnalyzerMapper = (analyzerData, mapConfig) => {
+const getPathHierarchyTokenizer = data => {
+	const tokenizer = generalTokenizerMapper(data, {
+		delimiter: "delimiter",
+		replacement: "replacement",
+		buffer_size: "pathBufferSize",
+		skip: "skip",
+		reverse: "reverse",
+	});
+
+	return tokenizer;
+};
+
+
+const generalTokenizerMapper = (analyzerData, mapConfig, jsonFields = []) => {
 	return Object.keys(mapConfig).reduce((analyzer, analyzerKey) => {
 		const analyzerValue = analyzerData[analyzerKey];
 		if (analyzerValue || analyzerValue === false || analyzerValue === 0) {
-			analyzer[mapConfig[analyzerKey]] = analyzerValue;
+			if (jsonFields.includes(analyzerKey)) {
+				try {
+					analyzer[mapConfig[analyzerKey]] = JSON.stringify(analyzerValue, null, 4);
+				} catch (e) {
+					analyzer[mapConfig[analyzerKey]] = analyzerValue;
+				}
+			} else {
+				analyzer[mapConfig[analyzerKey]] = analyzerValue;
+			}
 		}
 		return analyzer;
 	}, {});
@@ -139,37 +130,6 @@ const combineOptions = (generalOptions, specificOptions) => {
 	};
 };
 
-const getConfigForProperty = (configStructure, propertyPath) => {
-	// TODO: check setting custom analyzer on field level
-	const [propertyKeyword, ...rest] = propertyPath;
-	const property = configStructure.find(property => property.propertyKeyword === propertyKeyword);
-	if (!property) {
-		return null;
-	}
-	if (rest.length === 0) {
-		return property;
-	}
-	if (property.structure) {
-		return getConfigForProperty(property.structure, rest);
-	}
-	return null;
-};
-
-const mapGroupArray = (arrayData, key, customValueKey, builtInOptions) => {
-	if (!Array.isArray(arrayData) || arrayData.length === 0) {
-		return null;
-	}
-
-	return arrayData.map(itemValue => {
-		const isBuiltIn = builtInOptions.includes(itemValue);
-		if (isBuiltIn) {
-			return { [key]: itemValue };
-		} else {
-			return { [key]: 'custom', [customValueKey]: itemValue };
-		}
-	});
-};
-
 module.exports = {
-	getAnalyzers: getTokenizers,
+	getTokenizers,
 };
