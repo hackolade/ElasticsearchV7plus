@@ -4,6 +4,7 @@ const elasticsearch = require('elasticsearch');
 const fs = require('fs');
 const SchemaCreator = require('./SchemaCreator');
 const inferSchemaService = require('./helpers/inferSchemaService');
+const { getAnalysisData } = require('./helpers/analysisSettingsHelper');
 const versions = require('../package.json').contributes.target.versions;
 
 let connectionParams = {};
@@ -242,7 +243,7 @@ module.exports = {
 				async.mapSeries(indices, async (indexName) => {
 					logger.progress({ message: 'Get index documents', containerName: indexName, entityName: '' });
 
-					let bucketInfo = Object.assign(getBucketData(jsonSchemas[indexName] || {}), defaultBucketInfo);
+					let bucketInfo = Object.assign(getBucketData(jsonSchemas[indexName] || {}, logger), defaultBucketInfo);
 					const documents = await getDocuments({ client, indexName, recordSamplingSettings });
 					const documentKind = documentKinds[indexName].documentKindName;
 					
@@ -513,9 +514,8 @@ function getSchemaMapping(indices, client) {
 	});
 }
 
-function getBucketData(mappingData) {
+function getBucketData(mappingData, logger) {
 	let data = {};
-
 	if (mappingData.settings) {
 		let settingContainer = mappingData.settings;
 
@@ -529,6 +529,14 @@ function getBucketData(mappingData) {
 
 		if (settingContainer.number_of_replicas) {
 			data.number_of_replicas = settingContainer.number_of_replicas;
+		}
+
+		if (settingContainer.analysis) {
+			try {
+				data = { ...data, ...getAnalysisData(settingContainer.analysis) };
+			} catch (error) {
+				logger.log('error', error, 'Getting analysis data');
+			}
 		}
 	}
 

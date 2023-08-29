@@ -419,6 +419,8 @@ module.exports = {
 				schema["stringfields"] = JSON.stringify(properties[propName], null, 4);
 			} else if (propName === 'relations') {
 				schema[propName] = getRelations(properties[propName]);
+			} else if (propName === 'analyzer') {
+				schema = { ...schema, ...getAnalyzerProps(properties[propName])};
 			} else {
 				schema[propName] = properties[propName];
 			}
@@ -480,4 +482,20 @@ const findPropertiesInMapping = (propertyName, mapping) => {
 	};
 
 	return getPaths(propertyName, mapping, []);
+};
+
+const getAnalyzerProps = (analyzerType) => {
+	const builtInAnalyzers = [
+		"standard",
+		"simple",
+		"whitespace",
+		"stop",
+		"keyword",
+		"pattern",
+		"english",
+		"french",
+		"fingerprint",
+	];
+	const isBuiltInAnalyzer = builtInAnalyzers.includes(analyzerType);
+	return isBuiltInAnalyzer ? { analyzer: analyzerType } : { analyzer: 'custom', customAnalyzerName: analyzerType };
 };

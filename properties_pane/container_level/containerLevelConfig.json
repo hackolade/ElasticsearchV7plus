@@ -211,6 +211,758 @@ making sure that you maintain a proper JSON format.
 				]
 			},
 			{
+				"propertyName": "Analyzers",
+				"propertyTooltip": "The analyzer parameter specifies the analyzer used for text analysis when indexing or searching a text field.",
+				"propertyType": "group",
+				"propertyKeyword": "analyzers",
+				"structure": [
+					{
+						"propertyName": "Name",
+						"propertyKeyword": "name",
+						"propertyTooltip": "The name of the analyzer",
+						"propertyType": "text",
+						"validation": {
+							"minLength": 1
+						}
+					},
+					{
+						"propertyName": "Type",
+						"propertyKeyword": "type",
+						"propertyTooltip": "Select from list of built-in analyzers or custom",
+						"propertyType": "select",
+						"defaultValue": "standard",
+						"options": [
+							"custom",
+							"standard",
+							"simple",
+							"whitespace",
+							"stop",
+							"keyword",
+							"pattern",
+							"fingerprint",
+							"language"
+						],
+						"isTargetProperty": true
+					},
+					{
+						"propertyName": "Language",
+						"propertyKeyword": "language",
+						"propertyTooltip": "The language of the analyzer",
+						"propertyType": "select",
+						"defaultValue": "english",
+						"options": [
+							"english",
+							"french",
+							"arabic",
+							"armenian",
+							"basque",
+							"bengali",
+							"brazilian",
+							"bulgarian",
+							"catalan",
+							"cjk",
+							"czech",
+							"danish",
+							"dutch",
+							"estonian",
+							"finnish",
+							"galician",
+							"german",
+							"greek",
+							"hindi",
+							"hungarian",
+							"indonesian",
+							"irish",
+							"italian",
+							"latvian",
+							"lithuanian",
+							"norwegian",
+							"persian",
+							"portuguese",
+							"romanian",
+							"sorani",
+							"spanish",
+							"swedish",
+							"turkish",
+							"thai"
+						],
+						"dependency": {
+							"key": "type",
+							"value": "language"
+						}
+					},
+					{
+						"propertyName": "Max token length",
+						"propertyKeyword": "maxTokenLength",
+						"propertyValidate": true,
+						"propertyType": "numeric",
+						"valueType": "number",
+						"allowNegative": false,
+						"dependency": {
+							"key": "type",
+							"value": "standard"
+						}
+					},
+					{
+						"propertyName": "Pattern",
+						"propertyTooltip": "A Java regular expression",
+						"propertyType": "text",
+						"propertyKeyword": "pattern",
+						"dependency": {
+							"key": "type",
+							"value": "pattern"
+						}
+					},
+					{
+						"propertyName": "Flags",
+						"propertyTooltip": "Java regular expression flags. Flags should be pipe-separated, eg \"CASE_INSENSITIVE|COMMENTS\".",
+						"propertyType": "text",
+						"propertyKeyword": "flags",
+						"dependency": {
+							"key": "type",
+							"value": "pattern"
+						}
+					},
+					{
+						"propertyName": "Lowercase",
+						"propertyTooltip": "Should terms be lowercased or not.",
+						"propertyType": "checkbox",
+						"propertyKeyword": "lowercase",
+						"defaultValue": true,
+						"dependency": {
+							"key": "type",
+							"value": "pattern"
+						}
+					},
+					{
+						"propertyName": "Separator",
+						"propertyTooltip": "The character to use to concatenate the terms. Defaults to a space.",
+						"propertyType": "text",
+						"propertyKeyword": "separator",
+						"dependency": {
+							"key": "type",
+							"value": "fingerprint"
+						}
+					},
+					{
+						"propertyName": "Max output size",
+						"propertyKeyword": "maxOutputSize",
+						"propertyTooltip": "The maximum token size to emit. Defaults to 255. Tokens larger than this size will be discarded.",
+						"propertyValidate": true,
+						"propertyType": "numeric",
+						"valueType": "number",
+						"allowNegative": false,
+						"dependency": {
+							"key": "type",
+							"value": "fingerprint"
+						}
+					},
+					{
+						"propertyName": "Stop words path",
+						"propertyTooltip": "The path to a file containing stop words.",
+						"propertyType": "text",
+						"propertyKeyword": "stopWordsPath",
+						"dependency": {
+							"type": "or",
+							"values": [
+								{
+									"key": "type",
+									"value": "standard"
+								},
+								{
+									"key": "type",
+									"value": "stop"
+								},
+								{
+									"key": "type",
+									"value": "pattern"
+								},
+								{
+									"key": "type",
+									"value": "fingerprint"
+								},
+								{
+									"key": "type",
+									"value": "language"
+								}
+							]
+						}
+					},
+					{
+						"propertyName": "Pre-defined stop words list name",
+						"propertyKeyword": "predefinedStopWordsList",
+						"propertyTooltip": "A pre-defined stop words list like _english_",
+						"propertyType": "text",
+						"dependency": {
+							"type": "or",
+							"values": [
+								{
+									"key": "type",
+									"value": "standard"
+								},
+								{
+									"key": "type",
+									"value": "stop"
+								},
+								{
+									"key": "type",
+									"value": "pattern"
+								},
+								{
+									"key": "type",
+									"value": "fingerprint"
+								},
+								{
+									"key": "type",
+									"value": "language"
+								}
+							]
+						}
+					},
+					{
+						"propertyName": "Stop words",
+						"propertyTooltip": "An array containing a list of stop words",
+						"propertyType": "group",
+						"propertyKeyword": "stopWordsList",
+						"structure": [
+							{
+								"propertyName": "",
+								"propertyKeyword": "stopWord",
+								"propertyTooltip": "A stop word",
+								"propertyType": "text"
+							}
+						],
+						"dependency": {
+							"type": "or",
+							"values": [
+								{
+									"key": "type",
+									"value": "standard"
+								},
+								{
+									"key": "type",
+									"value": "stop"
+								},
+								{
+									"key": "type",
+									"value": "pattern"
+								},
+								{
+									"key": "type",
+									"value": "fingerprint"
+								},
+								{
+									"key": "type",
+									"value": "language"
+								}
+							]
+						}
+					},
+					{
+						"propertyName": "Tokenizer",
+						"propertyTooltip": "A built-in or customised tokenizer.",
+						"propertyType": "select",
+						"propertyKeyword": "tokenizer",
+						"options": [
+							"custom",
+							"standard",
+							"letter",
+							"lowercase",
+							"whitespace",
+							"uax_url_email",
+							"classic",
+							"thai",
+							"ngram",
+							"edge_ngram",
+							"keyword",
+							"pattern",
+							"simple_pattern",
+							"char_group",
+							"simple_pattern_split",
+							"path_hierarchy"
+						],
+						"defaultValue": "standard",
+						"dependency": {
+							"key": "type",
+							"value": "custom"
+						}
+					},
+					{
+						"propertyName": "Custom tokenizer name",
+						"propertyTooltip": "The custom tokenizer name.",
+						"propertyType": "text",
+						"propertyKeyword": "customTokenizerName",
+						"dependency": {
+							"type": "and",
+							"values": [
+								{
+									"key": "tokenizer",
+									"value": "custom"
+								},
+								{
+									"key": "type",
+									"value": "custom"
+								}
+							]
+						}
+					},
+					{
+						"propertyName": "Char filters",
+						"propertyTooltip": "An optional array of built-in or customised character filters.",
+						"propertyType": "group",
+						"propertyKeyword": "charFilters",
+						"structure": [
+							{
+								"propertyName": "Filter",
+								"propertyTooltip": "A built-in or custom filter.",
+								"propertyType": "select",
+								"propertyKeyword": "filter",
+								"options": [
+									"custom",
+									"html_strip",
+									"mapping",
+									"pattern_replace"
+								]
+							},
+							{
+								"propertyName": "Custom character filter name",
+								"propertyTooltip": "The custom character filter name.",
+								"propertyType": "text",
+								"propertyKeyword": "customFilterName",
+								"dependency": {
+									"key": "filter",
+									"value": "custom"
+								}
+							}
+						],
+						"dependency": {
+							"key": "type",
+							"value": "custom"
+						}
+					},
+					{
+						"propertyName": "Filters",
+						"propertyTooltip": "An optional array of built-in or customised token filters.",
+						"propertyType": "group",
+						"propertyKeyword": "filters",
+						"structure": [
+							{
+								"propertyName": "Filter",
+								"propertyTooltip": "A built-in or custom filter.",
+								"propertyType": "select",
+								"propertyKeyword": "filter",
+								"options": [
+									"custom",
+									"apostrophe",
+									"asciifolding",
+									"cjk_bigram",
+									"cjk_width",
+									"classic",
+									"common_grams",
+									"condition",
+									"decimal_digit",
+									"delimited_payload_filter",
+									"dictionary_decompounder",
+									"edge_ngram",
+									"elision",
+									"fingerprint",
+									"flatten_graph",
+									"hunspell",
+									"hyphenation_decompounder",
+									"icu_folding",
+									"keep",
+									"keep_types",
+									"keyword_marker",
+									"kstem",
+									"length",
+									"limit",
+									"lowercase",
+									"ngram",
+									"nor",
+									"pattern_capture",
+									"pattern_replace",
+									"porter_stem",
+									"remove_duplicates",
+									"reverse",
+									"shingle",
+									"snowball",
+									"stemmer",
+									"stemmer_override",
+									"stop",
+									"trim",
+									"truncate",
+									"unique",
+									"uppercase",
+									"word_delimiter"
+								]
+							},
+							{
+								"propertyName": "Custom filter name",
+								"propertyTooltip": "The name of the custom filter.",
+								"propertyType": "text",
+								"propertyKeyword": "customFilterName",
+								"dependency": {
+									"key": "filter",
+									"value": "custom"
+								}
+							}
+						],
+						"dependency": {
+							"key": "type",
+							"value": "custom"
+						}
+					},
+					{
+						"propertyName": "Position increment gap",
+						"propertyTooltip": "When indexing an array of text values, Elasticsearch inserts a fake \"gap\" between the last term of one value and the first term of the next value to ensure that a phrase query doesn’t match two terms from different array elements. Defaults to 100.",
+						"propertyType": "numeric",
+						"valueType": "integer",
+						"allowNegative": false,
+						"propertyKeyword": "positionIncrementGap",
+						"dependency": {
+							"key": "type",
+							"value": "custom"
+						}
+					}
+				]
+			},
+			{
+				"propertyName": "Tokenizers",
+				"propertyTooltip": "A tokenizer receives a stream of characters, breaks it up into individual tokens (usually individual words), and outputs a stream of tokens.",
+				"propertyType": "group",
+				"propertyKeyword": "tokenizers",
+				"structure": [
+					{
+						"propertyName": "Name",
+						"propertyKeyword": "name",
+						"propertyTooltip": "The name of the tokenizer",
+						"propertyType": "text",
+						"validation": {
+							"minLength": 1
+						}
+					},
+					{
+						"propertyName": "Type",
+						"propertyKeyword": "type",
+						"propertyTooltip": "Select from list of built-in tokenizers",
+						"propertyType": "select",
+						"defaultValue": "standard",
+						"options": [
+							"standard",
+							"letter",
+							"lowercase",
+							"whitespace",
+							"uax_url_email",
+							"classic",
+							"thai",
+							"ngram",
+							"edge_ngram",
+							"keyword",
+							"pattern",
+							"simple_pattern",
+							"char_group",
+							"simple_pattern_split",
+							"path_hierarchy"
+						],
+						"isTargetProperty": true
+					},
+					{
+						"propertyName": "Max token length",
+						"propertyKeyword": "maxTokenLength",
+						"propertyValidate": true,
+						"propertyType": "numeric",
+						"propertyTooltip": "The maximum token length. If a token is seen that exceeds this length then it is split at max_token_length intervals.",
+						"valueType": "number",
+						"allowNegative": false,
+						"dependency": {
+							"type": "or",
+							"values": [
+								{
+									"key": "type",
+									"value": "standard"
+								},
+								{
+									"key": "type",
+									"value": "whitespace"
+								},
+								{
+									"key": "type",
+									"value": "uax_url_email"
+								},
+								{
+									"key": "type",
+									"value": "classic"
+								},
+								{
+									"key": "type",
+									"value": "char_group"
+								}
+							]
+						}
+					},
+					{
+						"propertyName": "Min gram",
+						"propertyKeyword": "minGram",
+						"propertyValidate": true,
+						"propertyType": "numeric",
+						"propertyTooltip": "Minimum length of characters in a gram.",
+						"valueType": "number",
+						"allowNegative": false,
+						"dependency": {
+							"type": "or",
+							"values": [
+								{
+									"key": "type",
+									"value": "ngram"
+								},
+								{
+									"key": "type",
+									"value": "edge_ngram"
+								}
+							]
+						}
+					},
+					{
+						"propertyName": "Max gram",
+						"propertyKeyword": "maxGram",
+						"propertyValidate": true,
+						"propertyType": "numeric",
+						"propertyTooltip": "Maximum length of characters in a gram.",
+						"valueType": "number",
+						"allowNegative": false,
+						"dependency": {
+							"type": "or",
+							"values": [
+								{
+									"key": "type",
+									"value": "ngram"
+								},
+								{
+									"key": "type",
+									"value": "edge_ngram"
+								}
+							]
+						}
+					},
+					{
+						"propertyName": "Token chars",
+						"propertyKeyword": "tokenChars",
+						"propertyType": "details",
+						"template": "textAreaJson",
+						"propertyTooltip": "Character classes that should be included in a token (letter, digit, whitespace, punctuation, symbol, custom). Elasticsearch will split on characters that don’t belong to the classes specified. Defaults to []",
+						"dependency": {
+							"type": "or",
+							"values": [
+								{
+									"key": "type",
+									"value": "ngram"
+								},
+								{
+									"key": "type",
+									"value": "edge_ngram"
+								}
+							]
+						}
+					},
+					{
+						"propertyName": "Custom token chars",
+						"propertyKeyword": "customTokenChars",
+						"propertyType": "text",
+						"propertyTooltip": "Custom characters that should be treated as part of a token. For example, setting this to +-_ will make the tokenizer treat the plus, minus and underscore sign as part of a token.",
+						"dependency": {
+							"type": "or",
+							"values": [
+								{
+									"key": "type",
+									"value": "ngram"
+								},
+								{
+									"key": "type",
+									"value": "edge_ngram"
+								}
+							]
+						}
+					},
+					{
+						"propertyName": "Buffer size",
+						"propertyKeyword": "bufferSize",
+						"propertyValidate": true,
+						"propertyType": "numeric",
+						"propertyTooltip": "The number of characters read into the term buffer in a single pass. Defaults to 256. The term buffer will grow by this size until all the text has been consumed. It is advisable not to change this setting.",
+						"valueType": "number",
+						"allowNegative": false,
+						"dependency": {
+							"key": "type",
+							"value": "keyword"
+						}
+					},
+					{
+						"propertyName": "Pattern",
+						"propertyTooltip": "A Java regular expression",
+						"propertyType": "text",
+						"propertyKeyword": "pattern",
+						"dependency": {
+							"key": "type",
+							"value": "pattern"
+						}
+					},
+					{
+						"propertyName": "Flags",
+						"propertyTooltip": "Java regular expression flags. Flags should be pipe-separated, eg \"CASE_INSENSITIVE|COMMENTS\".",
+						"propertyType": "text",
+						"propertyKeyword": "flags",
+						"dependency": {
+							"key": "type",
+							"value": "pattern"
+						}
+					},
+					{
+						"propertyName": "Group",
+						"propertyKeyword": "group",
+						"propertyType": "numeric",
+						"propertyTooltip": "Which capture group to extract as tokens. Defaults to -1 (split).",
+						"valueType": "number",
+						"dependency": {
+							"key": "type",
+							"value": "pattern"
+						}
+					},
+					{
+						"propertyName": "Pattern",
+						"propertyTooltip": "Lucene regular expression, defaults to the empty string",
+						"propertyType": "text",
+						"propertyKeyword": "lucenePattern",
+						"dependency": {
+							"type": "or",
+							"values": [
+								{
+									"key": "type",
+									"value": "simple_pattern"
+								},
+								{
+									"key": "type",
+									"value": "simple_pattern_split"
+								}
+							]
+						}
+					},
+					{
+						"propertyName": "Tokenize on chars",
+						"propertyKeyword": "tokenizeOnChars",
+						"propertyType": "details",
+						"template": "textAreaJson",
+						"propertyTooltip": "A list containing a list of characters to tokenize the string on. Whenever a character from this list is encountered, a new token is started. This accepts either single characters like e.g. -, or character groups: whitespace, letter, digit, punctuation, symbol.",
+						"dependency": {
+							"key": "type",
+							"value": "char_group"
+						}
+					},
+					{
+						"propertyName": "Delimiter",
+						"propertyTooltip": "The character to use as the path separator. Defaults to /.",
+						"propertyType": "text",
+						"propertyKeyword": "delimiter",
+						"dependency": {
+							"key": "type",
+							"value": "path_hierarchy"
+						}
+					},
+					{
+						"propertyName": "Replacement",
+						"propertyTooltip": "An optional replacement character to use for the delimiter. Defaults to the delimiter.",
+						"propertyType": "text",
+						"propertyKeyword": "replacement",
+						"dependency": {
+							"key": "type",
+							"value": "path_hierarchy"
+						}
+					},
+					{
+						"propertyName": "Buffer size",
+						"propertyKeyword": "pathBufferSize",
+						"propertyValidate": true,
+						"propertyType": "numeric",
+						"propertyTooltip": "The number of characters read into the term buffer in a single pass. Defaults to 1024. The term buffer will grow by this size until all the text has been consumed. It is advisable not to change this setting.",
+						"valueType": "number",
+						"allowNegative": false,
+						"dependency": {
+							"key": "type",
+							"value": "path_hierarchy"
+						}
+					},
+					{
+						"propertyName": "Reverse",
+						"propertyTooltip": "If true, uses Lucene’s ReversePathHierarchyTokenizer, which is suitable for domain–like hierarchies. Defaults to false.",
+						"propertyType": "checkbox",
+						"propertyKeyword": "reverse",
+						"defaultValue": false,
+						"dependency": {
+							"key": "type",
+							"value": "path_hierarchy"
+						}
+					},
+					{
+						"propertyName": "Skip",
+						"propertyKeyword": "skip",
+						"propertyType": "numeric",
+						"propertyTooltip": "The number of initial tokens to skip. Defaults to 0.",
+						"valueType": "number",
+						"dependency": {
+							"key": "type",
+							"value": "path_hierarchy"
+						}
+					}
+				]
+			},
+			{
+				"propertyName": "Filters",
+				"propertyKeyword": "filters",
+				"propertyType": "group",
+				"propertyTooltip": "Token filters accept a stream of tokens from a tokenizer and can modify tokens (eg lowercasing), delete tokens (eg remove stopwords) or add tokens (eg synonyms).",
+				"structure": [
+					{
+						"propertyName": "Name",
+						"propertyKeyword": "name",
+						"propertyTooltip": "The name of the filter",
+						"propertyType": "text",
+						"validation": {
+							"minLength": 1
+						}
+					},
+					{
+						"propertyName": "Config",
+						"propertyKeyword": "config",
+						"propertyType": "details",
+						"template": "textAreaJson",
+						"propertyTooltip": "Configurable parameters for the filter"
+					}
+				]
+			},
+			{
+				"propertyName": "Character filters",
+				"propertyKeyword": "characterFilters",
+				"propertyType": "group",
+				"propertyTooltip": "Character filters are used to preprocess the stream of characters before it is passed to the tokenizer.",
+				"structure": [
+					{
+						"propertyName": "Name",
+						"propertyKeyword": "name",
+						"propertyTooltip": "The name of the filter",
+						"propertyType": "text",
+						"validation": {
+							"minLength": 1
+						}
+					},
+					{
+						"propertyName": "Config",
+						"propertyKeyword": "config",
+						"propertyType": "details",
+						"template": "textAreaJson",
+						"propertyTooltip": "Configurable parameters for the filter"
+					}
+				]
+			},
+			{
 				"propertyName": "Description",
 				"propertyKeyword": "description",
 				"shouldValidate": false,

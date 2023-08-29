@@ -4,6 +4,7 @@ const { ElasticSearchService} = require("./service/elasticsearch/elasticsearchSe
 const {ElasticSearchClientFactory} = require("./service/elasticsearch/clientFactory");
 const curlParser = require("./scriptParser/curlScriptParser");
 const kibanaParser = require("./scriptParser/kibanaScriptParser");
+const { getIndexSettings } = require('./mappers/indexSettingsMapper');
 
 const getSampleGenerationOptions = (app, data) => {
 	const _ = app.require('lodash');
@@ -57,7 +58,7 @@ module.exports = {
 			externalDefinitions: JSON.parse(data.externalDefinitions)
 		});
 		let typeSchema = this.getTypeSchema(entityData, fieldsSchema);
-		let mappingScript = this.getMappingScript(containerData, typeSchema);
+		let mappingScript = this.getMappingScript(containerData, typeSchema, logger);
 
 		let script = "";
 		if (isUpdateScript) {
@@ -93,9 +94,7 @@ module.exports = {
 				});
 			});
 			const schema = scripts.reduce(mergeSchemas, {});
-			let mappingScript = this.getMappingScript(indexData, {
-				properties: schema,
-			});
+			let mappingScript = this.getMappingScript(indexData, { properties: schema }, logger);
 
 			let script = "";
 			if (isUpdateScript) {
@@ -268,6 +267,8 @@ module.exports = {
 					schema['fields'] = JSON.parse(properties[propName]);
 				} catch (e) {
 				}
+			} else if (propName === 'customAnalyzerName') {
+				schema['analyzer'] = properties[propName];
 			} else if (this.isFieldList(properties[propName])) {
 				const names = schemaHelper.getNamesByIds(
 					properties[propName].map(item => item.keyId),
@@ -303,9 +304,9 @@ module.exports = {
 		};
 	},
 
-	getMappingScript(indexData, typeSchema) {
+	getMappingScript(indexData, typeSchema, logger) {
 		let mappingScript = {};
-		let settings = this.getSettings(indexData);
+		let settings = getIndexSettings(indexData, logger);
 		let aliases = this.getAliases(indexData);
 
 		if (settings) {
@@ -319,23 +320,6 @@ module.exports = {
 		mappingScript.mappings = typeSchema;
 
 		return mappingScript;
-	},
-
-	getSettings(indexData) {
-		let settings;
-		let properties = helper.getContainerLevelProperties();
-
-		properties.forEach(propertyName => {
-			if (indexData[propertyName]) {
-				if (!settings) {
-					settings = {};
-				}
-
-				settings[propertyName] = indexData[propertyName];
-			}
-		});
-
-		return settings;
 	},
 
 	getAliases(indexData) {
