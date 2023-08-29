@@ -160,8 +160,8 @@ making sure that you maintain a proper JSON format.
 				"isTargetProperty": true
 			},
 			{
-				"propertyName": "custom analyzer name",
-				"propertyTooltip": "The name of the custom analyzer",
+				"propertyName": "analyzer name",
+				"propertyTooltip": "The name of the user-defined analyzer",
 				"propertyType": "text",
 				"propertyKeyword": "customAnalyzerName",
 				"isTargetProperty": true,
@@ -938,8 +938,8 @@ making sure that you maintain a proper JSON format.
 				"isTargetProperty": true
 			},
 			{
-				"propertyName": "custom analyzer name",
-				"propertyTooltip": "The name of the custom analyzer",
+				"propertyName": "analyzer name",
+				"propertyTooltip": "The name of the user-defined analyzer",
 				"propertyType": "text",
 				"propertyKeyword": "customAnalyzerName",
 				"isTargetProperty": true,
@@ -1009,8 +1009,8 @@ making sure that you maintain a proper JSON format.
 				"isTargetProperty": true
 			},
 			{
-				"propertyName": "custom analyzer name",
-				"propertyTooltip": "The name of the custom analyzer",
+				"propertyName": "analyzer name",
+				"propertyTooltip": "The name of the user-defined analyzer",
 				"propertyType": "text",
 				"propertyKeyword": "customAnalyzerName",
 				"isTargetProperty": true,
