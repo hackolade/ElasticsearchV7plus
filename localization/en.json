@@ -9,6 +9,7 @@
 	"MAIN_MENU___APPEND_FIELD": "Append Field",
 	"MAIN_MENU___REVERSE_DB_COLLECTIONS": "Elasticsearch indices...",
 	"MAIN_MENU___FORWARD_DB_COLLECTIONS": "Elasticsearch Mapping",
+	"MAIN_MENU___FORWARD_DB_BUCKETS": "Elasticsearch Mapping...",
 	"TOOLBAR___ADD_BUCKET": "Add index",
 	"TOOLBAR___ADD_COLLECTION": "Add type",
 	"TOOLBAR___ADD_VIEW": "Add Filtered Alias",
