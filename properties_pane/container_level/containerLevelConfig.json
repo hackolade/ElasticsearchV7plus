@@ -478,7 +478,6 @@ making sure that you maintain a proper JSON format.
 							"pattern",
 							"simple_pattern",
 							"char_group",
-							"char_group",
 							"simple_pattern_split",
 							"path_hierarchy"
 						],
