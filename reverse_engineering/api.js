@@ -243,7 +243,7 @@ module.exports = {
 				async.mapSeries(indices, async (indexName) => {
 					logger.progress({ message: 'Get index documents', containerName: indexName, entityName: '' });
 
-					let bucketInfo = Object.assign(getBucketData(jsonSchemas[indexName] || {}), defaultBucketInfo);
+					let bucketInfo = Object.assign(getBucketData(jsonSchemas[indexName] || {}, logger), defaultBucketInfo);
 					const documents = await getDocuments({ client, indexName, recordSamplingSettings });
 					const documentKind = documentKinds[indexName].documentKindName;
 					
@@ -514,7 +514,7 @@ function getSchemaMapping(indices, client) {
 	});
 }
 
-function getBucketData(mappingData) {
+function getBucketData(mappingData, logger) {
 	let data = {};
 	if (mappingData.settings) {
 		let settingContainer = mappingData.settings;
@@ -532,7 +532,11 @@ function getBucketData(mappingData) {
 		}
 
 		if (settingContainer.analysis) {
-			data = { ...data, ...getAnalysisData(settingContainer.analysis) };
+			try {
+				data = { ...data, ...getAnalysisData(settingContainer.analysis) };
+			} catch (error) {
+				logger.log('error', error, 'Getting analysis data');
+			}
 		}
 	}
 

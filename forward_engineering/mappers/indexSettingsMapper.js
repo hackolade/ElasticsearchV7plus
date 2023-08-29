@@ -4,7 +4,7 @@ const { getFilters } = require("./filtersMapper");
 const { isObjectEmpty } = require("./mapperHelper");
 const { getTokenizers } = require("./tokenizersMapper");
 
-const getIndexSettings = (indexData) => {
+const getIndexSettings = (indexData, logger) => {
 	const properties = helper.getContainerLevelProperties();
 	const indexSettings = properties.reduce((settings, propertyName) => {
 		if (indexData[propertyName]) {
@@ -13,9 +13,13 @@ const getIndexSettings = (indexData) => {
 		}
 	}, {});
 
-	const analysis = getIndexAnalysisSettings(indexData);
-	if (analysis) {
-		indexSettings.analysis = analysis;
+	try {
+		const analysis = getIndexAnalysisSettings(indexData);
+		if (analysis) {
+			indexSettings.analysis = analysis;
+		}
+	} catch (error) {
+		logger.log('error', error, 'Getting analysis settings');
 	}
 
 	return isObjectEmpty(indexSettings) ? null : indexSettings;

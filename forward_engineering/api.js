@@ -4,7 +4,7 @@ const { ElasticSearchService} = require("./service/elasticsearch/elasticsearchSe
 const {ElasticSearchClientFactory} = require("./service/elasticsearch/clientFactory");
 const curlParser = require("./scriptParser/curlScriptParser");
 const kibanaParser = require("./scriptParser/kibanaScriptParser");
-const { getIndexSettings } = require('./mappers/indexSettingsMapper.js');
+const { getIndexSettings } = require('./mappers/indexSettingsMapper');
 
 const getSampleGenerationOptions = (app, data) => {
 	const _ = app.require('lodash');
@@ -58,7 +58,7 @@ module.exports = {
 			externalDefinitions: JSON.parse(data.externalDefinitions)
 		});
 		let typeSchema = this.getTypeSchema(entityData, fieldsSchema);
-		let mappingScript = this.getMappingScript(containerData, typeSchema);
+		let mappingScript = this.getMappingScript(containerData, typeSchema, logger);
 
 		let script = "";
 		if (isUpdateScript) {
@@ -94,9 +94,7 @@ module.exports = {
 				});
 			});
 			const schema = scripts.reduce(mergeSchemas, {});
-			let mappingScript = this.getMappingScript(indexData, {
-				properties: schema,
-			});
+			let mappingScript = this.getMappingScript(indexData, { properties: schema }, logger);
 
 			let script = "";
 			if (isUpdateScript) {
@@ -306,9 +304,9 @@ module.exports = {
 		};
 	},
 
-	getMappingScript(indexData, typeSchema) {
+	getMappingScript(indexData, typeSchema, logger) {
 		let mappingScript = {};
-		let settings = getIndexSettings(indexData);
+		let settings = getIndexSettings(indexData, logger);
 		let aliases = this.getAliases(indexData);
 
 		if (settings) {
