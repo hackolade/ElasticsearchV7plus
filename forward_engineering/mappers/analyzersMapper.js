@@ -46,7 +46,7 @@ const getAnalyzer = (analyzerData) => {
 const getCustomAnalyzer = (analyzerOptions) => {
 	const tokenizer = analyzerOptions.tokenizer === "custom" ? analyzerOptions.customTokenizerName : analyzerOptions.tokenizer;
 	const filter = mapGroupArray(analyzerOptions.filters, "filter", "customFilterName");
-	const charFilter = mapGroupArray(analyzerOptions.charFilters, "filter", "customCharFilterName");
+	const charFilter = mapGroupArray(analyzerOptions.charFilters, "filter", "customFilterName");
 
 	const analyzer = {
 		tokenizer,

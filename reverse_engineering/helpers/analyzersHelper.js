@@ -58,7 +58,7 @@ const getCustomAnalyzer = data => {
 	const charFilters = mapGroupArray(
 		data.char_filter,
 		'filter',
-		'customCharFilterName',
+		'customFilterName',
 		getConfigForProperty(containerLevelConfig[0].structure, ['analyzers', 'charFilters', 'filter']).options.filter(
 			option => option !== 'custom',
 		),
