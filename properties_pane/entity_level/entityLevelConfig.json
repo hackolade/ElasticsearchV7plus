@@ -136,7 +136,8 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "enabled",
 				"propertyKeyword": "enabled",
 				"shouldValidate": false,
-				"propertyType": "checkbox"
+				"propertyType": "checkbox",
+				"defaultValue": true
 			},
 			{
 				"propertyName": "Comments",
