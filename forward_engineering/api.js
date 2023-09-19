@@ -286,6 +286,10 @@ module.exports = {
 				if (names.length) {
 					schema[propName] = names.length === 1 ? names[0] : names;
 				}
+			} else if (propName === 'enabled') {
+				if (properties[propName] === false) {
+					schema[propName] = false;
+				}
 			} else {
 				schema[propName] = properties[propName];
 			}
@@ -478,7 +482,7 @@ const getIndexProperties = (scriptsData) => {
 		if (entityData.dynamic) {
 			result.dynamic = entityData.dynamic;
 		}
-		if (typeof entityData.enabled === 'boolean') {
+		if (entityData.enabled === false) {
 			result.enabled = entityData.enabled;
 		}
 		return result;
