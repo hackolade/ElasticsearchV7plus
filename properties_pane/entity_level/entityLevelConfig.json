@@ -122,11 +122,13 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "dynamic",
 				"propertyKeyword": "dynamic",
 				"shouldValidate": false,
-				"propertyTooltip": "dynamic setting value",
+				"propertyTooltip": "The dynamic parameter controls whether new fields are added dynamically.",
 				"propertyType": "select",
 				"options": [
+					"",
 					"true",
 					"false",
+					"runtime",
 					"strict"
 				]
 			},
