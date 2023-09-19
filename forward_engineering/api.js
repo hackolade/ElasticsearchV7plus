@@ -85,16 +85,20 @@ module.exports = {
 			const modelData = (data.modelData || [])[0] || '';
 			const indexData = (containerData || [])[0] || '';
 
-			const scripts = data.entities.map(entityId => {
-				return this.getFieldsSchema({
-					jsonSchema: JSON.parse(data.jsonSchema[entityId] || '""'),
-					internalDefinitions: JSON.parse(data.internalDefinitions[entityId] || '""'),
-					modelDefinitions: JSON.parse(data.modelDefinitions),
-					externalDefinitions: JSON.parse(data.externalDefinitions)
-				});
+			const scriptsData = data.entities.map(entityId => {
+				return {
+					fieldsSchema: this.getFieldsSchema({
+						jsonSchema: JSON.parse(data.jsonSchema[entityId] || '""'),
+						internalDefinitions: JSON.parse(data.internalDefinitions[entityId] || '""'),
+						modelDefinitions: JSON.parse(data.modelDefinitions),
+						externalDefinitions: JSON.parse(data.externalDefinitions)
+					}),
+					entityData: data.entityData[entityId]?.[0] || {},
+				};
 			});
-			const schema = scripts.reduce(mergeSchemas, {});
-			let mappingScript = this.getMappingScript(indexData, { properties: schema }, logger);
+			const schema = scriptsData.reduce((resultSchema, { fieldsSchema }) => mergeSchemas(resultSchema, fieldsSchema), {});
+			const indexMappingProperties = getIndexProperties(scriptsData);
+			let mappingScript = this.getMappingScript(indexData, { ...indexMappingProperties, properties: schema }, logger);
 
 			let script = "";
 			if (isUpdateScript) {
@@ -467,4 +471,16 @@ const mergeSchemas = (schemaA, schemaB) => {
 	});
 
 	return result;
+};
+
+const getIndexProperties = (scriptsData) => {
+	return scriptsData.reduce((result, { entityData }) => {
+		if (entityData.dynamic) {
+			result.dynamic = entityData.dynamic;
+		}
+		if (typeof entityData.enabled === 'boolean') {
+			result.enabled = entityData.enabled;
+		}
+		return result;
+	}, {});
 };
