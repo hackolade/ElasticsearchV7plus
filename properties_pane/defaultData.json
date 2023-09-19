@@ -14,12 +14,10 @@
 	"collection": {
 		"collectionName": "New type",
 		"collectionUsers": [],
-		"collation": {},
-		"dynamic": "true"
+		"collation": {}
 	},
 	"field": {
-		"name": "New field",
-		"dynamic": "true"
+		"name": "New field"
 	},
 	"patternField": {
 		"name": "^New Pattern Field$"
