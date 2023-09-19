@@ -807,12 +807,14 @@ making sure that you maintain a proper JSON format.
 			{
 				"propertyName": "dynamic",
 				"propertyKeyword": "dynamic",
-				"propertyTooltip": "dynamic setting value",
+				"propertyTooltip": "The dynamic parameter controls whether new fields are added dynamically.",
 				"propertyType": "select",
 				"isTargetProperty": true,
 				"options": [
+					"",
 					"true",
 					"false",
+					"runtime",
 					"strict"
 				]
 			},
@@ -844,12 +846,14 @@ making sure that you maintain a proper JSON format.
 			{
 				"propertyName": "dynamic",
 				"propertyKeyword": "dynamic",
-				"propertyTooltip": "dynamic setting value",
+				"propertyTooltip": "The dynamic parameter controls whether new fields are added dynamically.",
 				"propertyType": "select",
 				"isTargetProperty": true,
 				"options": [
+					"",
 					"true",
 					"false",
+					"runtime",
 					"strict"
 				]
 			},
