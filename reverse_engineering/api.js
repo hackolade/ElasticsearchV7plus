@@ -262,7 +262,11 @@ module.exports = {
 						async,
 						_,
 					};
-					let types = !documentKind ? [indexName] : indexTypes[indexName];
+					let types = !documentKind ? [indexName] : indexTypes[indexName] || [];
+					const ignoreDocumentKinds = types.length === 1;
+					if (!ignoreDocumentKinds) {
+						types.push('indexMappingConfig');
+					}
 
 					const packages = (types || []).map((typeName) => {
 						logger.progress({ message: 'Get schema by documents ...', containerName: indexName, entityName: typeName });
@@ -271,6 +275,7 @@ module.exports = {
 							...schemaData,
 							documents: documentsByType[typeName] || [],
 							typeName,
+							ignoreDocumentKinds
 						});
 					}).filter(shouldPackageBeAdded.bind(null, _, includeEmptyCollection));
 
@@ -318,6 +323,7 @@ const getIndexTypeData = ({
 	jsonSchema,
 	documents,
 	indexName,
+	ignoreDocumentKinds,
 	_,
 }) => {
 	const documentTemplate = documents.reduce((tpl, doc) => _.merge(tpl, doc), {});
@@ -338,7 +344,7 @@ const getIndexTypeData = ({
 	const hasJsonSchema = Boolean(mappingJsonSchema);
 
 	if (hasJsonSchema) {
-		SchemaCreator.ignoreSample = documents.length === 0;
+		SchemaCreator.ignoreSample = documents.length === 0 || ignoreDocumentKinds;
 		documentsPackage.validation = {
 			jsonSchema: SchemaCreator.getSchema(
 				mappingJsonSchema,

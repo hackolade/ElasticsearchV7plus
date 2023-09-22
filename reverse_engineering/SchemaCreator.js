@@ -94,7 +94,7 @@ module.exports = {
 		let schema = {};
 
 		for (let fieldName in properties) {
-			const currentSample = sample && sample[fieldName];
+			const currentSample = sample?.[fieldName];
 
 			if (!this.ignoreSample && currentSample === undefined) {
 				continue;
