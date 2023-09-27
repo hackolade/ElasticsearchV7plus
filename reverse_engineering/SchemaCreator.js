@@ -435,7 +435,7 @@ module.exports = {
 		const result = copyTo.reduce((result, propertyName) => {
 			return [
 				...result,
-				...findPropertiesInMapping(propertyName, mapping)
+				...findPropertiesInMapping(propertyName, mapping, ['_source'])
 			];
 		}, []);
 
@@ -458,7 +458,7 @@ const getRelations = (relations) => {
 	}, {});
 };
 
-const findPropertiesInMapping = (propertyName, mapping) => {
+const findPropertiesInMapping = (propertyName, mapping, initialPath) => {
 	const getPaths = (propertyName, properties, path) => {
 		return Object.keys(properties).reduce((result, name) => {
 			const property = properties[name];
@@ -481,7 +481,7 @@ const findPropertiesInMapping = (propertyName, mapping) => {
 		}, []);
 	};
 
-	return getPaths(propertyName, mapping, []);
+	return getPaths(propertyName, mapping, initialPath);
 };
 
 const getAnalyzerProps = (analyzerType) => {
