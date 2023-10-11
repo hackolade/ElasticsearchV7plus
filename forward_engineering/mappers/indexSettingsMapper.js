@@ -6,9 +6,13 @@ const { getTokenizers } = require("./tokenizersMapper");
 
 const getIndexSettings = (indexData, logger) => {
 	const properties = helper.getContainerLevelProperties();
-	const indexSettings = properties.reduce((settings, propertyName) => {
+	const indexSettings = properties.reduce((settings, { propertyName, isJson }) => {
 		if (indexData[propertyName]) {
-			settings[propertyName] = indexData[propertyName];
+			try {
+				settings[propertyName] = isJson ? JSON.parse(indexData[propertyName]) : indexData[propertyName];
+			} catch (error) {
+				logger.log('error', error, 'Error parsing index level property JSON');
+			}
 			return settings;
 		}
 	}, {});

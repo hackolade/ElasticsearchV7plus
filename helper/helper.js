@@ -49,7 +49,7 @@ module.exports = {
 		containerLevelConfig.forEach((tab) => {
 			tab.structure.forEach(property => {
 				if (property.isTargetProperty) {
-					properties.push(property.propertyKeyword);
+					properties.push({ propertyName: property.propertyKeyword, isJson: property.template === 'textAreaJson' });
 				}
 			});
 		});

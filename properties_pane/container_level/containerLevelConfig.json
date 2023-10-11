@@ -190,6 +190,14 @@ making sure that you maintain a proper JSON format.
 				"isTargetProperty": true
 			},
 			{
+				"propertyName": "Index blocks",
+				"propertyKeyword": "blocks",
+				"propertyType": "details",
+				"template": "textAreaJson",
+				"propertyTooltip": "Index blocks limit the kind of operations that are available on a certain index.",
+				"isTargetProperty": true
+			},
+			{
 				"propertyName": "Aliases",
 				"propertyType": "group",
 				"propertyKeyword": "aliases",

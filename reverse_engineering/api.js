@@ -530,7 +530,8 @@ function getBucketData(mappingData, logger) {
 		}
 
 		const containerProperties = getPropertiesByKeys(settingContainer, ['number_of_shards', 'number_of_replicas', 'max_ngram_diff']);
-		data = { ...data, ...containerProperties };
+		const containerJSONProperties = getJSONPropertiesByKeys(settingContainer, ['blocks']);
+		data = { ...data, ...containerProperties, ...containerJSONProperties };
 
 		if (settingContainer.analysis) {
 			try {
@@ -586,4 +587,20 @@ function getPropertiesByKeys(data, keys) {
 
 		return result;
 	}, {});
+}
+
+function getJSONPropertiesByKeys(data, keys) {
+	const stringifiedData = keys.reduce((result, key) => {
+		try {
+			if (data[key]) {
+				result[key] = JSON.stringify(data[key], null, 4);
+			}
+		} catch (error) {
+			console.log(error);
+		}
+
+		return result;
+	}, {});
+
+	return getPropertiesByKeys(stringifiedData, keys);
 }
