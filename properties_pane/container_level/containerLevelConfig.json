@@ -198,6 +198,14 @@ making sure that you maintain a proper JSON format.
 				"isTargetProperty": true
 			},
 			{
+				"propertyName": "Routing",
+				"propertyKeyword": "routing",
+				"propertyType": "details",
+				"template": "textAreaJson",
+				"propertyTooltip": "Routing allows you to route documents to shards based on the values of the document’s routing parameter.",
+				"isTargetProperty": true
+			},
+			{
 				"propertyName": "Aliases",
 				"propertyType": "group",
 				"propertyKeyword": "aliases",
