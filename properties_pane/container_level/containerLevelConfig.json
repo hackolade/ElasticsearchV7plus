@@ -180,6 +180,16 @@ making sure that you maintain a proper JSON format.
 				"isTargetProperty": true
 			},
 			{
+				"propertyName": "Max ngam diff",
+				"propertyKeyword": "max_ngram_diff",
+				"propertyTooltip": "The maximum allowed difference between min_gram and max_gram for NGramTokenizer and NGramTokenFilter.",
+				"propertyValidate": false,
+				"propertyType": "numeric",
+				"valueType": "integer",
+				"allowNegative": false,
+				"isTargetProperty": true
+			},
+			{
 				"propertyName": "Aliases",
 				"propertyType": "group",
 				"propertyKeyword": "aliases",

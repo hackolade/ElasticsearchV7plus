@@ -529,13 +529,8 @@ function getBucketData(mappingData, logger) {
 			settingContainer = mappingData.settings.index;
 		}
 
-		if (settingContainer.number_of_shards) {
-			data.number_of_shards = settingContainer.number_of_shards;
-		}
-
-		if (settingContainer.number_of_replicas) {
-			data.number_of_replicas = settingContainer.number_of_replicas;
-		}
+		const containerProperties = getPropertiesByKeys(settingContainer, ['number_of_shards', 'number_of_replicas', 'max_ngram_diff']);
+		data = { ...data, ...containerProperties };
 
 		if (settingContainer.analysis) {
 			try {
@@ -578,6 +573,16 @@ function groupDocumentsByType(type, documents) {
 			result[typeName] = [];
 		}
 		result[typeName].push(doc);
+
+		return result;
+	}, {});
+}
+
+function getPropertiesByKeys(data, keys) {
+	return keys.reduce((result, key) => {
+		if (data[key]) {
+			result[key] = data[key];
+		}
 
 		return result;
 	}, {});
