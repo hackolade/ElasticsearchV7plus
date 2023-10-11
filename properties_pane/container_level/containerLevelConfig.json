@@ -989,6 +989,30 @@ making sure that you maintain a proper JSON format.
 				]
 			},
 			{
+				"propertyName": "Normalizers",
+				"propertyKeyword": "normalizers",
+				"propertyType": "group",
+				"propertyTooltip": "A normalizer is similar to an analyzer except that it guarantees that the analysis chain produces a single token. The token can then be used in sorting, aggregations, or queries that require exact matches.",
+				"structure": [
+					{
+						"propertyName": "Name",
+						"propertyKeyword": "name",
+						"propertyTooltip": "The name of the normalizer",
+						"propertyType": "text",
+						"validation": {
+							"minLength": 1
+						}
+					},
+					{
+						"propertyName": "Config",
+						"propertyKeyword": "config",
+						"propertyType": "details",
+						"template": "textAreaJson",
+						"propertyTooltip": "Configurable parameters for the normalizer"
+					}
+				]
+			},
+			{
 				"propertyName": "Description",
 				"propertyKeyword": "description",
 				"shouldValidate": false,
