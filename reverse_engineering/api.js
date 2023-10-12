@@ -529,7 +529,29 @@ function getBucketData(mappingData, logger) {
 			settingContainer = mappingData.settings.index;
 		}
 
-		const containerProperties = getPropertiesByKeys(settingContainer, ['number_of_shards', 'number_of_replicas', 'max_ngram_diff']);
+		const containerProperties = getPropertiesByKeys(settingContainer, [
+			'number_of_shards',
+			'number_of_replicas',
+			'max_ngram_diff',
+			'number_of_routing_shards',
+			'auto_expand_replicas',
+			'refresh_interval',
+			'max_result_window',
+			'max_inner_result_window',
+			'max_rescore_window',
+			'max_docvalue_fields_search',
+			'max_script_fields',
+			'routing_partition_size',
+			'soft_deletes',
+			'codec',
+			'max_shingle_diff',
+			'max_terms_count',
+			'max_terms_count',
+			'max_regex_length',
+			'gc_deletes',
+			'default_pipeline',
+			'final_pipeline',
+		]);
 		const containerJSONProperties = getJSONPropertiesByKeys(settingContainer, ['blocks', 'routing']);
 		data = { ...data, ...containerProperties, ...containerJSONProperties };
 
