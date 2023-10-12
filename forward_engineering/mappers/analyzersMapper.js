@@ -89,8 +89,13 @@ const getLanguageAnalyzer = (analyzerData) => {
 	if (!analyzerData.language) {
 		return null;
 	}
+	const tokenizer = analyzerData.tokenizer === "custom" ? analyzerData.customTokenizerName : analyzerData.tokenizer;
+	const filter = mapGroupArray(analyzerData.filters, "filter", "customFilterName");
+
 	const analyzer = {
 		type: analyzerData.language,
+		...(tokenizer && { tokenizer }),
+		...filter && { filter },
 	};
 
 	return combineOptions([analyzer, getStopWordsConfig(analyzerData)]);

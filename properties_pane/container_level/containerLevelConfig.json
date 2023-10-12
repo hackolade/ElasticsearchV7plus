@@ -509,8 +509,17 @@ making sure that you maintain a proper JSON format.
 						],
 						"defaultValue": "standard",
 						"dependency": {
-							"key": "type",
-							"value": "custom"
+							"type": "or",
+							"values": [
+								{
+									"key": "type",
+									"value": "custom"
+								},
+								{
+									"key": "type",
+									"value": "language"
+								}
+							]
 						}
 					},
 					{
@@ -526,8 +535,17 @@ making sure that you maintain a proper JSON format.
 									"value": "custom"
 								},
 								{
-									"key": "type",
-									"value": "custom"
+									"type": "or",
+									"values": [
+										{
+											"key": "type",
+											"value": "custom"
+										},
+										{
+											"key": "type",
+											"value": "language"
+										}
+									]
 								}
 							]
 						}
@@ -634,8 +652,18 @@ making sure that you maintain a proper JSON format.
 							}
 						],
 						"dependency": {
-							"key": "type",
-							"value": "custom"
+							"type": "or",
+							"values": [
+								{
+									"key": "type",
+									"value": "custom"
+								},
+								{
+									"key": "type",
+									"value": "language"
+								}
+							]
+							
 						}
 					},
 					{
