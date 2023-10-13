@@ -95,7 +95,7 @@ const getLanguageAnalyzer = (analyzerData) => {
 	const analyzer = {
 		type: analyzerData.language,
 		...(tokenizer && { tokenizer }),
-		...filter && { filter },
+		...(filter && { filter }),
 	};
 
 	return combineOptions([analyzer, getStopWordsConfig(analyzerData)]);
