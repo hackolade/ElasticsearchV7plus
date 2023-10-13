@@ -13,8 +13,8 @@ const getIndexSettings = (indexData, logger) => {
 			} catch (error) {
 				logger.log('error', error, 'Error parsing index level property JSON');
 			}
-			return settings;
 		}
+		return settings;
 	}, {});
 
 	try {
