@@ -529,13 +529,31 @@ function getBucketData(mappingData, logger) {
 			settingContainer = mappingData.settings.index;
 		}
 
-		if (settingContainer.number_of_shards) {
-			data.number_of_shards = settingContainer.number_of_shards;
-		}
-
-		if (settingContainer.number_of_replicas) {
-			data.number_of_replicas = settingContainer.number_of_replicas;
-		}
+		const containerProperties = getPropertiesByKeys(settingContainer, [
+			'number_of_shards',
+			'number_of_replicas',
+			'max_ngram_diff',
+			'number_of_routing_shards',
+			'auto_expand_replicas',
+			'refresh_interval',
+			'max_result_window',
+			'max_inner_result_window',
+			'max_rescore_window',
+			'max_docvalue_fields_search',
+			'max_script_fields',
+			'routing_partition_size',
+			'soft_deletes',
+			'codec',
+			'max_shingle_diff',
+			'max_terms_count',
+			'max_terms_count',
+			'max_regex_length',
+			'gc_deletes',
+			'default_pipeline',
+			'final_pipeline',
+		]);
+		const containerJSONProperties = getJSONPropertiesByKeys(settingContainer, ['blocks', 'routing']);
+		data = { ...data, ...containerProperties, ...containerJSONProperties };
 
 		if (settingContainer.analysis) {
 			try {
@@ -581,4 +599,30 @@ function groupDocumentsByType(type, documents) {
 
 		return result;
 	}, {});
+}
+
+function getPropertiesByKeys(data, keys) {
+	return keys.reduce((result, key) => {
+		if (data[key]) {
+			result[key] = data[key];
+		}
+
+		return result;
+	}, {});
+}
+
+function getJSONPropertiesByKeys(data, keys) {
+	const stringifiedData = keys.reduce((result, key) => {
+		try {
+			if (data[key]) {
+				result[key] = JSON.stringify(data[key], null, 4);
+			}
+		} catch (error) {
+			console.log(error);
+		}
+
+		return result;
+	}, {});
+
+	return getPropertiesByKeys(stringifiedData, keys);
 }

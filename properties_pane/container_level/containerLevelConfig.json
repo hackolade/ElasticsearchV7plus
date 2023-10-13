@@ -164,6 +164,17 @@ making sure that you maintain a proper JSON format.
 			{
 				"propertyName": "Number of shards",
 				"propertyKeyword": "number_of_shards",
+				"propertyTooltip": "The number of shards that an index should have.",
+				"propertyValidate": false,
+				"propertyType": "numeric",
+				"valueType": "integer",
+				"allowNegative": false,
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Number of routing shards",
+				"propertyKeyword": "number_of_routing_shards",
+				"propertyTooltip": "The number of shards that a custom router should be aware of.",
 				"propertyValidate": false,
 				"propertyType": "numeric",
 				"valueType": "integer",
@@ -173,10 +184,195 @@ making sure that you maintain a proper JSON format.
 			{
 				"propertyName": "Number of replicas",
 				"propertyKeyword": "number_of_replicas",
+				"propertyTooltip": "The number of replicas each primary shard has.",
 				"propertyValidate": false,
 				"propertyType": "numeric",
 				"valueType": "integer",
 				"allowNegative": false,
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Auto expand replicas",
+				"propertyKeyword": "auto_expand_replicas",
+				"propertyTooltip": "Auto-expand the number of replicas based on the number of data nodes in the cluster.",
+				"propertyValidate": false,
+				"propertyType": "numeric",
+				"valueType": "integer",
+				"allowNegative": false,
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Refresh interval",
+				"propertyKeyword": "refresh_interval",
+				"propertyTooltip": "How often to perform a refresh operation, which makes recent changes to the index visible to search.",
+				"propertyValidate": false,
+				"propertyType": "numeric",
+				"valueType": "integer",
+				"allowNegative": false,
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Max result window",
+				"propertyKeyword": "max_result_window",
+				"propertyTooltip": "The maximum value of from + size for searches to this index.",
+				"propertyValidate": false,
+				"propertyType": "numeric",
+				"valueType": "integer",
+				"allowNegative": false,
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Max inner result window",
+				"propertyKeyword": "max_inner_result_window",
+				"propertyTooltip": "The maximum value of from + size for inner hits definition and top hits aggregations to this index.",
+				"propertyValidate": false,
+				"propertyType": "numeric",
+				"valueType": "integer",
+				"allowNegative": false,
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Max rescore window",
+				"propertyKeyword": "max_rescore_window",
+				"propertyTooltip": "The maximum value of window_size for rescore requests in searches of this index.",
+				"propertyValidate": false,
+				"propertyType": "numeric",
+				"valueType": "integer",
+				"allowNegative": false,
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Max docvalue fields search",
+				"propertyKeyword": "max_docvalue_fields_search",
+				"propertyTooltip": "The maximum number of docvalue_fields that are allowed in a query.",
+				"propertyValidate": false,
+				"propertyType": "numeric",
+				"valueType": "integer",
+				"allowNegative": false,
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Max script fields",
+				"propertyKeyword": "max_script_fields",
+				"propertyTooltip": "The maximum number of script_fields that are allowed in a query.",
+				"propertyValidate": false,
+				"propertyType": "numeric",
+				"valueType": "integer",
+				"allowNegative": false,
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Routing partition size",
+				"propertyKeyword": "routing_partition_size",
+				"propertyTooltip": "The number of shards a custom routing value can go to.",
+				"propertyValidate": false,
+				"propertyType": "text",
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Routing",
+				"propertyKeyword": "routing",
+				"propertyType": "details",
+				"template": "textAreaJson",
+				"propertyTooltip": "Routing allows you to route documents to shards based on the values of the document’s routing parameter.",
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Soft deletes",
+				"propertyKeyword": "soft_deletes",
+				"propertyType": "details",
+				"template": "textAreaJson",
+				"propertyTooltip": "Soft deletes configuration.",
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Codec",
+				"propertyKeyword": "codec",
+				"propertyTooltip": "The codec used to compress stored data on disk. Defaults to LZ4, but can also be set to best_compression which selects the best codec for each block independently.",
+				"propertyValidate": false,
+				"propertyType": "text",
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Max ngam diff",
+				"propertyKeyword": "max_ngram_diff",
+				"propertyTooltip": "The maximum allowed difference between min_gram and max_gram for NGramTokenizer and NGramTokenFilter.",
+				"propertyValidate": false,
+				"propertyType": "numeric",
+				"valueType": "integer",
+				"allowNegative": false,
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Max shingle diff",
+				"propertyKeyword": "max_shingle_diff",
+				"propertyTooltip": "The maximum allowed difference between max_shingle_size and min_shingle_size for the shingle token filter.",
+				"propertyValidate": false,
+				"propertyType": "numeric",
+				"valueType": "integer",
+				"allowNegative": false,
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Max refresh listeners",
+				"propertyKeyword": "max_refresh_listeners",
+				"propertyTooltip": "Maximum number of refresh listeners available on each shard of the index. These listeners are used to implement refresh=wait_for.",
+				"propertyValidate": false,
+				"propertyType": "numeric",
+				"valueType": "integer",
+				"allowNegative": false,
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Max terms count",
+				"propertyKeyword": "max_terms_count",
+				"propertyTooltip": "The maximum number of terms that can be used in Terms Query.",
+				"propertyValidate": false,
+				"propertyType": "numeric",
+				"valueType": "integer",
+				"allowNegative": false,
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Max regex length",
+				"propertyKeyword": "max_regex_length",
+				"propertyTooltip": "The maximum length of regex that can be used in Regexp Query.",
+				"propertyValidate": false,
+				"propertyType": "numeric",
+				"valueType": "integer",
+				"allowNegative": false,
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "GC deletes",
+				"propertyKeyword": "gc_deletes",
+				"propertyTooltip": "The length of time that a deleted document’s version number remains available for further versioned operations.",
+				"propertyValidate": false,
+				"propertyType": "text",
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Default pipeline",
+				"propertyKeyword": "default_pipeline",
+				"propertyTooltip": "Default ingest pipeline for the index. Index requests will fail if the default pipeline is set and the pipeline does not exist.",
+				"propertyValidate": false,
+				"propertyType": "text",
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Final pipeline",
+				"propertyKeyword": "final_pipeline",
+				"propertyTooltip": "Final ingest pipeline for the index. Indexing requests will fail if the final pipeline is set and the pipeline does not exist.",
+				"propertyValidate": false,
+				"propertyType": "text",
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Index blocks",
+				"propertyKeyword": "blocks",
+				"propertyType": "details",
+				"template": "textAreaJson",
+				"propertyTooltip": "Index blocks limit the kind of operations that are available on a certain index.",
 				"isTargetProperty": true
 			},
 			{
@@ -483,8 +679,17 @@ making sure that you maintain a proper JSON format.
 						],
 						"defaultValue": "standard",
 						"dependency": {
-							"key": "type",
-							"value": "custom"
+							"type": "or",
+							"values": [
+								{
+									"key": "type",
+									"value": "custom"
+								},
+								{
+									"key": "type",
+									"value": "language"
+								}
+							]
 						}
 					},
 					{
@@ -500,8 +705,17 @@ making sure that you maintain a proper JSON format.
 									"value": "custom"
 								},
 								{
-									"key": "type",
-									"value": "custom"
+									"type": "or",
+									"values": [
+										{
+											"key": "type",
+											"value": "custom"
+										},
+										{
+											"key": "type",
+											"value": "language"
+										}
+									]
 								}
 							]
 						}
@@ -608,8 +822,18 @@ making sure that you maintain a proper JSON format.
 							}
 						],
 						"dependency": {
-							"key": "type",
-							"value": "custom"
+							"type": "or",
+							"values": [
+								{
+									"key": "type",
+									"value": "custom"
+								},
+								{
+									"key": "type",
+									"value": "language"
+								}
+							]
+							
 						}
 					},
 					{
@@ -959,6 +1183,30 @@ making sure that you maintain a proper JSON format.
 						"propertyType": "details",
 						"template": "textAreaJson",
 						"propertyTooltip": "Configurable parameters for the filter"
+					}
+				]
+			},
+			{
+				"propertyName": "Normalizers",
+				"propertyKeyword": "normalizers",
+				"propertyType": "group",
+				"propertyTooltip": "A normalizer is similar to an analyzer except that it guarantees that the analysis chain produces a single token. The token can then be used in sorting, aggregations, or queries that require exact matches.",
+				"structure": [
+					{
+						"propertyName": "Name",
+						"propertyKeyword": "name",
+						"propertyTooltip": "The name of the normalizer",
+						"propertyType": "text",
+						"validation": {
+							"minLength": 1
+						}
+					},
+					{
+						"propertyName": "Config",
+						"propertyKeyword": "config",
+						"propertyType": "details",
+						"template": "textAreaJson",
+						"propertyTooltip": "Configurable parameters for the normalizer"
 					}
 				]
 			},

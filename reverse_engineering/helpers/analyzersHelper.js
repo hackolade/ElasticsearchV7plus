@@ -103,9 +103,28 @@ const getFingerprintAnalyzer = data => {
 };
 
 const getLanguageAnalyzer = data => {
+	const builtInTokenizers = getConfigForProperty(containerLevelConfig[0].structure, [
+		'analyzers',
+		'tokenizer',
+	]).options.filter(option => option !== 'custom');
+	const tokenizerType = builtInTokenizers.includes(data.tokenizer) ? data.tokenizer : 'custom';
+	const tokenizer = data.tokenizer ? tokenizerType : null;
+	const customTokenizerName = tokenizer === 'custom' ? data.tokenizer : null;
+	const filters = mapGroupArray(
+		data.filter,
+		'filter',
+		'customFilterName',
+		getConfigForProperty(containerLevelConfig[0].structure, ['analyzers', 'filters', 'filter']).options.filter(
+			option => option !== 'custom',
+		),
+	);
+
 	const analyzer = {
 		type: 'language',
 		'language': data.type,
+		tokenizer,
+		...(customTokenizerName && { customTokenizerName }),
+		...(Array.isArray(filters) && filters.length > 0 && { filters }),
 	};
 
 	return { ...analyzer, ...getStopWordsConfig(data) };

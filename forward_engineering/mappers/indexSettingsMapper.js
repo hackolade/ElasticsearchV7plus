@@ -6,11 +6,15 @@ const { getTokenizers } = require("./tokenizersMapper");
 
 const getIndexSettings = (indexData, logger) => {
 	const properties = helper.getContainerLevelProperties();
-	const indexSettings = properties.reduce((settings, propertyName) => {
+	const indexSettings = properties.reduce((settings, { propertyName, isJson }) => {
 		if (indexData[propertyName]) {
-			settings[propertyName] = indexData[propertyName];
-			return settings;
+			try {
+				settings[propertyName] = isJson ? JSON.parse(indexData[propertyName]) : indexData[propertyName];
+			} catch (error) {
+				logger.log('error', error, 'Error parsing index level property JSON');
+			}
 		}
+		return settings;
 	}, {});
 
 	try {
@@ -30,12 +34,14 @@ const getIndexAnalysisSettings = (indexData) => {
 	const tokenizer = getTokenizers(indexData.tokenizers);
 	const filter = getFilters(indexData.filters);
 	const charFilter = getFilters(indexData.characterFilters);
+	const normalizer = getFilters(indexData.normalizers);
 
 	const analysis = {
 		...(analyzer && { analyzer }),
 		...(tokenizer && { tokenizer }),
 		...(filter && { filter }),
 		...(charFilter && { char_filter: charFilter }),
+		...(normalizer && { normalizer })
 	};
 
 	return isObjectEmpty(analysis) ? null : analysis;
