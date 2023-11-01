@@ -869,6 +869,110 @@ making sure that you maintain a proper JSON format.
 			"additionalProperties",
 			"comments"
 		],
+		"flattened": [
+			"name",
+			"sampleName",
+			"schemaId",
+			"refPath",
+			"description",
+			"type",
+			"dependencies",
+			"required",
+			{
+				"propertyName": "Depth limit",
+				"propertyKeyword": "depth_limit",
+				"propertyTooltip": "The maximum allowed depth of the flattened object field, in terms of nested inner objects.",
+				"propertyType": "numeric",
+				"valueType": "integer",
+				"allowNegative": false,
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Doc values",
+				"propertyKeyword": "doc_values",
+				"propertyType": "checkbox",
+				"propertyTooltip": "Should the field be stored on disk in a column-stride fashion, so that it can later be used for sorting, aggregations, or scripting?",
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Eager global ordinals",
+				"propertyKeyword": "eager_global_ordinals",
+				"propertyType": "checkbox",
+				"propertyTooltip": "Should global ordinals be loaded eagerly on refresh?",
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Ignore above",
+				"propertyKeyword": "ignore_above",
+				"propertyValidate": false,
+				"propertyType": "numeric",
+				"valueType": "number",
+				"allowNegative": false,
+				"propertyTooltip": "Leaf values longer than this limit will not be indexed.",
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "index",
+				"propertyKeyword": "index",
+				"propertyType": "checkbox",
+				"propertyTooltip": "Determines if the field should be searchable.",
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Index options",
+				"propertyKeyword": "index_options",
+				"propertyTooltip": "What information should be stored in the index for scoring purposes.",
+				"propertyType": "select",
+				"options": [
+					"",
+					"docs",
+					"freqs",
+					"positions",
+					"offsets"
+				],
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Null value",
+				"propertyKeyword": "null_value",
+				"propertyType": "text",
+				"propertyTooltip": "A string value which is substituted for any explicit null values within the flattened object field.",
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Similarity",
+				"propertyKeyword": "similarity",
+				"propertyTooltip": "Select from list of scoring algorithm or similarity per field",
+				"propertyType": "select",
+				"options": [
+					"",
+					"BM25",
+					"classic",
+					"boolean"
+				],
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Split queries on whitespace",
+				"propertyKeyword": "split_queries_on_whitespace",
+				"propertyType": "checkbox",
+				"propertyTooltip": "Whether full text queries should split the input on whitespace when building a query for this field.",
+				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Time-series dimensions",
+				"propertyKeyword": "time_series_dimensions",
+				"propertyType": "text",
+				"multi": true,
+				"valueType": "array",
+				"propertyTooltip": "A list of fields inside the flattened object, where each field is a dimension of the time series.",
+				"isTargetProperty": true
+			},
+			"minProperties",
+			"maxProperties",
+			"additionalProperties",
+			"comments"
+		],
 		"___3": [],
 		"ip": [
 			"name",
