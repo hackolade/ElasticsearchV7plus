@@ -947,7 +947,6 @@ making sure that you maintain a proper JSON format.
 				"options": [
 					"",
 					"BM25",
-					"classic",
 					"boolean"
 				],
 				"isTargetProperty": true
