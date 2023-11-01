@@ -926,9 +926,7 @@ making sure that you maintain a proper JSON format.
 				"options": [
 					"",
 					"docs",
-					"freqs",
-					"positions",
-					"offsets"
+					"freqs"
 				],
 				"isTargetProperty": true
 			},
