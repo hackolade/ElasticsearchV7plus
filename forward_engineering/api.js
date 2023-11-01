@@ -230,7 +230,7 @@ module.exports = {
 			].includes(type)
 		) {
 			return schema;
-		} else if (field.properties && field.type !== 'range') {
+		} else if (field.properties && !['range', 'flattened'].includes(field.type)) {
 			schema.properties = this.getSchemaByItem(field.properties, data);
 		} else if (field.items) {
 			let arrData = field.items;

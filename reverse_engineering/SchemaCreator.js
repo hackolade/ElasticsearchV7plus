@@ -211,6 +211,7 @@ module.exports = {
 			case "rank_feature":
 			case "rank_features":
 			case "join":
+			case "flattened":
 				return { type };
 			case "completion":
 				return {
