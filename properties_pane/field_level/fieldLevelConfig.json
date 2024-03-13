@@ -313,8 +313,28 @@ making sure that you maintain a proper JSON format.
 					"positions",
 					"offsets"
 				],
+                "dependency": {
+                    "key": "mode",
+                    "value": "text"
+                },
 				"isTargetProperty": true
 			},
+            {
+                "propertyName": "index_options",
+                "propertyKeyword": "index_options",
+                "propertyTooltip": "Select from list of parameter controls for information is added to the inverted index, for search and highlighting purposes",
+                "propertyType": "select",
+                "options": [
+                    "",
+                    "docs",
+                    "freqs"
+                ],
+                "dependency": {
+                    "key": "mode",
+                    "value": "keyword"
+                },
+                "isTargetProperty": true
+            },
 			{
 				"propertyName": "index_prefixes",
 				"propertyKeyword": "index_prefixes",
