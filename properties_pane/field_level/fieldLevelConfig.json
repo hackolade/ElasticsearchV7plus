@@ -157,7 +157,11 @@ making sure that you maintain a proper JSON format.
 					"fingerprint",
 					"custom"
 				],
-				"isTargetProperty": true
+				"isTargetProperty": true,
+				"dependency": {
+					"key": "mode",
+					"value": "text"
+				}
 			},
 			{
 				"propertyName": "analyzer name",
@@ -166,21 +170,38 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "customAnalyzerName",
 				"isTargetProperty": true,
 				"dependency": {
-					"key": "analyzer",
-					"value": "custom"
+					"type": "and",
+					"values": [
+						{
+							"key": "analyzer",
+							"value": "custom"
+						},
+						{
+							"key": "mode",
+							"value": "text"
+						}
+					]
 				}
 			},
 			{
 				"propertyName": "search_analyzer",
 				"propertyKeyword": "search_analyzer",
 				"propertyType": "text",
-				"isTargetProperty": true
+				"isTargetProperty": true,
+				"dependency": {
+					"key": "mode",
+					"value": "text"
+				}
 			},
 			{
 				"propertyName": "search_quote_analyzer",
 				"propertyKeyword": "search_quote_analyzer",
 				"propertyType": "text",
-				"isTargetProperty": true
+				"isTargetProperty": true,
+				"dependency": {
+					"key": "mode",
+					"value": "text"
+				}
 			},
 			{
 				"propertyName": "boost",
@@ -197,7 +218,7 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "fieldList",
 				"template": "orderedList",
 				"isTargetProperty": true
-			}, 
+			},
 			{
 				"propertyName": "doc_values",
 				"propertyKeyword": "doc_values",
@@ -218,7 +239,11 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "fielddata",
 				"propertyKeyword": "fielddata",
 				"propertyType": "checkbox",
-				"isTargetProperty": true
+				"isTargetProperty": true,
+				"dependency": {
+					"key": "mode",
+					"value": "text"
+				}
 			},
 			{
 				"propertyName": "fielddata_frequency_filter",
@@ -228,8 +253,17 @@ making sure that you maintain a proper JSON format.
 				"template": "textarea",
 				"markdown": false,
 				"dependency": {
-					"key": "fielddata",
-					"value": true
+					"type": "and",
+					"values": [
+						{
+							"key": "mode",
+							"value": "text"
+						},
+						{
+							"key": "fielddata",
+							"value": true
+						}
+					]
 				},
 				"isTargetProperty": true
 			},
@@ -241,7 +275,11 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "details",
 				"template": "textarea",
 				"markdown": false,
-				"isTargetProperty": true
+				"isTargetProperty": true,
+				"dependency": {
+					"key": "mode",
+					"value": "keyword"
+				}
 			},
 			{
 				"propertyName": "ignore_above",
@@ -256,13 +294,6 @@ making sure that you maintain a proper JSON format.
 				},
 				"isTargetProperty": true
 			},
-/*			{
-				"propertyName": "include_in_all",
-				"propertyKeyword": "include_in_all",
-				"propertyType": "checkbox",
-				"isTargetProperty": true
-			},
-*/
 			{
 				"propertyName": "index",
 				"propertyKeyword": "index",
@@ -293,6 +324,7 @@ making sure that you maintain a proper JSON format.
 				"propertyTooltip": "Select from list of parameter controls for information is added to the inverted index, for search and highlighting purposes",
 				"propertyType": "select",
 				"options": [
+					"",
 					"docs",
 					"freqs"
 				],
@@ -309,13 +341,21 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "details",
 				"template": "textarea",
 				"markdown": false,
-				"isTargetProperty": true
+				"isTargetProperty": true,
+				"dependency": {
+					"key": "mode",
+					"value": "text"
+				}
 			},
 			{
 				"propertyName": "index_phrases",
 				"propertyKeyword": "index_phrases",
 				"propertyType": "checkbox",
-				"isTargetProperty": true
+				"isTargetProperty": true,
+				"dependency": {
+					"key": "mode",
+					"value": "text"
+				}
 			},
 			{
 				"propertyName": "norms",
@@ -356,7 +396,11 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "term_vector",
 				"propertyKeyword": "term_vector",
 				"propertyType": "checkbox",
-				"isTargetProperty": true
+				"isTargetProperty": true,
+				"dependency": {
+					"key": "mode",
+					"value": "text"
+				}
 			},
 			{
 				"propertyName": "normalizer",
@@ -405,7 +449,6 @@ making sure that you maintain a proper JSON format.
 			"foreignField",
 			"relationshipType",
 			"default",
-
 			{
 				"propertyName": "coerce",
 				"propertyKeyword": "coerce",
@@ -432,13 +475,7 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "checkbox",
 				"isTargetProperty": true
 			},
-/*			{
-				"propertyName": "include_in_all",
-				"propertyKeyword": "include_in_all",
-				"propertyType": "checkbox",
-				"isTargetProperty": true
-			},
-*/			{
+			{
 				"propertyName": "index",
 				"propertyKeyword": "index",
 				"propertyType": "checkbox",
@@ -467,7 +504,7 @@ making sure that you maintain a proper JSON format.
 					"value": "scaled_float"
 				},
 				"isTargetProperty": true
-			},	
+			},
 			"unit",
 			"minimum",
 			"exclusiveMinimum",
@@ -519,13 +556,7 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "checkbox",
 				"isTargetProperty": true
 			},
-/*			{
-				"propertyName": "include_in_all",
-				"propertyKeyword": "include_in_all",
-				"propertyType": "checkbox",
-				"isTargetProperty": true
-			},
-*/			{
+			{
 				"propertyName": "index",
 				"propertyKeyword": "index",
 				"propertyType": "checkbox",
@@ -644,13 +675,7 @@ making sure that you maintain a proper JSON format.
 				"allowNegative": false,
 				"isTargetProperty": true
 			},
-/*			{
-				"propertyName": "include_in_all",
-				"propertyKeyword": "include_in_all",
-				"propertyType": "checkbox",
-				"isTargetProperty": true
-			},
-*/			{
+			{
 				"propertyName": "index",
 				"propertyKeyword": "index",
 				"propertyType": "checkbox",
@@ -1206,12 +1231,14 @@ making sure that you maintain a proper JSON format.
 						"propertyName": "children",
 						"propertyKeyword": "children",
 						"propertyType": "group",
-						"structure": [{
-							"propertyName": "name",
-							"propertyKeyword": "name",
-							"propertyType": "text",
-							"shouldValidate": false
-						}]
+						"structure": [
+							{
+								"propertyName": "name",
+								"propertyKeyword": "name",
+								"propertyType": "text",
+								"shouldValidate": false
+							}
+						]
 					}
 				]
 			},
