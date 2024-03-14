@@ -1,7 +1,7 @@
 {
 	"name": "ElasticsearchV7plus",
-	"version": "0.1.10",
-	"versionDate": "2023-11-01",
+	"version": "0.1.11",
+	"versionDate": "2024-03-14",
 	"author": "hackolade",
 	"engines": {
 		"hackolade": "4.3.1",
@@ -12,7 +12,8 @@
 			"applicationTarget": "ELASTICSEARCHv7plus",
 			"title": "Elasticsearch v7 and above",
 			"versions": [
-				"7.x"
+				"7.x",
+				"8.x"
 			]
 		},
 		"features": {

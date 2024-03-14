@@ -1,7 +1,7 @@
 {
 	"model": {
 		"modelName": "New model",
-		"dbVersion": "6.x",
+		"dbVersion": "8.x",
 		"dbVendor": "Elasticsearch",
 		"port": 9200
 	},
