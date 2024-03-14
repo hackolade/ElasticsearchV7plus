@@ -16,7 +16,7 @@ module.exports = {
 			if (typeof property === 'object' && property.isTargetProperty) {
 				if (!property.dependency) {
 					return true;
-				} else if (data[property.dependency.key] != property.dependency.value) {
+				} else if (!this.checkDependency(property.dependency, data)) {
 					return false;
 				} else if (Array.isArray(property.options) && !property.options.includes(data[property.propertyName])) {
 					return false;
@@ -27,6 +27,27 @@ module.exports = {
 
 			return false;
 		}).map(property => property.propertyKeyword);
+	},
+
+	checkDependency(dependency, data) {
+		if (dependency.type) {
+			return this.getDependencyResults(dependency, data);
+		}
+		
+		return data[dependency.key] === dependency.value;
+	},
+	
+	getDependencyResults(dependency, data) {
+			switch (dependency.type) {
+			case 'and':
+				return dependency.values.every(condition => this.checkDependency(condition, data));
+				case 'or':
+				return dependency.values.some(condition => this.checkDependency(condition, data));
+			case 'not':
+				return !this.checkDependency(dependency.values, data);
+			default:
+				return false;
+		}
 	},
 
 	getFieldProperties(type, data, pseudonyms) {
