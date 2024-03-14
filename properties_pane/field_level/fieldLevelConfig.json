@@ -275,11 +275,7 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "details",
 				"template": "textarea",
 				"markdown": false,
-				"isTargetProperty": true,
-				"dependency": {
-					"key": "mode",
-					"value": "keyword"
-				}
+				"isTargetProperty": true
 			},
 			{
 				"propertyName": "ignore_above",
