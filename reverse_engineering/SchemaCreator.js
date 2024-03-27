@@ -286,7 +286,6 @@ module.exports = {
 	getServiceFields(sample) {
 		let schema = {
 			_index: { type: "string", mode: "text" },
-			_type: { type: "string", mode: "text" },
 			_id: { type: "string", mode: "text" },
 			_source: { type: "object", properties: {} }
 		};

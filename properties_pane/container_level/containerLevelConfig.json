@@ -208,8 +208,25 @@ making sure that you maintain a proper JSON format.
 				"propertyValidate": false,
 				"propertyType": "numeric",
 				"valueType": "integer",
-				"allowNegative": false,
+				"allowNegative": true,
+				"minValue": -1,
 				"isTargetProperty": true
+			},
+			{
+				"propertyName": "Refresh interval unit",
+				"propertyKeyword": "refresh_interval_unit",
+				"propertyTooltip": "Measurement unit of a refresh interval property",
+				"propertyValidate": false,
+				"propertyType": "select",
+				"defaultValue": "s",
+				"options": [
+					"ms",
+					"s",
+					"m",
+					"h",
+					"d"
+				],
+				"isTargetProperty": false
 			},
 			{
 				"propertyName": "Max result window",
