@@ -65,7 +65,7 @@ class ElasticSearchService {
      * @param jsonData {JsonData}
      */
     async _insertExampleDocument(jsonData) {
-        const { _index: indexName, _source: data, _type: typeName } = jsonData;
+        const { _index: indexName, _source: data } = jsonData;
         if (!indexName) {
             throw new Error(`Index name must be present in sample data line ${JSON.stringify(jsonData)}`);
         }
@@ -74,7 +74,6 @@ class ElasticSearchService {
         }
         await this._client.index({
             index: indexName,
-            type: typeName,
             op_type: 'index',
             body: data
         });

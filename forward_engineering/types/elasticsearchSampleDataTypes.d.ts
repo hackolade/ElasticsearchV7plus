@@ -8,7 +8,6 @@ export type EntitiesData = {
 
 export type JsonData = {
     _index: string,
-    _type?: string,
     _id: string,
     _source: Object
 }

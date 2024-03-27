@@ -5,6 +5,7 @@ const fs = require('fs');
 const SchemaCreator = require('./SchemaCreator');
 const inferSchemaService = require('./helpers/inferSchemaService');
 const { getAnalysisData } = require('./helpers/analysisSettingsHelper');
+const { getIndexRefreshInterval } = require('./helpers/refreshIntervalMapper');
 const versions = require('../package.json').contributes.target.versions;
 
 let connectionParams = {};
@@ -553,7 +554,8 @@ function getBucketData(mappingData, logger) {
 			'final_pipeline',
 		]);
 		const containerJSONProperties = getJSONPropertiesByKeys(settingContainer, ['blocks', 'routing']);
-		data = { ...data, ...containerProperties, ...containerJSONProperties };
+		const refreshInterval = getIndexRefreshInterval({ indexData: containerProperties });
+		data = { ...data, ...containerProperties, ...containerJSONProperties, ...refreshInterval };
 
 		if (settingContainer.analysis) {
 			try {

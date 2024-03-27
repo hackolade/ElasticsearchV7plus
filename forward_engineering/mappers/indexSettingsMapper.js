@@ -3,6 +3,7 @@ const { getAnalyzers } = require("./analyzersMapper");
 const { getFilters } = require("./filtersMapper");
 const { isObjectEmpty } = require("./mapperHelper");
 const { getTokenizers } = require("./tokenizersMapper");
+const { getIndexRefreshInterval } = require('./refreshIntervalMapper');
 
 const getIndexSettings = (indexData, logger) => {
 	const properties = helper.getContainerLevelProperties();
@@ -17,6 +18,11 @@ const getIndexSettings = (indexData, logger) => {
 		return settings;
 	}, {});
 
+	const indexRefreshInterval = getIndexRefreshInterval({ indexData });
+	if (indexRefreshInterval) {
+		indexSettings.refresh_interval = indexRefreshInterval;
+	}
+	
 	try {
 		const analysis = getIndexAnalysisSettings(indexData);
 		if (analysis) {
@@ -41,7 +47,7 @@ const getIndexAnalysisSettings = (indexData) => {
 		...(tokenizer && { tokenizer }),
 		...(filter && { filter }),
 		...(charFilter && { char_filter: charFilter }),
-		...(normalizer && { normalizer })
+		...(normalizer && { normalizer }),
 	};
 
 	return isObjectEmpty(analysis) ? null : analysis;
