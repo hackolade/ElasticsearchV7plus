@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const readConfig = (pathToConfig) => {
-	return JSON.parse(fs.readFileSync(path.join(__dirname, pathToConfig)).toString().replace(/\/\*[.\s\S]*?\*\//ig, ""));
+	return JSON.parse(fs.readFileSync(path.join(__dirname, pathToConfig)).toString().replace(/\/\*[.\s\S]*?\*\//ig, ''));
 };
 const fieldLevelConfig = readConfig('../properties_pane/field_level/fieldLevelConfig.json');
 const containerLevelConfig = readConfig('../properties_pane/container_level/containerLevelConfig.json');
@@ -36,15 +36,15 @@ module.exports = {
 		
 		return data[dependency.key] === dependency.value;
 	},
-	
+
 	getDependencyResults(dependency, data) {
-			switch (dependency.type) {
+		switch (dependency.type) {
 			case 'and':
 				return dependency.values.every(condition => this.checkDependency(condition, data));
-				case 'or':
+			case 'or':
 				return dependency.values.some(condition => this.checkDependency(condition, data));
 			case 'not':
-				return !this.checkDependency(dependency.values, data);
+				return !dependency.values.every(condition => this.checkDependency(condition, data));
 			default:
 				return false;
 		}
@@ -76,5 +76,5 @@ module.exports = {
 		});
 
 		return properties;
-	}
+	},
 };

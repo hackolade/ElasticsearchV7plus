@@ -91,7 +91,8 @@ module.exports = {
 						jsonSchema: JSON.parse(data.jsonSchema[entityId] || '""'),
 						internalDefinitions: JSON.parse(data.internalDefinitions[entityId] || '""'),
 						modelDefinitions: JSON.parse(data.modelDefinitions),
-						externalDefinitions: JSON.parse(data.externalDefinitions)
+						externalDefinitions: JSON.parse(data.externalDefinitions),
+						modelData,
 					}),
 					entityData: data.entityData[entityId]?.[0] || {},
 				};
@@ -207,7 +208,11 @@ module.exports = {
 
 	getField(field, data) {
 		let schema = {};
-		const fieldProperties = helper.getFieldProperties(field.type, field, {});
+		const fieldWithExtras = {
+			...field,
+			dbVersion: data.modelData?.dbVersion
+		}
+		const fieldProperties = helper.getFieldProperties(field.type, fieldWithExtras, {});
 		let type = this.getFieldType(field);
 
 		if (type !== 'object' && type !== 'array') {

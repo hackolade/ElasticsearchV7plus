@@ -984,7 +984,17 @@ making sure that you maintain a proper JSON format.
 				"multi": true,
 				"valueType": "array",
 				"propertyTooltip": "A list of fields inside the flattened object, where each field is a dimension of the time series.",
-				"isTargetProperty": true
+				"isTargetProperty": true,
+				"dependency": {
+					"type": "not",
+					"values": [
+						{
+							"level": "model",
+							"key": "dbVersion",
+							"value": "7.x"
+						}
+					]
+				}
 			},
 			"minProperties",
 			"maxProperties",
