@@ -10,5 +10,5 @@ const getIndexRefreshInterval = ({ indexData }) => {
 };
 
 module.exports = {
-	getIndexRefreshInterval
-}
+	getIndexRefreshInterval,
+};

@@ -1,19 +1,15 @@
-
 function getDocumentKindDataFromInfer(data, targetProbability) {
 	const { inference, excludeDocKind } = data;
 	let suggestedDocKinds = [];
 	let otherDocKinds = [];
 	let documentKind = {
 		key: '',
-		probability: 0	
+		probability: 0,
 	};
 	let properties = inference.properties;
 
 	Object.keys(properties).forEach(key => {
-		const {
-			probability,
-			type,
-		} = properties[key];
+		const { probability, type } = properties[key];
 
 		if (probability < targetProbability || type !== 'string') {
 			otherDocKinds.push(key);
@@ -30,11 +26,7 @@ function getDocumentKindDataFromInfer(data, targetProbability) {
 			return;
 		}
 
-		if (
-			documentKind.probability === probability
-			&&
-			documentKind.key === 'type'
-		) {
+		if (documentKind.probability === probability && documentKind.key === 'type') {
 			return;
 		}
 
@@ -51,7 +43,7 @@ function getDocumentKindDataFromInfer(data, targetProbability) {
 
 function typeOf(obj) {
 	return {}.toString.call(obj).split(' ')[1].slice(0, -1).toLowerCase();
-};
+}
 
 function generateCustomInferSchema(documents, sampleSize = 30) {
 	const total = documents.length;
@@ -66,7 +58,7 @@ function generateCustomInferSchema(documents, sampleSize = 30) {
 					count: 1,
 					samples: [value],
 					type: typeOf(value),
-				};	
+				};
 				return;
 			}
 
@@ -86,7 +78,7 @@ function generateCustomInferSchema(documents, sampleSize = 30) {
 	Object.keys(properties).forEach(key => {
 		const value = properties[key];
 
-		properties[key].probability = Math.round((value.count / total * 100), 2);
+		properties[key].probability = Math.round((value.count / total) * 100, 2);
 	});
 
 	return {

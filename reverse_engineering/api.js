@@ -13,11 +13,11 @@ let connectionParams = {};
 let _client = null;
 
 module.exports = {
-	connect: function(connectionInfo, logger, cb){
+	connect: function (connectionInfo, logger, cb) {
 		logger.clear();
 		logger.log('info', connectionInfo, 'Connection information', connectionInfo.hiddenKeys);
-		
-		let authString = "";
+
+		let authString = '';
 
 		if (_client !== null) {
 			return cb(null, _client);
@@ -37,7 +37,7 @@ module.exports = {
 				host: connectionInfo.host,
 				port: connectionInfo.port,
 				path: connectionInfo.path,
-				auth: authString
+				auth: authString,
 			};
 		} else if (connectionInfo.connectionType === 'Replica set or Sharded cluster') {
 			connectionParams.hosts = connectionInfo.hosts.map(socket => {
@@ -45,7 +45,7 @@ module.exports = {
 					host: socket.host,
 					port: socket.port,
 					protocol: connectionInfo.protocol,
-					auth: authString
+					auth: authString,
 				};
 			});
 		} else {
@@ -55,7 +55,7 @@ module.exports = {
 		if (connectionInfo.is_ssl) {
 			connectionParams.ssl = {
 				ca: fs.readFileSync(connectionInfo.ca),
-				rejectUnauthorized: connectionInfo.rejectUnauthorized
+				rejectUnauthorized: connectionInfo.rejectUnauthorized,
 			};
 		}
 
@@ -64,7 +64,7 @@ module.exports = {
 		cb(null, _client);
 	},
 
-	disconnect: function(connectionInfo, logger, cb){
+	disconnect: function (connectionInfo, logger, cb) {
 		if (_client) {
 			_client.close();
 			_client = null;
@@ -73,29 +73,32 @@ module.exports = {
 		cb();
 	},
 
-	testConnection: function(connectionInfo, logger, cb){
+	testConnection: function (connectionInfo, logger, cb) {
 		this.connect(connectionInfo, logger, (err, connection) => {
 			if (err) {
 				cb(err);
 			} else {
-				connection.ping({
-					requestTimeout: 5000
-				}, (error, success) => {
-					this.disconnect(connectionInfo, logger, () => {});
-					if (error) {
-						logger.log('error', error, 'Test connection', connectionInfo.hiddenKeys);
-					}
-					cb(!success);
-				});
+				connection.ping(
+					{
+						requestTimeout: 5000,
+					},
+					(error, success) => {
+						this.disconnect(connectionInfo, logger, () => {});
+						if (error) {
+							logger.log('error', error, 'Test connection', connectionInfo.hiddenKeys);
+						}
+						cb(!success);
+					},
+				);
 			}
 		});
 	},
 
-	getDatabases: function(connectionInfo, logger, cb){
+	getDatabases: function (connectionInfo, logger, cb) {
 		cb();
 	},
 
-	getDocumentKinds: function(connectionInfo, logger, cb, app) {
+	getDocumentKinds: function (connectionInfo, logger, cb, app) {
 		const _ = app.require('lodash');
 		this.connect(connectionInfo, logger, async (err, client) => {
 			try {
@@ -105,25 +108,33 @@ module.exports = {
 				const { includeSystemCollection } = connectionInfo;
 				const indexes = await getIndexes(client, includeSystemCollection);
 				const indexNames = Object.keys(indexes);
-				const documentPackages = await Promise.all(indexNames.map(async indexName => {
-					const documents = await getDocuments({ client, indexName, recordSamplingSettings: connectionInfo.recordSamplingSettings });
-					const inferSchema = inferSchemaService.generateCustomInferSchema(_.get(documents, 'hits.hits').map(doc => doc._source));
-					const {
-						suggestedDocKinds,
-						documentKind,
-						otherDocKinds,
-					} = inferSchemaService.getDocumentKindDataFromInfer({
-						inference: inferSchema,
-						excludeDocKind: connectionInfo.excludeDocKind,
-					}, 90);
+				const documentPackages = await Promise.all(
+					indexNames.map(async indexName => {
+						const documents = await getDocuments({
+							client,
+							indexName,
+							recordSamplingSettings: connectionInfo.recordSamplingSettings,
+						});
+						const inferSchema = inferSchemaService.generateCustomInferSchema(
+							_.get(documents, 'hits.hits').map(doc => doc._source),
+						);
+						const { suggestedDocKinds, documentKind, otherDocKinds } =
+							inferSchemaService.getDocumentKindDataFromInfer(
+								{
+									inference: inferSchema,
+									excludeDocKind: connectionInfo.excludeDocKind,
+								},
+								90,
+							);
 
-					return {
-						bucketName: indexName,
-						documentList: suggestedDocKinds,
-						documentKind: documentKind.key,
-						otherDocKinds,
-					};
-				}));
+						return {
+							bucketName: indexName,
+							documentList: suggestedDocKinds,
+							documentKind: documentKind.key,
+							otherDocKinds,
+						};
+					}),
+				);
 
 				cb(null, documentPackages);
 			} catch (err) {
@@ -134,35 +145,38 @@ module.exports = {
 		});
 	},
 
-	getDbCollectionsNames: function(connectionInfo, logger, cb, app) {
+	getDbCollectionsNames: function (connectionInfo, logger, cb, app) {
 		const _ = app.require('lodash');
 		this.connect(connectionInfo, logger, async (err, client) => {
 			try {
 				if (err) {
 					throw err;
 				}
-				const {
-					includeSystemCollection,
-					documentKinds,
-					recordSamplingSettings,
-				} = connectionInfo;
+				const { includeSystemCollection, documentKinds, recordSamplingSettings } = connectionInfo;
 				const indexes = await getIndexes(client, includeSystemCollection);
-				const data = await Promise.all(Object.keys(indexes).map(async indexName => {
-					const documentKind = documentKinds[indexName].documentKindName;
-					let dbCollections = [];
-					
-					if (documentKind) {
-						let documents = await getDocuments({ client, indexName, recordSamplingSettings });
-						dbCollections = _.uniq(_.get(documents, 'hits.hits').map(doc => doc._source).map(data => {
-							return String(data[documentKind]);
-						}).filter(Boolean));
-					}
+				const data = await Promise.all(
+					Object.keys(indexes).map(async indexName => {
+						const documentKind = documentKinds[indexName].documentKindName;
+						let dbCollections = [];
 
-					return {
-						dbName: indexName,
-						dbCollections,
-					};
-				}));
+						if (documentKind) {
+							let documents = await getDocuments({ client, indexName, recordSamplingSettings });
+							dbCollections = _.uniq(
+								_.get(documents, 'hits.hits')
+									.map(doc => doc._source)
+									.map(data => {
+										return String(data[documentKind]);
+									})
+									.filter(Boolean),
+							);
+						}
+
+						return {
+							dbName: indexName,
+							dbCollections,
+						};
+					}),
+				);
 
 				cb(null, data);
 			} catch (err) {
@@ -173,7 +187,7 @@ module.exports = {
 		});
 	},
 
-	getDbCollectionsData: function(data, logger, cb, app) {
+	getDbCollectionsData: function (data, logger, cb, app) {
 		const async = app.require('async');
 		const _ = app.require('lodash');
 		let includeEmptyCollection = data.includeEmptyCollection;
@@ -187,117 +201,158 @@ module.exports = {
 			docIDName: '_id',
 			docIDType: 'string',
 			sourceName: '_source',
-			sourceType: 'object'
+			sourceType: 'object',
 		};
 
 		const containerLevelKeys = {
 			index: '_index',
 			docID: '_id',
-			source: '_source'
+			source: '_source',
 		};
 
-		logger.log('info', getSamplingInfo(recordSamplingSettings, fieldInference), 'Reverse-Engineering sampling params', data.hiddenKeys);
+		logger.log(
+			'info',
+			getSamplingInfo(recordSamplingSettings, fieldInference),
+			'Reverse-Engineering sampling params',
+			data.hiddenKeys,
+		);
 		logger.log('info', { Indices: indices }, 'Selected collection list', data.hiddenKeys);
 		logger.progress({ message: 'Start reverse-engineering ...', containerName: '', entityName: '' });
 
-		async.waterfall([
-			(getDbInfo) => {
-				this.connect(data, logger, getDbInfo);
-			},
-			(client, getMapping) => {
-				logger.progress({ message: 'Connected to database', containerName: '', entityName: '' });
+		async.waterfall(
+			[
+				getDbInfo => {
+					this.connect(data, logger, getDbInfo);
+				},
+				(client, getMapping) => {
+					logger.progress({ message: 'Connected to database', containerName: '', entityName: '' });
 
-				client.info().then(info => {
-					const socket = getInfoSocket();
-					const modelName = info.name;
-					const version = getVersion(info.version.number, versions);
-					const modelInfo = {
-						host: socket.host,
-						port: +socket.port,
-						modelName,
-						version,
+					client.info().then(
+						info => {
+							const socket = getInfoSocket();
+							const modelName = info.name;
+							const version = getVersion(info.version.number, versions);
+							const modelInfo = {
+								host: socket.host,
+								port: +socket.port,
+								modelName,
+								version,
+							};
+
+							logger.log('info', { modelInfo }, 'Model info');
+							logger.progress({
+								message: 'Client info: ' + modelName + ' v' + version,
+								containerName: '',
+								entityName: '',
+							});
+
+							getMapping(null, client, modelInfo);
+						},
+						() => getMapping(null, client),
+					);
+				},
+
+				(client, modelInfo, getData) => {
+					logger.progress({ message: 'Get schema mappings ...', containerName: '', entityName: '' });
+
+					getSchemaMapping(indices, client)
+						.then(
+							jsonSchemas => {
+								getData(null, client, modelInfo, jsonSchemas);
+							},
+							err => {
+								logger.log('error', err, 'Error of getting schema');
+								getData(null, client, modelInfo, null);
+							},
+						)
+						.catch(err => {
+							logger.log('error', err);
+							this.disconnect(data, logger, () => {});
+							cb(err);
+						});
+				},
+
+				(client, modelInfo, jsonSchemas, next) => {
+					async.mapSeries(
+						indices,
+						async indexName => {
+							logger.progress({
+								message: 'Get index documents',
+								containerName: indexName,
+								entityName: '',
+							});
+
+							let bucketInfo = Object.assign(
+								getBucketData(jsonSchemas[indexName] || {}, logger),
+								defaultBucketInfo,
+							);
+							const documents = await getDocuments({ client, indexName, recordSamplingSettings });
+							const documentKind = documentKinds[indexName].documentKindName;
+
+							logger.progress({
+								message: 'Group documents by kind',
+								containerName: indexName,
+								entityName: '',
+							});
+
+							const documentsByType = documentKind
+								? groupDocumentsByType(documentKind, documents.hits.hits)
+								: { [indexName]: documents.hits.hits || [] };
+							const schemaData = {
+								jsonSchema: jsonSchemas[indexName],
+								containerLevelKeys,
+								fieldInference,
+								bucketInfo,
+								indexName,
+								client,
+								async,
+								_,
+							};
+							let types = !documentKind ? [indexName] : indexTypes[indexName] || [];
+							const ignoreDocumentKinds = types.length === 1;
+							if (!ignoreDocumentKinds) {
+								types.push('indexMappingConfig');
+							}
+
+							const packages = (types || [])
+								.map(typeName => {
+									logger.progress({
+										message: 'Get schema by documents ...',
+										containerName: indexName,
+										entityName: typeName,
+									});
+
+									return getIndexTypeData({
+										...schemaData,
+										documents: documentsByType[typeName] || [],
+										typeName,
+										ignoreDocumentKinds,
+									});
+								})
+								.filter(shouldPackageBeAdded.bind(null, _, includeEmptyCollection));
+
+							return packages;
+						},
+						(err, items) => {
+							next(err, items, modelInfo);
+						},
+					);
+				},
+			],
+			(err, items, modelInfo) => {
+				if (err) {
+					err = {
+						message: err.message,
+						stack: err.stack,
 					};
-
-					logger.log('info', { modelInfo }, 'Model info');
-					logger.progress({ message: 'Client info: ' + modelName + ' v' + version, containerName: '', entityName: '' });
-
-					getMapping(null, client, modelInfo)
-				}, () => getMapping(null, client));
-			},
-
-			(client, modelInfo, getData) => {
-				logger.progress({ message: 'Get schema mappings ...', containerName: '', entityName: '' });
-
-				getSchemaMapping(indices, client).then((jsonSchemas) => {
-					getData(null, client, modelInfo, jsonSchemas);
-				}, (err) => {
-					logger.log('error', err, 'Error of getting schema');
-					getData(null, client, modelInfo, null);
-				}).catch(err => {
 					logger.log('error', err);
 					this.disconnect(data, logger, () => {});
-					cb(err);
-				});
+				}
+
+				cb(err, items, modelInfo);
 			},
-
-			(client, modelInfo, jsonSchemas, next) => {
-				async.mapSeries(indices, async (indexName) => {
-					logger.progress({ message: 'Get index documents', containerName: indexName, entityName: '' });
-
-					let bucketInfo = Object.assign(getBucketData(jsonSchemas[indexName] || {}, logger), defaultBucketInfo);
-					const documents = await getDocuments({ client, indexName, recordSamplingSettings });
-					const documentKind = documentKinds[indexName].documentKindName;
-					
-					logger.progress({ message: 'Group documents by kind', containerName: indexName, entityName: '' });
-					
-					const documentsByType = documentKind
-						? groupDocumentsByType(documentKind, documents.hits.hits)
-						: { [indexName]: documents.hits.hits || [] };
-					const schemaData = {
-						jsonSchema: jsonSchemas[indexName],
-						containerLevelKeys,
-						fieldInference,
-						bucketInfo,
-						indexName,
-						client,
-						async,
-						_,
-					};
-					let types = !documentKind ? [indexName] : indexTypes[indexName] || [];
-					const ignoreDocumentKinds = types.length === 1;
-					if (!ignoreDocumentKinds) {
-						types.push('indexMappingConfig');
-					}
-
-					const packages = (types || []).map((typeName) => {
-						logger.progress({ message: 'Get schema by documents ...', containerName: indexName, entityName: typeName });
-
-						return getIndexTypeData({
-							...schemaData,
-							documents: documentsByType[typeName] || [],
-							typeName,
-							ignoreDocumentKinds
-						});
-					}).filter(shouldPackageBeAdded.bind(null, _, includeEmptyCollection));
-
-					return packages;
-				}, (err, items) => {
-					next(err, items, modelInfo);
-				});
-			}
-		], (err, items, modelInfo) => {
-			if (err) {
-				err = {
-					message: err.message,
-					stack: err.stack,
-				};
-				logger.log('error', err);
-				this.disconnect(data, logger, () => {});
-			}
-			
-			cb(err, items, modelInfo);
-		});
-	}
+		);
+	},
 };
 
 const shouldPackageBeAdded = (_, includeEmptyCollection, docPackage) => {
@@ -306,8 +361,7 @@ const shouldPackageBeAdded = (_, includeEmptyCollection, docPackage) => {
 	}
 
 	if (
-		docPackage.documents.length === 0
-		&&
+		docPackage.documents.length === 0 &&
 		_.isEmpty(_.get(docPackage, 'validation.jsonSchema.properties._source.properties'))
 	) {
 		return false;
@@ -330,7 +384,7 @@ const getIndexTypeData = ({
 	const documentTemplate = documents.reduce((tpl, doc) => _.merge(tpl, doc), {});
 	let documentsPackage = {
 		dbName: indexName,
-		collectionName: typeName || "_doc",
+		collectionName: typeName || '_doc',
 		documents,
 		indexes: [],
 		bucketIndexes: [],
@@ -338,7 +392,7 @@ const getIndexTypeData = ({
 		validation: false,
 		emptyBucket: false,
 		containerLevelKeys,
-		bucketInfo
+		bucketInfo,
 	};
 
 	const mappingJsonSchema = (jsonSchema || {}).mappings;
@@ -347,10 +401,7 @@ const getIndexTypeData = ({
 	if (hasJsonSchema) {
 		SchemaCreator.ignoreSample = documents.length === 0 || ignoreDocumentKinds;
 		documentsPackage.validation = {
-			jsonSchema: SchemaCreator.getSchema(
-				mappingJsonSchema,
-				documentTemplate
-			)
+			jsonSchema: SchemaCreator.getSchema(mappingJsonSchema, documentTemplate),
 		};
 	}
 
@@ -361,30 +412,38 @@ const getIndexTypeData = ({
 	return documentsPackage;
 };
 
-const getCount = (client, indexName) => new Promise((resolve, reject) => {
-	client.count({
-		index: indexName,
-	}, (err, response) => {
-		if (err) {
-			reject(err);
-		} else {
-			resolve(response.count);
-		}
+const getCount = (client, indexName) =>
+	new Promise((resolve, reject) => {
+		client.count(
+			{
+				index: indexName,
+			},
+			(err, response) => {
+				if (err) {
+					reject(err);
+				} else {
+					resolve(response.count);
+				}
+			},
+		);
 	});
-});
 
-const search = (client, indexName, size) => new Promise((resolve, reject) => {
-	client.search({
-		index: indexName,
-		size
-	}, (err, data) => {
-		if (err) {
-			reject(err);
-		} else {
-			resolve(data);
-		}
+const search = (client, indexName, size) =>
+	new Promise((resolve, reject) => {
+		client.search(
+			{
+				index: indexName,
+				size,
+			},
+			(err, data) => {
+				if (err) {
+					reject(err);
+				} else {
+					resolve(data);
+				}
+			},
+		);
 	});
-});
 
 const getSampleDocSize = (count, recordSamplingSettings) => {
 	if (recordSamplingSettings.active === 'absolute') {
@@ -403,7 +462,7 @@ const getDocuments = async ({ client, indexName, recordSamplingSettings }) => {
 	return await search(client, indexName, size);
 };
 
-const isSystemIndex = (indexName) => {
+const isSystemIndex = indexName => {
 	if (indexName[0] === '.') {
 		return true;
 	} else if (/^apm\-[0-9]+\.[0-9]+\.[0-9]+/i.test(indexName)) {
@@ -414,36 +473,37 @@ const isSystemIndex = (indexName) => {
 };
 
 const getIndexes = (client, includeSystemCollection) => {
-	return client.indices.getMapping()
-		.then(data => {
-			return Object.keys(data).filter(indexName => {
+	return client.indices.getMapping().then(data => {
+		return Object.keys(data)
+			.filter(indexName => {
 				if (!includeSystemCollection && isSystemIndex(indexName)) {
 					return false;
 				} else {
 					return true;
 				}
-			}).reduce((result, indexName) => {
+			})
+			.reduce((result, indexName) => {
 				return Object.assign({}, result, {
-					[indexName]: data[indexName]
+					[indexName]: data[indexName],
 				});
 			}, {});
-		});
+	});
 };
 
-function getSamplingInfo(recordSamplingSettings, fieldInference){
+function getSamplingInfo(recordSamplingSettings, fieldInference) {
 	let samplingInfo = {};
 	let value = recordSamplingSettings[recordSamplingSettings.active].value;
-	let unit = (recordSamplingSettings.active === 'relative') ? '%' : ' records max';
-	
-	samplingInfo.recordSampling = `${recordSamplingSettings.active} ${value}${unit}`
-	samplingInfo.fieldInference = (fieldInference.active === 'field') ? 'keep field order' : 'alphabetical order';
-	
+	let unit = recordSamplingSettings.active === 'relative' ? '%' : ' records max';
+
+	samplingInfo.recordSampling = `${recordSamplingSettings.active} ${value}${unit}`;
+	samplingInfo.fieldInference = fieldInference.active === 'field' ? 'keep field order' : 'alphabetical order';
+
 	return samplingInfo;
 }
 
 function getVersion(version, versions) {
 	const arVersion = version.split('.');
-	let result = "";
+	let result = '';
 
 	versions.forEach(v => {
 		const arV = v.split('.');
@@ -473,18 +533,18 @@ function getInfoSocket() {
 	if (connectionParams.host) {
 		return {
 			host: connectionParams.host.host,
-			port: connectionParams.host.port
+			port: connectionParams.host.port,
 		};
 	} else if (connectionParams.hosts) {
 		return {
 			host: connectionParams.hosts[0].host,
-			port: connectionParams.hosts[0].port
+			port: connectionParams.hosts[0].port,
 		};
 	} else {
 		return {
-			host: "",
-			port: ""
-		}
+			host: '',
+			port: '',
+		};
 	}
 }
 
@@ -496,29 +556,33 @@ function getSchemaMapping(indices, client) {
 		SchemaCreator.addIndex(indexName);
 	});
 
-	return SchemaCreator.getMapping(client).then(schemas => {
-		result.jsonSchemas = schemas;
+	return SchemaCreator.getMapping(client)
+		.then(schemas => {
+			result.jsonSchemas = schemas;
 
-		return SchemaCreator.getSettings(client);
-	}).then(settings => {
-		result.settings = settings;
+			return SchemaCreator.getSettings(client);
+		})
+		.then(settings => {
+			result.settings = settings;
 
-		return SchemaCreator.getAliases(client);
-	}).then(aliases => {
-		result.aliases = aliases;
+			return SchemaCreator.getAliases(client);
+		})
+		.then(aliases => {
+			result.aliases = aliases;
 
-		return result;
-	}).then(res => {
-		let data = {};
+			return result;
+		})
+		.then(res => {
+			let data = {};
 
-		for (let indexName in res.jsonSchemas) {
-			data[indexName] = res.jsonSchemas[indexName];
-			data[indexName].settings = res.settings[indexName].settings;
-			data[indexName].aliases = res.aliases[indexName].aliases;
-		}
+			for (let indexName in res.jsonSchemas) {
+				data[indexName] = res.jsonSchemas[indexName];
+				data[indexName].settings = res.settings[indexName].settings;
+				data[indexName].aliases = res.aliases[indexName].aliases;
+			}
 
-		return data;
-	});
+			return data;
+		});
 }
 
 function getBucketData(mappingData, logger) {
@@ -571,7 +635,7 @@ function getBucketData(mappingData, logger) {
 
 		for (let aliasName in mappingData.aliases) {
 			let alias = {
-				name: aliasName
+				name: aliasName,
 			};
 
 			if (mappingData.aliases[aliasName].filter) {

@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const getPathById = (schema, id, path) => {
 	if (schema.GUID === id) {
@@ -10,7 +10,10 @@ const getPathById = (schema, id, path) => {
 			if (newPath) {
 				return newPath;
 			} else {
-				return getPathById(schema.properties[propertyName], id, [...path, schema.properties[propertyName].GUID]);
+				return getPathById(schema.properties[propertyName], id, [
+					...path,
+					schema.properties[propertyName].GUID,
+				]);
 			}
 		}, undefined);
 	} else if (schema.items) {
@@ -42,12 +45,10 @@ const getNameByPath = (schema, path) => {
 			}
 
 			if (path.length === 1) {
-				return [ propertyName ];
+				return [propertyName];
 			}
 
-			return [
-				propertyName, ...getNameByPath(property, path.slice(1))
-			];
+			return [propertyName, ...getNameByPath(property, path.slice(1))];
 		}, []);
 	} else if (Array.isArray(schema.items)) {
 		return schema.items.reduce((foundedName, property, i) => {
@@ -60,72 +61,63 @@ const getNameByPath = (schema, path) => {
 			}
 
 			if (path.length === 1) {
-				return [ '[' + i + ']' ];
+				return ['[' + i + ']'];
 			}
 
-			return [
-				'[' + i + ']',
-				...getNameByPath(property, path.slice(1), '[' + i + ']')
-			];
+			return ['[' + i + ']', ...getNameByPath(property, path.slice(1), '[' + i + ']')];
 		}, []);
 	} else if (Object(schema.items) === schema.items) {
 		const property = schema.items;
 
 		if (property.GUID !== path[0]) {
-			return [ "" ];
+			return [''];
 		}
 
 		if (path.length === 1) {
 			return ['[0]'];
 		}
 
-		return [
-			'[0]',
-			...getNameByPath(property, path.slice(1), '[0]')
-		];
+		return ['[0]', ...getNameByPath(property, path.slice(1), '[0]')];
 	}
 };
 
-const joinIndex = (items) => {
+const joinIndex = items => {
 	return items.reduce((result, item) => {
 		if (/\[\d+\]/.test(item)) {
-			return [
-				...result.slice(0, -1),
-				result[result.length - 1] + item
-			];
+			return [...result.slice(0, -1), result[result.length - 1] + item];
 		} else {
-			return [
-				...result,
-				item
-			];
+			return [...result, item];
 		}
 	}, []);
 };
 
 const findFieldNameById = (id, source) => {
 	let path = getPathById(source, id, []);
-	
-	if (path) {
-		const name = joinIndex(getNameByPath(source, path, ""));
 
-		return name[name.length - 1] || "";
+	if (path) {
+		const name = joinIndex(getNameByPath(source, path, ''));
+
+		return name[name.length - 1] || '';
 	} else {
-		return "";
+		return '';
 	}
 };
 
 const getPathName = (id, sources) => {
 	for (let i = 0; i < sources.length; i++) {
 		let path = getPathById(sources[i], id, []);
-		
-		if (path) {
-			const name = getNameByPath(sources[i], path, "");
 
-			return name.slice(1).filter(item => !/\[\d+\]/.test(item)).join('.');
+		if (path) {
+			const name = getNameByPath(sources[i], path, '');
+
+			return name
+				.slice(1)
+				.filter(item => !/\[\d+\]/.test(item))
+				.join('.');
 		}
 	}
 
-	return "";
+	return '';
 };
 
 const getNamesByIds = (ids, sources) => {
@@ -144,5 +136,5 @@ const getNamesByIds = (ids, sources) => {
 
 module.exports = {
 	getNamesByIds,
-	getPathName
+	getPathName,
 };

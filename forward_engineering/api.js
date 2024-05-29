@@ -1,36 +1,37 @@
 const helper = require('../helper/helper.js');
 const schemaHelper = require('../helper/schemaHelper.js');
-const { ElasticSearchService} = require("./service/elasticsearch/elasticsearchService");
-const {ElasticSearchClientFactory} = require("./service/elasticsearch/clientFactory");
-const curlParser = require("./scriptParser/curlScriptParser");
-const kibanaParser = require("./scriptParser/kibanaScriptParser");
+const { ElasticSearchService } = require('./service/elasticsearch/elasticsearchService');
+const { ElasticSearchClientFactory } = require('./service/elasticsearch/clientFactory');
+const curlParser = require('./scriptParser/curlScriptParser');
+const kibanaParser = require('./scriptParser/kibanaScriptParser');
 const { getIndexSettings } = require('./mappers/indexSettingsMapper');
 
 const getSampleGenerationOptions = (app, data) => {
 	const _ = app.require('lodash');
-	const insertSamplesOption = _.get(data, 'options.additionalOptions', []).find(option => option.id === 'INCLUDE_SAMPLES') || {};
+	const insertSamplesOption =
+		_.get(data, 'options.additionalOptions', []).find(option => option.id === 'INCLUDE_SAMPLES') || {};
 	const isSampleGenerationRequired = Boolean(insertSamplesOption?.value);
 	// Append to result script if the plugin is invoked from cli and do not append if it's invoked from GUI app
 	const shouldAppendSamplesToTheResultScript = data.options.origin !== 'ui';
 
 	return {
 		isSampleGenerationRequired,
-		shouldAppendSamplesToTheResultScript
-	}
-}
+		shouldAppendSamplesToTheResultScript,
+	};
+};
 
 const getScriptAndSampleResponse = (script, sample) => {
 	return [
 		{
 			title: 'Elasticsearsh script',
-			script
+			script,
 		},
 		{
 			title: 'Sample data',
 			script: sample,
 		},
-	]
-}
+	];
+};
 
 /**
  * @param error {Error}
@@ -39,12 +40,12 @@ const getScriptAndSampleResponse = (script, sample) => {
  *     stack: string | undefined,
  * }}
  * */
-const extractNonSensitiveInfoFromError = (error) => {
+const extractNonSensitiveInfoFromError = error => {
 	return {
 		message: error.message,
 		stack: error.stack,
-	}
-}
+	};
+};
 
 module.exports = {
 	generateScript(data, logger, cb, app) {
@@ -55,12 +56,12 @@ module.exports = {
 			jsonSchema: JSON.parse(jsonSchema),
 			internalDefinitions: JSON.parse(data.internalDefinitions),
 			modelDefinitions: JSON.parse(data.modelDefinitions),
-			externalDefinitions: JSON.parse(data.externalDefinitions)
+			externalDefinitions: JSON.parse(data.externalDefinitions),
 		});
 		let typeSchema = this.getTypeSchema(entityData, fieldsSchema);
 		let mappingScript = this.getMappingScript(containerData, typeSchema, logger);
 
-		let script = "";
+		let script = '';
 		if (isUpdateScript) {
 			script = this.getCurlScript(mappingScript, modelData, containerData);
 		} else {
@@ -74,7 +75,7 @@ module.exports = {
 		// Append to result script if the plugin is invoked from cli and do not append if it's invoked from GUI app
 		if (sampleGenerationOptions.shouldAppendSamplesToTheResultScript) {
 			// Sampling for CLI is not supported yet
-			return cb(null, script)
+			return cb(null, script);
 		}
 		return cb(null, getScriptAndSampleResponse(script, jsonData));
 	},
@@ -97,11 +98,18 @@ module.exports = {
 					entityData: data.entityData[entityId]?.[0] || {},
 				};
 			});
-			const schema = scriptsData.reduce((resultSchema, { fieldsSchema }) => mergeSchemas(resultSchema, fieldsSchema), {});
+			const schema = scriptsData.reduce(
+				(resultSchema, { fieldsSchema }) => mergeSchemas(resultSchema, fieldsSchema),
+				{},
+			);
 			const indexMappingProperties = getIndexProperties(scriptsData);
-			let mappingScript = this.getMappingScript(indexData, { ...indexMappingProperties, properties: schema }, logger);
+			let mappingScript = this.getMappingScript(
+				indexData,
+				{ ...indexMappingProperties, properties: schema },
+				logger,
+			);
 
-			let script = "";
+			let script = '';
 			if (isUpdateScript) {
 				script = this.getCurlScript(mappingScript, modelData, indexData);
 			} else {
@@ -115,7 +123,7 @@ module.exports = {
 			// Append to result script if the plugin is invoked from cli and do not append if it's invoked from GUI app
 			if (sampleGenerationOptions.shouldAppendSamplesToTheResultScript) {
 				// Sampling for CLI is not supported yet
-				return cb(null, script)
+				return cb(null, script);
 			}
 			const firstIndexSampleData = (Object.values(jsonData) || [''])[0];
 
@@ -132,7 +140,7 @@ module.exports = {
 		try {
 			const client = ElasticSearchClientFactory.getByConnectionInfo(data);
 			const elasticSearchService = new ElasticSearchService(client);
-			const {script, entitiesData} = data;
+			const { script, entitiesData } = data;
 
 			let parsedScriptData;
 			if (script.startsWith('curl')) {
@@ -168,28 +176,26 @@ module.exports = {
 	getCurlScript(mapping, modelData, indexData) {
 		const host = modelData.host || 'localhost';
 		const port = modelData.port || 9200;
-		const indexName = indexData.name || "";
+		const indexName = indexData.name || '';
 
 		return `curl -XPUT '${host}:${port}/${indexName.toLowerCase()}?pretty' -H 'Content-Type: application/json' -d '\n${JSON.stringify(mapping, null, 4)}\n'`;
 	},
 
 	getKibanaScript(mapping, indexData) {
-		const indexName = indexData.name || "";
+		const indexName = indexData.name || '';
 
 		return `PUT /${indexName.toLowerCase()}\n${JSON.stringify(mapping, null, 4)}`;
 	},
 
 	getFieldsSchema(data) {
-		const {
-			jsonSchema
-		} = data;
+		const { jsonSchema } = data;
 		let schema = {};
 
 		if (!(jsonSchema.properties && jsonSchema.properties._source && jsonSchema.properties._source.properties)) {
 			return schema;
 		}
 
-		schema = this.getSchemaByItem(jsonSchema.properties._source.properties, data)
+		schema = this.getSchemaByItem(jsonSchema.properties._source.properties, data);
 
 		return schema;
 	},
@@ -210,8 +216,8 @@ module.exports = {
 		let schema = {};
 		const fieldWithExtras = {
 			...field,
-			dbVersion: data.modelData?.dbVersion
-		}
+			dbVersion: data.modelData?.dbVersion,
+		};
 		const fieldProperties = helper.getFieldProperties(field.type, fieldWithExtras, {});
 		let type = this.getFieldType(field);
 
@@ -231,7 +237,13 @@ module.exports = {
 			return Object.assign({}, schema, this.getJoinSchema(field));
 		} else if (
 			[
-				'completion', 'sparse_vector', 'dense_vector', 'geo_shape', 'geo_point', 'rank_feature', 'rank_features'
+				'completion',
+				'sparse_vector',
+				'dense_vector',
+				'geo_shape',
+				'geo_point',
+				'rank_feature',
+				'rank_features',
 			].includes(type)
 		) {
 			return schema;
@@ -251,7 +263,7 @@ module.exports = {
 	},
 
 	getFieldType(field) {
-		switch(field.type) {
+		switch (field.type) {
 			case 'geo-shape':
 				return 'geo_shape';
 			case 'geo-point':
@@ -274,19 +286,13 @@ module.exports = {
 			if (propName === 'stringfields') {
 				try {
 					schema['fields'] = JSON.parse(properties[propName]);
-				} catch (e) {
-				}
+				} catch (e) {}
 			} else if (propName === 'customAnalyzerName') {
 				schema['analyzer'] = properties[propName];
 			} else if (this.isFieldList(properties[propName])) {
 				const names = schemaHelper.getNamesByIds(
 					properties[propName].map(item => item.keyId),
-					[
-						data.jsonSchema,
-						data.internalDefinitions,
-						data.modelDefinitions,
-						data.externalDefinitions
-					]
+					[data.jsonSchema, data.internalDefinitions, data.modelDefinitions, data.externalDefinitions],
 				);
 				if (names.length) {
 					schema[propName] = names.length === 1 ? names[0] : names;
@@ -313,7 +319,7 @@ module.exports = {
 		script.properties = fieldsSchema;
 
 		return {
-			[(typeData.collectionName || "").toLowerCase()]: script
+			[(typeData.collectionName || '').toLowerCase()]: script,
 		};
 	},
 
@@ -342,7 +348,7 @@ module.exports = {
 			return aliases;
 		}
 
-		indexData.aliases.forEach((alias) => {
+		indexData.aliases.forEach(alias => {
 			if (alias.name) {
 				if (!aliases) {
 					aliases = {};
@@ -351,13 +357,13 @@ module.exports = {
 				aliases[alias.name] = {};
 
 				if (alias.filter) {
-					let filterData = "";
+					let filterData = '';
 					try {
 						filterData = JSON.parse(alias.filter);
 					} catch (e) {}
 
 					aliases[alias.name].filter = {
-						term: filterData
+						term: filterData,
 					};
 				}
 
@@ -402,12 +408,12 @@ module.exports = {
 
 			if (item.children.length === 1) {
 				return Object.assign({}, result, {
-					[item.parent]: (item.children[0] || {}).name
+					[item.parent]: (item.children[0] || {}).name,
 				});
 			}
 
 			return Object.assign({}, result, {
-				[item.parent]: item.children.map(item => item.name || "")
+				[item.parent]: item.children.map(item => item.name || ''),
 			});
 		}, {});
 
@@ -423,18 +429,15 @@ module.exports = {
 			return {};
 		}
 
-		const pathName = schemaHelper.getPathName(
-			field.path[0].keyId,
-			[
-				data.jsonSchema,
-				data.internalDefinitions,
-				data.modelDefinitions,
-				data.externalDefinitions
-			]
-		);
+		const pathName = schemaHelper.getPathName(field.path[0].keyId, [
+			data.jsonSchema,
+			data.internalDefinitions,
+			data.modelDefinitions,
+			data.externalDefinitions,
+		]);
 
 		return { path: pathName };
-	}
+	},
 };
 
 const getPriority = (a, b) => {
@@ -482,7 +485,7 @@ const mergeSchemas = (schemaA, schemaB) => {
 	return result;
 };
 
-const getIndexProperties = (scriptsData) => {
+const getIndexProperties = scriptsData => {
 	return scriptsData.reduce((result, { entityData }) => {
 		if (entityData.dynamic) {
 			result.dynamic = entityData.dynamic;

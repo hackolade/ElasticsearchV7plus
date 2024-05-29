@@ -9,7 +9,7 @@ const getIndexRefreshInterval = ({ indexData }) => {
 	if (indexData.refresh_interval < 0) {
 		return {
 			refresh_interval: -1,
-			refresh_interval_unit: defaultUnit
+			refresh_interval_unit: defaultUnit,
 		};
 	}
 
@@ -19,17 +19,17 @@ const getIndexRefreshInterval = ({ indexData }) => {
 	if (!parsedInterval) {
 		return {
 			refresh_interval: defaultInterval,
-			refresh_interval_unit: defaultUnit
+			refresh_interval_unit: defaultUnit,
 		};
 	}
 
 	const { interval, unit } = parsedInterval.groups;
 	return {
 		refresh_interval: interval,
-		refresh_interval_unit: unit || defaultUnit
+		refresh_interval_unit: unit || defaultUnit,
 	};
 };
 
 module.exports = {
-	getIndexRefreshInterval
-}
+	getIndexRefreshInterval,
+};

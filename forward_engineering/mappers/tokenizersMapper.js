@@ -1,4 +1,4 @@
-const { isObjectEmpty } = require("./mapperHelper");
+const { isObjectEmpty } = require('./mapperHelper');
 
 const getTokenizers = (tokenizersData = []) => {
 	if (tokenizersData.length === 0) {
@@ -16,39 +16,39 @@ const getTokenizers = (tokenizersData = []) => {
 	return isObjectEmpty(tokenizers) ? null : tokenizers;
 };
 
-const getTokenizer = (tokenizerData) => {
+const getTokenizer = tokenizerData => {
 	const tokenizer = {
 		type: tokenizerData.type,
 	};
 
 	switch (tokenizerData.type) {
-		case "standard":
-		case "whitespace":
-		case "uax_url_email":
-		case "classic":
+		case 'standard':
+		case 'whitespace':
+		case 'uax_url_email':
+		case 'classic':
 			return combineOptions([tokenizer, getSharedTokenizerWithMaxTokenLength(tokenizerData)]);
-		case "ngram":
-		case "edge_ngram":
+		case 'ngram':
+		case 'edge_ngram':
 			return combineOptions([tokenizer, getNgramTokenizer(tokenizerData)]);
-		case "keyword":
+		case 'keyword':
 			return combineOptions([tokenizer, getKeywordTokenizer(tokenizerData)]);
-		case "pattern":
+		case 'pattern':
 			return combineOptions([tokenizer, getPatternTokenizer(tokenizerData)]);
-		case "simple_pattern":
-		case "simple_pattern_split":
+		case 'simple_pattern':
+		case 'simple_pattern_split':
 			return combineOptions([tokenizer, getSimplePatternTokenizer(tokenizerData)]);
-		case "char_group":
+		case 'char_group':
 			return combineOptions([tokenizer, getCharGroupTokenizer(tokenizerData)]);
-		case "path_hierarchy":
+		case 'path_hierarchy':
 			return combineOptions([tokenizer, getPathHierarchyTokenizer(tokenizerData)]);
 		default:
 			return null;
 	}
 };
 
-const getSharedTokenizerWithMaxTokenLength = (tokenizerOptions) => {
+const getSharedTokenizerWithMaxTokenLength = tokenizerOptions => {
 	const tokenizer = generalTokenizerMapper(tokenizerOptions, {
-		maxTokenLength: "max_token_length",
+		maxTokenLength: 'max_token_length',
 	});
 
 	return tokenizer;
@@ -70,50 +70,51 @@ const getNgramTokenizer = tokenizerOptions => {
 };
 
 const getKeywordTokenizer = tokenizerOptions => {
+	const tokenizer = generalTokenizerMapper(tokenizerOptions, {
+		bufferSize: 'buffer_size',
+	});
+
+	return tokenizer;
+};
+
+const getPatternTokenizer = tokenizerOptions => {
+	const tokenizer = generalTokenizerMapper(tokenizerOptions, {
+		pattern: 'pattern',
+		flags: 'flags',
+		group: 'group',
+	});
+
+	return tokenizer;
+};
+
+const getSimplePatternTokenizer = tokenizerOptions => {
+	const tokenizer = generalTokenizerMapper(tokenizerOptions, {
+		lucenePattern: 'pattern',
+	});
+
+	return tokenizer;
+};
+
+const getCharGroupTokenizer = tokenizerOptions => {
 	const tokenizer = generalTokenizerMapper(
 		tokenizerOptions,
 		{
-			bufferSize: 'buffer_size',
+			maxTokenLength: 'max_token_length',
+			tokenizeOnChars: 'tokenize_on_chars',
 		},
+		['tokenizeOnChars'],
 	);
 
 	return tokenizer;
 };
 
-const getPatternTokenizer = (tokenizerOptions) => {
+const getPathHierarchyTokenizer = tokenizerOptions => {
 	const tokenizer = generalTokenizerMapper(tokenizerOptions, {
-		pattern: "pattern",
-		flags: "flags",
-		group: "group",
-	});
-
-	return tokenizer;
-};
-
-const getSimplePatternTokenizer = (tokenizerOptions) => {
-	const tokenizer = generalTokenizerMapper(tokenizerOptions, {
-		lucenePattern: "pattern",
-	});
-
-	return tokenizer;
-};
-
-const getCharGroupTokenizer = (tokenizerOptions) => {
-	const tokenizer = generalTokenizerMapper(tokenizerOptions, {
-		maxTokenLength: "max_token_length",
-		tokenizeOnChars: "tokenize_on_chars",
-	}, ["tokenizeOnChars"]);
-
-	return tokenizer;
-};
-
-const getPathHierarchyTokenizer = (tokenizerOptions) => {
-	const tokenizer = generalTokenizerMapper(tokenizerOptions, {
-		delimiter: "delimiter",
-		replacement: "replacement",
-		pathBufferSize: "buffer_size",
-		skip: "skip",
-		reverse: "reverse",
+		delimiter: 'delimiter',
+		replacement: 'replacement',
+		pathBufferSize: 'buffer_size',
+		skip: 'skip',
+		reverse: 'reverse',
 	});
 
 	return tokenizer;
@@ -135,7 +136,7 @@ const generalTokenizerMapper = (tokenizerData, mapConfig, jsonFields = []) => {
 	}, {});
 };
 
-const combineOptions = (options) => {
+const combineOptions = options => {
 	return options.reduce((combinedOptions, option) => {
 		if (option) {
 			combinedOptions = {
@@ -148,5 +149,5 @@ const combineOptions = (options) => {
 };
 
 module.exports = {
-    getTokenizers
-}
+	getTokenizers,
+};

@@ -13,7 +13,7 @@ const getFilter = ([name, data]) => {
 		return {
 			name,
 			config: config,
-		}
+		};
 	} catch (e) {
 		return null;
 	}

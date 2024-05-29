@@ -1,21 +1,28 @@
 {
 	"name": "geoshape-circle",
 	"parentType": "document",
-	"properties": [{
-		"name": "type",
-		"type": "string",
-		"sample": "circle"
-	}, {
-		"name": "radius",
-		"type": "string",
-		"sample": "100m"
-	}, {
-		"name": "coordinates",
-		"type": "array",
-		"properties": [{
-			"type": "number"
-		}, {
-			"type": "number"
-		}]
-	}]
+	"properties": [
+		{
+			"name": "type",
+			"type": "string",
+			"sample": "circle"
+		},
+		{
+			"name": "radius",
+			"type": "string",
+			"sample": "100m"
+		},
+		{
+			"name": "coordinates",
+			"type": "array",
+			"properties": [
+				{
+					"type": "number"
+				},
+				{
+					"type": "number"
+				}
+			]
+		}
+	]
 }

@@ -1,8 +1,8 @@
-const helper = require("../../helper/helper");
-const { getAnalyzers } = require("./analyzersMapper");
-const { getFilters } = require("./filtersMapper");
-const { isObjectEmpty } = require("./mapperHelper");
-const { getTokenizers } = require("./tokenizersMapper");
+const helper = require('../../helper/helper');
+const { getAnalyzers } = require('./analyzersMapper');
+const { getFilters } = require('./filtersMapper');
+const { isObjectEmpty } = require('./mapperHelper');
+const { getTokenizers } = require('./tokenizersMapper');
 const { getIndexRefreshInterval } = require('./refreshIntervalMapper');
 
 const getIndexSettings = (indexData, logger) => {
@@ -22,7 +22,7 @@ const getIndexSettings = (indexData, logger) => {
 	if (indexRefreshInterval) {
 		indexSettings.refresh_interval = indexRefreshInterval;
 	}
-	
+
 	try {
 		const analysis = getIndexAnalysisSettings(indexData);
 		if (analysis) {
@@ -35,7 +35,7 @@ const getIndexSettings = (indexData, logger) => {
 	return isObjectEmpty(indexSettings) ? null : indexSettings;
 };
 
-const getIndexAnalysisSettings = (indexData) => {
+const getIndexAnalysisSettings = indexData => {
 	const analyzer = getAnalyzers(indexData.analyzers);
 	const tokenizer = getTokenizers(indexData.tokenizers);
 	const filter = getFilters(indexData.filters);
@@ -54,5 +54,5 @@ const getIndexAnalysisSettings = (indexData) => {
 };
 
 module.exports = {
-    getIndexSettings
-}
+	getIndexSettings,
+};
