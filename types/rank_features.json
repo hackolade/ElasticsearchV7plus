@@ -14,8 +14,6 @@
 		"enabled": true,
 		"properties": [],
 		"dependencies": [],
-		"minProperties": "",
-		"maxProperties": "",
 		"additionalProperties": false,
 		"enum": [],
 		"subtype": "rank_feature"
