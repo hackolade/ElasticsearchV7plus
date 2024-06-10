@@ -12,8 +12,6 @@
 		"properties": [],
 		"dependencies": [],
 		"ignore_z_value": true,
-		"minProperties": "",
-		"maxProperties": "",
 		"additionalProperties": false,
 		"enum": [],
 		"subTypes": [
