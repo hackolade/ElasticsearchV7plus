@@ -1,15 +1,7 @@
-const fs = require('fs');
-const path = require('path');
-const readConfig = pathToConfig => {
-	return JSON.parse(
-		fs
-			.readFileSync(path.join(__dirname, pathToConfig))
-			.toString()
-			.replace(/\/\*[.\s\S]*?\*\//gi, ''),
-	);
-};
-const fieldLevelConfig = readConfig('../properties_pane/field_level/fieldLevelConfig.json');
-const containerLevelConfig = readConfig('../properties_pane/container_level/containerLevelConfig.json');
+const { getFieldLevelConfig, getContainerLevelConfig } = require('./levelConfigHelper');
+
+const fieldLevelConfig = getFieldLevelConfig();
+const containerLevelConfig = getContainerLevelConfig();
 
 module.exports = {
 	getTargetFieldLevelPropertyNames(type, data) {
