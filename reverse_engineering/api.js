@@ -507,14 +507,13 @@ function getVersion(version, versions) {
 
 	versions.forEach(v => {
 		const arV = v.split('.');
-		let isVersion = false;
 
 		for (let i = 0; i < arV.length; i++) {
 			if (arV[0] === 'x') {
 				continue;
 			}
 
-			if (arVersion[i] == arV[i]) {
+			if (arVersion[i] === arV[i]) {
 				result = v;
 			} else {
 				break;

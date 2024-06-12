@@ -104,7 +104,7 @@ const getFingerprintAnalyzer = data => {
 		max_output_size: 'maxOutputSize',
 	});
 
-	return { ...analyzer, ...getStopWordsConfig(analyzerOptions) };
+	return { ...analyzer, ...getStopWordsConfig(data) };
 };
 
 const getLanguageAnalyzer = data => {
