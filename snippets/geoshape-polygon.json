@@ -1,93 +1,142 @@
 {
 	"name": "geoshape-polygon",
 	"parentType": "document",
-	"properties": [{
-		"name": "type",
-		"type": "string",
-		"sample": "polygon"
-	}, {
-		"name": "orientation",
-		"type": "string",
-		"sample": "clockwise"
-	}, {
-		"name": "coordinates",
-		"type": "array",
-		"properties": [{
+	"properties": [
+		{
+			"name": "type",
+			"type": "string",
+			"sample": "polygon"
+		},
+		{
+			"name": "orientation",
+			"type": "string",
+			"sample": "clockwise"
+		},
+		{
+			"name": "coordinates",
 			"type": "array",
-			"properties": [{
-				"type": "array",
-				"properties": [{
-					"type": "number"
-				}, {
-					"type": "number"
-				}]
-			}, {
-				"type": "array",
-				"properties": [{
-					"type": "number"
-				}, {
-					"type": "number"
-				}]
-			}, {
-				"type": "array",
-				"properties": [{
-					"type": "number"
-				}, {
-					"type": "number"
-				}]
-			}, {
-				"type": "array",
-				"properties": [{
-					"type": "number"
-				}, {
-					"type": "number"
-				}]
-			}, {
-				"type": "array",
-				"properties": [{
-					"type": "number"
-				}, {
-					"type": "number"
-				}]
-			}]
-		}, {
-			"type": "array",
-			"properties": [{
-				"type": "array",
-				"properties": [{
-					"type": "number"
-				}, {
-					"type": "number"
-				}]
-			}, {
-				"type": "array",
-				"properties": [{
-					"type": "number"
-				}, {
-					"type": "number"
-				}]
-			}, {
-				"type": "array",
-				"properties": [{
-					"type": "number"
-				}, {
-					"type": "number"
-				}]
-			}, {
-				"type": "array",
-				"properties": [{
-					"type": "number"
-				}, {
-					"type": "number"
-				}]
-			}, {
-				"type": "array",
-				"properties": [{
-					"type": "number"
-				}, {
-					"type": "number"
-				}]
-			}]
-		}]
-	}]
+			"properties": [
+				{
+					"type": "array",
+					"properties": [
+						{
+							"type": "array",
+							"properties": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							]
+						},
+						{
+							"type": "array",
+							"properties": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							]
+						},
+						{
+							"type": "array",
+							"properties": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							]
+						},
+						{
+							"type": "array",
+							"properties": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							]
+						},
+						{
+							"type": "array",
+							"properties": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							]
+						}
+					]
+				},
+				{
+					"type": "array",
+					"properties": [
+						{
+							"type": "array",
+							"properties": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							]
+						},
+						{
+							"type": "array",
+							"properties": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							]
+						},
+						{
+							"type": "array",
+							"properties": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							]
+						},
+						{
+							"type": "array",
+							"properties": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							]
+						},
+						{
+							"type": "array",
+							"properties": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	]
 }

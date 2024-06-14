@@ -126,10 +126,7 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "Sub-type",
 				"propertyKeyword": "mode",
 				"propertyType": "select",
-				"options": [
-					"text",
-					"keyword"
-				],
+				"options": ["text", "keyword"],
 				"data": "options",
 				"valueType": "string"
 			},
@@ -301,13 +298,7 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "index_options",
 				"propertyTooltip": "Select from list of parameter controls for information is added to the inverted index, for search and highlighting purposes",
 				"propertyType": "select",
-				"options": [
-					"",
-					"docs",
-					"freqs",
-					"positions",
-					"offsets"
-				],
+				"options": ["", "docs", "freqs", "positions", "offsets"],
 				"dependency": {
 					"key": "mode",
 					"value": "text"
@@ -319,11 +310,7 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "index_options",
 				"propertyTooltip": "Select from list of parameter controls for information is added to the inverted index, for search and highlighting purposes",
 				"propertyType": "select",
-				"options": [
-					"",
-					"docs",
-					"freqs"
-				],
+				"options": ["", "docs", "freqs"],
 				"dependency": {
 					"key": "mode",
 					"value": "keyword"
@@ -380,12 +367,7 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "similarity",
 				"propertyTooltip": "Select from list of scoring algorithm or similarity per field",
 				"propertyType": "select",
-				"options": [
-					"",
-					"BM25",
-					"classic",
-					"boolean"
-				],
+				"options": ["", "BM25", "classic", "boolean"],
 				"isTargetProperty": true
 			},
 			{
@@ -425,16 +407,7 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "Sub-type",
 				"propertyKeyword": "mode",
 				"propertyType": "select",
-				"options": [
-					"long",
-					"integer",
-					"short",
-					"byte",
-					"double",
-					"float",
-					"half_float",
-					"scaled_float"
-				],
+				"options": ["long", "integer", "short", "byte", "double", "float", "half_float", "scaled_float"],
 				"data": "options",
 				"valueType": "string"
 			},
@@ -646,14 +619,7 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "Sub-type",
 				"propertyKeyword": "mode",
 				"propertyType": "select",
-				"options": [
-					"integer_range",
-					"float_range",
-					"long_range",
-					"double_range",
-					"date_range",
-					"ip_range"
-				]
+				"options": ["integer_range", "float_range", "long_range", "double_range", "date_range", "ip_range"]
 			},
 			"dependencies",
 			"required",
@@ -726,10 +692,7 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "tree",
 				"propertyTooltip": "Select the name of the PrefixTree implementation to be used",
 				"propertyType": "select",
-				"options": [
-					"geohash",
-					"quadtree"
-				],
+				"options": ["geohash", "quadtree"],
 				"isTargetProperty": true
 			},
 			{
@@ -749,10 +712,7 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "strategy",
 				"propertyTooltip": "Select the name of the PrefixTree implementation to be used",
 				"propertyType": "select",
-				"options": [
-					"recursive",
-					"term"
-				],
+				"options": ["recursive", "term"],
 				"dependency": {
 					"key": "Subtype",
 					"value": "point"
@@ -770,14 +730,7 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "orientation",
 				"propertyTooltip": "Select a coordinate system rules",
 				"propertyType": "select",
-				"options": [
-					"right",
-					"ccw",
-					"counterclockwise",
-					"left",
-					"cw",
-					"clockwise"
-				],
+				"options": ["right", "ccw", "counterclockwise", "left", "cw", "clockwise"],
 				"isTargetProperty": true
 			},
 			{
@@ -829,13 +782,7 @@ making sure that you maintain a proper JSON format.
 				"propertyTooltip": "The dynamic parameter controls whether new fields are added dynamically.",
 				"propertyType": "select",
 				"isTargetProperty": true,
-				"options": [
-					"",
-					"true",
-					"false",
-					"runtime",
-					"strict"
-				]
+				"options": ["", "true", "false", "runtime", "strict"]
 			},
 			"minItems",
 			"maxItems",
@@ -843,16 +790,7 @@ making sure that you maintain a proper JSON format.
 			"additionalItems",
 			"comments"
 		],
-		"null": [
-			"name",
-			"sampleName",
-			"schemaId",
-			"refPath",
-			"description",
-			"type",
-			"dependencies",
-			"comments"
-		],
+		"null": ["name", "sampleName", "schemaId", "refPath", "description", "type", "dependencies", "comments"],
 		"object": [
 			"name",
 			"sampleName",
@@ -868,13 +806,7 @@ making sure that you maintain a proper JSON format.
 				"propertyTooltip": "The dynamic parameter controls whether new fields are added dynamically.",
 				"propertyType": "select",
 				"isTargetProperty": true,
-				"options": [
-					"",
-					"true",
-					"false",
-					"runtime",
-					"strict"
-				]
+				"options": ["", "true", "false", "runtime", "strict"]
 			},
 			{
 				"propertyName": "enabled",
@@ -942,11 +874,7 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "index_options",
 				"propertyTooltip": "What information should be stored in the index for scoring purposes.",
 				"propertyType": "select",
-				"options": [
-					"",
-					"docs",
-					"freqs"
-				],
+				"options": ["", "docs", "freqs"],
 				"isTargetProperty": true
 			},
 			{
@@ -961,11 +889,7 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "similarity",
 				"propertyTooltip": "Select from list of scoring algorithm or similarity per field",
 				"propertyType": "select",
-				"options": [
-					"",
-					"BM25",
-					"boolean"
-				],
+				"options": ["", "BM25", "boolean"],
 				"isTargetProperty": true
 			},
 			{

@@ -1,106 +1,164 @@
 {
 	"name": "geoshape-multilinestring",
 	"parentType": "document",
-	"properties": [{
-		"name": "type",
-		"type": "string",
-		"sample": "multilinestring"
-	}, {
-		"name": "coordinates",
-		"type": "array",
-		"properties": [{
+	"properties": [
+		{
+			"name": "type",
+			"type": "string",
+			"sample": "multilinestring"
+		},
+		{
+			"name": "coordinates",
 			"type": "array",
-			"properties": [{
-				"type": "array",
-				"properties": [{
-					"type": "number"
-				}, {
-					"type": "number"
-				}]
-			}, {
-				"type": "array",
-				"properties": [{
-					"type": "number"
-				}, {
-					"type": "number"
-				}]
-			}, {
-				"type": "array",
-				"properties": [{
-					"type": "number"
-				}, {
-					"type": "number"
-				}]
-			}, {
-				"type": "array",
-				"properties": [{
-					"type": "number"
-				}, {
-					"type": "number"
-				}]
-			}]
-		}, {
-			"type": "array",
-			"properties": [{
-				"type": "array",
-				"properties": [{
-					"type": "number"
-				}, {
-					"type": "number"
-				}]
-			}, {
-				"type": "array",
-				"properties": [{
-					"type": "number"
-				}, {
-					"type": "number"
-				}]
-			}, {
-				"type": "array",
-				"properties": [{
-					"type": "number"
-				}, {
-					"type": "number"
-				}]
-			}, {
-				"type": "array",
-				"properties": [{
-					"type": "number"
-				}, {
-					"type": "number"
-				}]
-			}]
-		}, {
-			"type": "array",
-			"properties": [{
-				"type": "array",
-				"properties": [{
-					"type": "number"
-				}, {
-					"type": "number"
-				}]
-			}, {
-				"type": "array",
-				"properties": [{
-					"type": "number"
-				}, {
-					"type": "number"
-				}]
-			}, {
-				"type": "array",
-				"properties": [{
-					"type": "number"
-				}, {
-					"type": "number"
-				}]
-			}, {
-				"type": "array",
-				"properties": [{
-					"type": "number"
-				}, {
-					"type": "number"
-				}]
-			}]
-		}]
-	}]
+			"properties": [
+				{
+					"type": "array",
+					"properties": [
+						{
+							"type": "array",
+							"properties": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							]
+						},
+						{
+							"type": "array",
+							"properties": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							]
+						},
+						{
+							"type": "array",
+							"properties": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							]
+						},
+						{
+							"type": "array",
+							"properties": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							]
+						}
+					]
+				},
+				{
+					"type": "array",
+					"properties": [
+						{
+							"type": "array",
+							"properties": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							]
+						},
+						{
+							"type": "array",
+							"properties": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							]
+						},
+						{
+							"type": "array",
+							"properties": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							]
+						},
+						{
+							"type": "array",
+							"properties": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							]
+						}
+					]
+				},
+				{
+					"type": "array",
+					"properties": [
+						{
+							"type": "array",
+							"properties": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							]
+						},
+						{
+							"type": "array",
+							"properties": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							]
+						},
+						{
+							"type": "array",
+							"properties": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							]
+						},
+						{
+							"type": "array",
+							"properties": [
+								{
+									"type": "number"
+								},
+								{
+									"type": "number"
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	]
 }

@@ -1,9 +1,6 @@
-const fs = require('fs');
-const path = require('path');
-const readConfig = (pathToConfig) => {
-	return JSON.parse(fs.readFileSync(path.join(__dirname, pathToConfig)).toString().replace(/\/\*[.\s\S]*?\*\//ig, ""));
-};
-const containerLevelConfig = readConfig('../../properties_pane/container_level/containerLevelConfig.json');
+const { getContainerLevelConfig } = require('../../helper/levelConfigHelper');
+
+const containerLevelConfig = getContainerLevelConfig();
 
 const getAnalyzers = analyzersData => {
 	if (!analyzersData) {
@@ -99,7 +96,7 @@ const getFingerprintAnalyzer = data => {
 		max_output_size: 'maxOutputSize',
 	});
 
-	return { ...analyzer, ...getStopWordsConfig(analyzerOptions) };
+	return { ...analyzer, ...getStopWordsConfig(data) };
 };
 
 const getLanguageAnalyzer = data => {

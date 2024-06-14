@@ -1,4 +1,4 @@
-const { isObjectEmpty } = require("./mapperHelper");
+const { isObjectEmpty } = require('./mapperHelper');
 
 const getAnalyzers = (analyzersData = []) => {
 	if (analyzersData.length === 0) {
@@ -16,81 +16,84 @@ const getAnalyzers = (analyzersData = []) => {
 	return isObjectEmpty(analyzers) ? null : analyzers;
 };
 
-const getAnalyzer = (analyzerData) => {
+const getAnalyzer = analyzerData => {
 	const analyzer = {
 		type: analyzerData.type,
 	};
 
 	switch (analyzerData.type) {
-		case "custom":
-			return combineOptions([analyzer,getCustomAnalyzer(analyzerData)]);
-		case "standard":
+		case 'custom':
+			return combineOptions([analyzer, getCustomAnalyzer(analyzerData)]);
+		case 'standard':
 			return combineOptions([analyzer, getStandardAnalyzer(analyzerData)]);
-		case "simple":
-		case "whitespace":
-		case "keyword":
+		case 'simple':
+		case 'whitespace':
+		case 'keyword':
 			return analyzer;
-		case "stop":
+		case 'stop':
 			return combineOptions([analyzer, getStopWordsConfig(analyzerData)]);
-		case "pattern":
+		case 'pattern':
 			return combineOptions([analyzer, getPatternAnalyzer(analyzerData)]);
-		case "fingerprint":
+		case 'fingerprint':
 			return combineOptions([analyzer, getFingerprintAnalyzer(analyzerData)]);
-		case "language":
+		case 'language':
 			return combineOptions([getLanguageAnalyzer(analyzerData)]);
 		default:
 			return null;
 	}
 };
 
-const getCustomAnalyzer = (analyzerOptions) => {
-	const tokenizer = analyzerOptions.tokenizer === "custom" ? analyzerOptions.customTokenizerName : analyzerOptions.tokenizer;
-	const filter = mapGroupArray(analyzerOptions.filters, "filter", "customFilterName");
-	const charFilter = mapGroupArray(analyzerOptions.charFilters, "filter", "customFilterName");
+const getCustomAnalyzer = analyzerOptions => {
+	const tokenizer =
+		analyzerOptions.tokenizer === 'custom' ? analyzerOptions.customTokenizerName : analyzerOptions.tokenizer;
+	const filter = mapGroupArray(analyzerOptions.filters, 'filter', 'customFilterName');
+	const charFilter = mapGroupArray(analyzerOptions.charFilters, 'filter', 'customFilterName');
 
 	const analyzer = {
 		tokenizer,
 		...(Array.isArray(filter) && filter.length > 0 && { filter }),
 		...(Array.isArray(charFilter) && charFilter.length > 0 && { char_filter: charFilter }),
-		...(analyzerOptions.positionIncrementGap >= 0 && { position_increment_gap: analyzerOptions.positionIncrementGap }),
+		...(analyzerOptions.positionIncrementGap >= 0 && {
+			position_increment_gap: analyzerOptions.positionIncrementGap,
+		}),
 	};
 
 	return isObjectEmpty(analyzer) ? null : analyzer;
 };
 
-const getStandardAnalyzer = (analyzerOptions) => {
+const getStandardAnalyzer = analyzerOptions => {
 	const analyzer = generalAnalyzerMapper(analyzerOptions, {
-		maxTokenLength: "max_token_length",
+		maxTokenLength: 'max_token_length',
 	});
 
 	return combineOptions([analyzer, getStopWordsConfig(analyzerOptions)]);
 };
 
-const getPatternAnalyzer = (analyzerOptions) => {
+const getPatternAnalyzer = analyzerOptions => {
 	const analyzer = generalAnalyzerMapper(analyzerOptions, {
-		pattern: "pattern",
-		flags: "flags",
-		lowercase: "lowercase",
+		pattern: 'pattern',
+		flags: 'flags',
+		lowercase: 'lowercase',
 	});
 
 	return combineOptions([analyzer, getStopWordsConfig(analyzerOptions)]);
 };
 
-const getFingerprintAnalyzer = (analyzerOptions) => {
+const getFingerprintAnalyzer = analyzerOptions => {
 	const analyzer = generalAnalyzerMapper(analyzerOptions, {
-		separator: "separator",
-		maxOutputSize: "max_output_size",
+		separator: 'separator',
+		maxOutputSize: 'max_output_size',
 	});
 
 	return combineOptions([analyzer, getStopWordsConfig(analyzerOptions)]);
 };
 
-const getLanguageAnalyzer = (analyzerData) => {
+const getLanguageAnalyzer = analyzerData => {
 	if (!analyzerData.language) {
 		return null;
 	}
-	const tokenizer = analyzerData.tokenizer === "custom" ? analyzerData.customTokenizerName : analyzerData.tokenizer;
-	const filter = mapGroupArray(analyzerData.filters, "filter", "customFilterName");
+	const tokenizer = analyzerData.tokenizer === 'custom' ? analyzerData.customTokenizerName : analyzerData.tokenizer;
+	const filter = mapGroupArray(analyzerData.filters, 'filter', 'customFilterName');
 
 	const analyzer = {
 		type: analyzerData.language,
@@ -111,10 +114,13 @@ const generalAnalyzerMapper = (analyzerData, mapConfig) => {
 	}, {});
 };
 
-const getStopWordsConfig = (analyzerData) => {
-	const predefinedStopWordsListName = typeof analyzerData.predefinedStopWordsList === "string" ? analyzerData.predefinedStopWordsList.trim() : null;
-	const stopWordsList = (analyzerData.stopWordsList || []).map(stopWordData => stopWordData.stopWord?.trim()).filter(stopWord => stopWord?.length > 0);
-	const stopWordsPath = typeof analyzerData.stopWordsPath === "string" ? analyzerData.stopWordsPath.trim() : null;
+const getStopWordsConfig = analyzerData => {
+	const predefinedStopWordsListName =
+		typeof analyzerData.predefinedStopWordsList === 'string' ? analyzerData.predefinedStopWordsList.trim() : null;
+	const stopWordsList = (analyzerData.stopWordsList || [])
+		.map(stopWordData => stopWordData.stopWord?.trim())
+		.filter(stopWord => stopWord?.length > 0);
+	const stopWordsPath = typeof analyzerData.stopWordsPath === 'string' ? analyzerData.stopWordsPath.trim() : null;
 
 	if (stopWordsPath) {
 		return { stopwords_path: stopWordsPath };
@@ -128,7 +134,7 @@ const getStopWordsConfig = (analyzerData) => {
 	return null;
 };
 
-const combineOptions = (options) => {
+const combineOptions = options => {
 	return options.reduce((combinedOptions, option) => {
 		if (option) {
 			combinedOptions = {
@@ -145,15 +151,17 @@ const mapGroupArray = (arrayData, key, customValueKey) => {
 		return null;
 	}
 
-	return arrayData.map(itemValue => {
-		const result = itemValue[key];
-		if (result === 'custom') {
-			return itemValue[customValueKey]?.trim();
-		}
-		return result;
-	}).filter(item => item);
-}
+	return arrayData
+		.map(itemValue => {
+			const result = itemValue[key];
+			if (result === 'custom') {
+				return itemValue[customValueKey]?.trim();
+			}
+			return result;
+		})
+		.filter(item => item);
+};
 
 module.exports = {
-    getAnalyzers
-}
+	getAnalyzers,
+};

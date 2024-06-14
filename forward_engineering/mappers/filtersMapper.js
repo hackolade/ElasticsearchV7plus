@@ -1,4 +1,4 @@
-const { isObjectEmpty } = require("./mapperHelper");
+const { isObjectEmpty } = require('./mapperHelper');
 
 const getFilters = (filtersData = []) => {
 	if (filtersData.length === 0) {
@@ -16,7 +16,7 @@ const getFilters = (filtersData = []) => {
 	return isObjectEmpty(filters) ? null : filters;
 };
 
-const getFilter = (filterData) => {
+const getFilter = filterData => {
 	try {
 		const filter = JSON.parse(filterData.config);
 		return filter;
@@ -26,5 +26,5 @@ const getFilter = (filterData) => {
 };
 
 module.exports = {
-    getFilters
-}
+	getFilters,
+};

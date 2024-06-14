@@ -117,49 +117,49 @@ making sure that you maintain a proper JSON format.
 [
 	{
 		"lowerTab": "Details",
-		"containerLevelKeys": [{
-			"labelName": "Index",
-			"propertyName": "Index",
-			"propertyKeyword": "_index",
-			"defaultName": "_index",
-			"propertyPrimaryKey": true,
-			"propertyType": "text",
-			"typeName": "Data type",
-			"typeOptions": ["string"],
-			"defaultType": "string",
-			"disabledFieldOption": true,
-			"sampleGen": "&containerName"
-		},{
-			"labelName": "ID",
-			"propertyName": "Document ID",
-			"propertyKeyword": "docID",
-			"defaultName": "_id",
-			"propertyPrimaryKey": true,
-			"propertyType": "text",
-			"typeName": "Data type",
-			"typeOptions": [
-				"string"
-			],
-			"defaultType": "string",
-			"disabledFieldOption": true,
-			"sampleGen": "&random"
-		},{
-			"labelName": "Source",
-			"propertyName": "source",
-			"propertyKeyword": "source",
-			"defaultName": "_source",
-			"propertyPrimaryKey": false,
-			"propertyType": "text",
-			"valueType": "object",
-			"typeName": "Data type",
-			"typeOptions": [
-				"object"
-			],
-			"defaultType": "object",
-			"disabledFieldOption": true,
-			"underERDDivider": true,
-			"propertiesRoot": true
-		}],
+		"containerLevelKeys": [
+			{
+				"labelName": "Index",
+				"propertyName": "Index",
+				"propertyKeyword": "_index",
+				"defaultName": "_index",
+				"propertyPrimaryKey": true,
+				"propertyType": "text",
+				"typeName": "Data type",
+				"typeOptions": ["string"],
+				"defaultType": "string",
+				"disabledFieldOption": true,
+				"sampleGen": "&containerName"
+			},
+			{
+				"labelName": "ID",
+				"propertyName": "Document ID",
+				"propertyKeyword": "docID",
+				"defaultName": "_id",
+				"propertyPrimaryKey": true,
+				"propertyType": "text",
+				"typeName": "Data type",
+				"typeOptions": ["string"],
+				"defaultType": "string",
+				"disabledFieldOption": true,
+				"sampleGen": "&random"
+			},
+			{
+				"labelName": "Source",
+				"propertyName": "source",
+				"propertyKeyword": "source",
+				"defaultName": "_source",
+				"propertyPrimaryKey": false,
+				"propertyType": "text",
+				"valueType": "object",
+				"typeName": "Data type",
+				"typeOptions": ["object"],
+				"defaultType": "object",
+				"disabledFieldOption": true,
+				"underERDDivider": true,
+				"propertiesRoot": true
+			}
+		],
 		"structure": [
 			{
 				"propertyName": "Number of shards",
@@ -219,13 +219,7 @@ making sure that you maintain a proper JSON format.
 				"propertyValidate": false,
 				"propertyType": "select",
 				"defaultValue": "s",
-				"options": [
-					"ms",
-					"s",
-					"m",
-					"h",
-					"d"
-				],
+				"options": ["ms", "s", "m", "h", "d"],
 				"isTargetProperty": false
 			},
 			{
@@ -748,12 +742,7 @@ making sure that you maintain a proper JSON format.
 								"propertyTooltip": "A built-in or custom filter.",
 								"propertyType": "select",
 								"propertyKeyword": "filter",
-								"options": [
-									"custom",
-									"html_strip",
-									"mapping",
-									"pattern_replace"
-								]
+								"options": ["custom", "html_strip", "mapping", "pattern_replace"]
 							},
 							{
 								"propertyName": "Custom character filter name",
@@ -850,7 +839,6 @@ making sure that you maintain a proper JSON format.
 									"value": "language"
 								}
 							]
-							
 						}
 					},
 					{
