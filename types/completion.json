@@ -11,8 +11,6 @@
 		"foreignField": [],
 		"properties": [],
 		"dependencies": [],
-		"minProperties": "",
-		"maxProperties": "",
 		"additionalProperties": false,
 		"enum": [],
 		"analyzer": "simple",

@@ -649,8 +649,6 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "checkbox",
 				"isTargetProperty": true
 			},
-			"minProperties",
-			"maxProperties",
 			"additionalProperties",
 			"comments"
 		],
@@ -920,8 +918,6 @@ making sure that you maintain a proper JSON format.
 					]
 				}
 			},
-			"minProperties",
-			"maxProperties",
 			"additionalProperties",
 			"comments"
 		],
@@ -1234,8 +1230,6 @@ making sure that you maintain a proper JSON format.
 			"type",
 			"dependencies",
 			"required",
-			"minProperties",
-			"maxProperties",
 			"additionalProperties",
 			"comments"
 		],
