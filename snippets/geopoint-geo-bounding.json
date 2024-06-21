@@ -1,25 +1,34 @@
 {
 	"name": "geopoint-geo-bounding",
 	"parentType": "document",
-	"properties": [{
-		"name": "top_left",
-		"type": "object",
-		"properties": [{
-			"name": "lat",
-			"type": "number"
-		}, {
-			"name": "lon",
-			"type": "number"	
-		}]
-	}, {
-		"name": "bottom_right",
-		"type": "object",
-		"properties": [{
-			"name": "lat",
-			"type": "number"
-		}, {
-			"name": "lon",
-			"type": "number"	
-		}]
-	}]
+	"properties": [
+		{
+			"name": "top_left",
+			"type": "object",
+			"properties": [
+				{
+					"name": "lat",
+					"type": "number"
+				},
+				{
+					"name": "lon",
+					"type": "number"
+				}
+			]
+		},
+		{
+			"name": "bottom_right",
+			"type": "object",
+			"properties": [
+				{
+					"name": "lat",
+					"type": "number"
+				},
+				{
+					"name": "lon",
+					"type": "number"
+				}
+			]
+		}
+	]
 }

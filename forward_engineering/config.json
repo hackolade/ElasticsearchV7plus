@@ -12,15 +12,17 @@
 		"generateSamplesInBulk": true
 	},
 	"applyScriptToInstance": true,
-	"additionalOptions": [{
-		"id": "INCLUDE_SAMPLES",
-		"value": true,
-		"name": "Include sample data",
-		"align": "right",
-		"level": {
-			"entity": true
+	"additionalOptions": [
+		{
+			"id": "INCLUDE_SAMPLES",
+			"value": true,
+			"name": "Include sample data",
+			"align": "right",
+			"level": {
+				"entity": true
+			}
 		}
-	}],
+	],
 	"splitView": {
 		"byAdditionalOptions": ["INCLUDE_SAMPLES"]
 	},

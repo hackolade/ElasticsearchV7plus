@@ -1,16 +1,21 @@
 {
 	"name": "completionObject",
 	"parentType": "document",
-	"properties": [{
-		"name": "input",
-		"type": "array",
-		"required": true,
-		"properties": [{
-			"type": "string"
-		}]
-	}, {
-		"name": "weight",
-		"type": "number",
-		"required": false
-	}]
+	"properties": [
+		{
+			"name": "input",
+			"type": "array",
+			"required": true,
+			"properties": [
+				{
+					"type": "string"
+				}
+			]
+		},
+		{
+			"name": "weight",
+			"type": "number",
+			"required": false
+		}
+	]
 }

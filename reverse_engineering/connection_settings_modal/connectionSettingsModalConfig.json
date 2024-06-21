@@ -7,21 +7,23 @@
 				"inputKeyword": "name",
 				"inputType": "text",
 				"inputPlaceholder": "Name"
-				
 			},
 			{
 				"inputLabel": "Connection type",
 				"inputKeyword": "connectionType",
 				"inputType": "select",
 				"description": "",
-				"options": [{
-					"value": "Direct connection", 
-					"label": "Direct connection"
-				}, {
-					"value": "Replica set or Sharded cluster",
-					"label": "Replica set or Sharded cluster"
-				}],
-				"defaultValue": "Direct connection" 
+				"options": [
+					{
+						"value": "Direct connection",
+						"label": "Direct connection"
+					},
+					{
+						"value": "Replica set or Sharded cluster",
+						"label": "Replica set or Sharded cluster"
+					}
+				],
+				"defaultValue": "Direct connection"
 			},
 			{
 				"inputLabel": "Host",
@@ -72,13 +74,16 @@
 				"inputLabel": "Protocol",
 				"inputKeyword": "protocol",
 				"inputType": "select",
-				"options": [{
-					"value": "http",
-					"label": "http"
-				}, {
-					"value": "https",
-					"label": "https"
-				}],
+				"options": [
+					{
+						"value": "http",
+						"label": "http"
+					},
+					{
+						"value": "https",
+						"label": "https"
+					}
+				],
 				"defaultValue": "http"
 			},
 			{
@@ -96,7 +101,6 @@
 				"inputKeyword": "username",
 				"inputType": "text",
 				"inputPlaceholder": "User Name"
-				
 			},
 			{
 				"inputLabel": "Password",
@@ -115,7 +119,6 @@
 				"inputLabel": "Enable SSL",
 				"inputKeyword": "is_ssl",
 				"inputType": "checkbox"
-				
 			},
 			{
 				"inputLabel": "Authority Certificate",
