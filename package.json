@@ -24,7 +24,7 @@
     "description": "Hackolade plugin for Elasticsearch v7 and above",
     "dependencies": {
         "@elastic/elasticsearch": "7.17.0",
-        "elasticsearch": "13.3.1",
+        "elasticsearch": "16.7.3",
         "lodash": "4.17.21"
     },
     "lint-staged": {
