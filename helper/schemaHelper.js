@@ -64,7 +64,7 @@ const getNameByPath = (schema, path) => {
 				return ['[' + i + ']'];
 			}
 
-			return ['[' + i + ']', ...getNameByPath(property, path.slice(1), '[' + i + ']')];
+			return ['[' + i + ']', ...getNameByPath(property, path.slice(1))];
 		}, []);
 	} else if (Object(schema.items) === schema.items) {
 		const property = schema.items;
@@ -77,7 +77,7 @@ const getNameByPath = (schema, path) => {
 			return ['[0]'];
 		}
 
-		return ['[0]', ...getNameByPath(property, path.slice(1), '[0]')];
+		return ['[0]', ...getNameByPath(property, path.slice(1))];
 	}
 };
 
@@ -95,7 +95,7 @@ const findFieldNameById = (id, source) => {
 	let path = getPathById(source, id, []);
 
 	if (path) {
-		const name = joinIndex(getNameByPath(source, path, ''));
+		const name = joinIndex(getNameByPath(source, path));
 
 		return name[name.length - 1] || '';
 	} else {
@@ -108,7 +108,7 @@ const getPathName = (id, sources) => {
 		let path = getPathById(sources[i], id, []);
 
 		if (path) {
-			const name = getNameByPath(sources[i], path, '');
+			const name = getNameByPath(sources[i], path);
 
 			return name
 				.slice(1)
