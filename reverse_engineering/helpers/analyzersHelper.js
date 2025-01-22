@@ -1,17 +1,13 @@
-const { getContainerLevelConfig } = require('../../helper/levelConfigHelper');
-
-const containerLevelConfig = getContainerLevelConfig();
-
-const getAnalyzers = analyzersData => {
+const getAnalyzers = (analyzersData, containerLevelConfig) => {
 	if (!analyzersData) {
 		return null;
 	}
-	const analyzers = Object.entries(analyzersData).map(getAnalyzer);
+	const analyzers = Object.entries(analyzersData).map(entries => getAnalyzer(entries, containerLevelConfig));
 
 	return analyzers.length > 0 ? analyzers : null;
 };
 
-const getAnalyzer = ([name, data]) => {
+const getAnalyzer = ([name, data], containerLevelConfig) => {
 	const analyzer = {
 		name,
 		type: data.type,
@@ -19,7 +15,7 @@ const getAnalyzer = ([name, data]) => {
 
 	switch (data.type) {
 		case 'custom':
-			return combineOptions(analyzer, getCustomAnalyzer(data));
+			return combineOptions(analyzer, getCustomAnalyzer(data, containerLevelConfig));
 		case 'standard':
 			return combineOptions(analyzer, getStandardAnalyzer(data));
 		case 'simple':
@@ -33,11 +29,11 @@ const getAnalyzer = ([name, data]) => {
 		case 'fingerprint':
 			return combineOptions(analyzer, getFingerprintAnalyzer(data));
 		default:
-			return combineOptions(analyzer, getLanguageAnalyzer(data));
+			return combineOptions(analyzer, getLanguageAnalyzer(data, containerLevelConfig));
 	}
 };
 
-const getCustomAnalyzer = data => {
+const getCustomAnalyzer = (data, containerLevelConfig) => {
 	const builtInTokenizers = getConfigForProperty(containerLevelConfig[0].structure, [
 		'analyzers',
 		'tokenizer',
@@ -99,7 +95,7 @@ const getFingerprintAnalyzer = data => {
 	return { ...analyzer, ...getStopWordsConfig(data) };
 };
 
-const getLanguageAnalyzer = data => {
+const getLanguageAnalyzer = (data, containerLevelConfig) => {
 	const builtInTokenizers = getConfigForProperty(containerLevelConfig[0].structure, [
 		'analyzers',
 		'tokenizer',

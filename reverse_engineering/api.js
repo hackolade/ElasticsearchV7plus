@@ -189,7 +189,7 @@ module.exports = {
 		const async = app.require('async');
 		const _ = app.require('lodash');
 		let includeEmptyCollection = data.includeEmptyCollection;
-		let { recordSamplingSettings, fieldInference, documentKinds } = data;
+		let { recordSamplingSettings, fieldInference, documentKinds, pluginConfiguration } = data;
 		const indices = data.collectionData.dataBaseNames;
 		const indexTypes = data.collectionData.collections;
 
@@ -281,7 +281,11 @@ module.exports = {
 							});
 
 							let bucketInfo = Object.assign(
-								getBucketData(jsonSchemas[indexName] || {}, logger),
+								getBucketData(
+									jsonSchemas[indexName] || {},
+									logger,
+									pluginConfiguration.containerLevelConfig,
+								),
 								defaultBucketInfo,
 							);
 							const documents = await getDocuments({ client, indexName, recordSamplingSettings });
@@ -304,6 +308,7 @@ module.exports = {
 								indexName,
 								client,
 								async,
+								fieldLevelConfig: pluginConfiguration.fieldLevelConfig,
 								_,
 							};
 							let types = !documentKind ? [indexName] : indexTypes[indexName] || [];
@@ -377,6 +382,7 @@ const getIndexTypeData = ({
 	documents,
 	indexName,
 	ignoreDocumentKinds,
+	fieldLevelConfig,
 	_,
 }) => {
 	const documentTemplate = documents.reduce((tpl, doc) => _.merge(tpl, doc), {});
@@ -399,7 +405,7 @@ const getIndexTypeData = ({
 	if (hasJsonSchema) {
 		SchemaCreator.ignoreSample = documents.length === 0 || ignoreDocumentKinds;
 		documentsPackage.validation = {
-			jsonSchema: SchemaCreator.getSchema(mappingJsonSchema, documentTemplate),
+			jsonSchema: SchemaCreator.getSchema(mappingJsonSchema, documentTemplate, fieldLevelConfig),
 		};
 	}
 
@@ -580,7 +586,7 @@ function getSchemaMapping(indices, client) {
 		});
 }
 
-function getBucketData(mappingData, logger) {
+function getBucketData(mappingData, logger, containerLevelConfig) {
 	let data = {};
 	if (mappingData.settings) {
 		let settingContainer = mappingData.settings;
@@ -618,7 +624,7 @@ function getBucketData(mappingData, logger) {
 
 		if (settingContainer.analysis) {
 			try {
-				data = { ...data, ...getAnalysisData(settingContainer.analysis) };
+				data = { ...data, ...getAnalysisData(settingContainer.analysis, containerLevelConfig) };
 			} catch (error) {
 				logger.log('error', error, 'Getting analysis data');
 			}

@@ -2,8 +2,8 @@ const { getAnalyzers } = require('./analyzersHelper');
 const { getFilters } = require('./filtersHelper');
 const { getTokenizers } = require('./tokenizersHelper');
 
-const getAnalysisData = analysisSettings => {
-	const analyzers = getAnalyzers(analysisSettings.analyzer);
+const getAnalysisData = (analysisSettings, containerLevelConfig) => {
+	const analyzers = getAnalyzers(analysisSettings.analyzer, containerLevelConfig);
 	const filters = getFilters(analysisSettings.filter);
 	const characterFilters = getFilters(analysisSettings.char_filter);
 	const tokenizers = getTokenizers(analysisSettings.tokenizer);
