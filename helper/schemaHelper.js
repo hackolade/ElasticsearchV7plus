@@ -1,5 +1,3 @@
-'use strict';
-
 const getPathById = (schema, id, path) => {
 	if (schema.GUID === id) {
 		return path;
@@ -83,7 +81,7 @@ const getNameByPath = (schema, path) => {
 
 const joinIndex = items => {
 	return items.reduce((result, item) => {
-		if (/\[\d+\]/.test(item)) {
+		if (/\[\d+]/.test(item)) {
 			return [...result.slice(0, -1), result[result.length - 1] + item];
 		} else {
 			return [...result, item];
@@ -104,15 +102,15 @@ const findFieldNameById = (id, source) => {
 };
 
 const getPathName = (id, sources) => {
-	for (let i = 0; i < sources.length; i++) {
-		let path = getPathById(sources[i], id, []);
+	for (const element of sources) {
+		let path = getPathById(element, id, []);
 
 		if (path) {
-			const name = getNameByPath(sources[i], path);
+			const name = getNameByPath(element, path);
 
 			return name
 				.slice(1)
-				.filter(item => !/\[\d+\]/.test(item))
+				.filter(item => !/\[\d+]/.test(item))
 				.join('.');
 		}
 	}
@@ -122,8 +120,8 @@ const getPathName = (id, sources) => {
 
 const getNamesByIds = (ids, sources) => {
 	return ids.reduce((names, id) => {
-		for (let i = 0; i < sources.length; i++) {
-			const name = findFieldNameById(id, sources[i]);
+		for (const element of sources) {
+			const name = findFieldNameById(id, element);
 
 			if (name) {
 				return [...names, name];

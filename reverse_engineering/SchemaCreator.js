@@ -253,12 +253,10 @@ module.exports = {
 							type: scalar,
 						};
 					}
+				} else if (hasProperties) {
+					return { type: 'object' };
 				} else {
-					if (hasProperties) {
-						return { type: 'object' };
-					} else {
-						return {};
-					}
+					return {};
 				}
 		}
 	},
@@ -275,16 +273,14 @@ module.exports = {
 
 		if (isFloat) {
 			return 'float';
+		} else if (value > -(byte + 1) && value < byte) {
+			return 'byte';
+		} else if (value > -(short + 1) && value < short) {
+			return 'short';
+		} else if (value > -(int + 1) && value < int) {
+			return 'integer';
 		} else {
-			if (value > -(byte + 1) && value < byte) {
-				return 'byte';
-			} else if (value > -(short + 1) && value < short) {
-				return 'short';
-			} else if (value > -(int + 1) && value < int) {
-				return 'integer';
-			} else {
-				return 'long';
-			}
+			return 'long';
 		}
 	},
 
@@ -377,17 +373,13 @@ module.exports = {
 	},
 
 	handleCompletionSnippet(schema) {
-		return Object.assign(
-			{},
-			this.handleSnippet(
-				Object.assign({}, schema, {
-					subType: schema.subType === 'array' ? 'completionArray' : 'completionObject',
-				}),
-			),
-			{
-				subType: schema.subType,
-			},
-		);
+		return {
+			...this.handleSnippet({
+				...schema,
+				subType: schema.subType === 'array' ? 'completionArray' : 'completionObject',
+			}),
+			subType: schema.subType,
+		};
 	},
 
 	handleSnippet(schema) {
@@ -438,9 +430,13 @@ module.exports = {
 	},
 
 	setProperties(schema, fieldData) {
-		const properties = helper.getFieldProperties(schema.type, Object.assign({ mode: fieldData.type }, fieldData), {
-			'stringfields': 'fields',
-		});
+		const properties = helper.getFieldProperties(
+			schema.type,
+			{ mode: fieldData.type, ...fieldData },
+			{
+				'stringfields': 'fields',
+			},
+		);
 
 		for (let propName in properties) {
 			if (propName === 'fields') {
@@ -460,11 +456,9 @@ module.exports = {
 	getCopyToPath(copyToValue, mapping) {
 		const copyTo = Array.isArray(copyToValue) ? copyToValue : [copyToValue];
 
-		const result = copyTo.reduce((result, propertyName) => {
+		return copyTo.reduce((result, propertyName) => {
 			return [...result, ...findPropertiesInMapping(propertyName, mapping, ['_source'])];
 		}, []);
-
-		return result;
 	},
 };
 

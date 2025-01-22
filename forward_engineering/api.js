@@ -191,7 +191,7 @@ module.exports = {
 		const { jsonSchema } = data;
 		let schema = {};
 
-		if (!(jsonSchema.properties && jsonSchema.properties._source && jsonSchema.properties._source.properties)) {
+		if (!jsonSchema.properties?._source?.properties) {
 			return schema;
 		}
 
@@ -232,9 +232,9 @@ module.exports = {
 		this.setProperties(schema, fieldProperties, data);
 
 		if (type === 'alias') {
-			return Object.assign({}, schema, this.getAliasSchema(field, data));
+			return { ...schema, ...this.getAliasSchema(field, data) };
 		} else if (type === 'join') {
-			return Object.assign({}, schema, this.getJoinSchema(field));
+			return { ...schema, ...this.getJoinSchema(field) };
 		} else if (
 			[
 				'completion',
@@ -385,11 +385,7 @@ module.exports = {
 			return false;
 		}
 
-		if (property[0].keyId) {
-			return true;
-		}
-
-		return false;
+		return Boolean(property[0].keyId);
 	},
 
 	getJoinSchema(field) {
@@ -407,14 +403,10 @@ module.exports = {
 			}
 
 			if (item.children.length === 1) {
-				return Object.assign({}, result, {
-					[item.parent]: (item.children[0] || {}).name,
-				});
+				return { ...result, [item.parent]: item.children[0]?.name };
 			}
 
-			return Object.assign({}, result, {
-				[item.parent]: item.children.map(item => item.name || ''),
-			});
+			return { ...result, [item.parent]: item.children.map(item => item.name || '') };
 		}, {});
 
 		return { relations };
@@ -440,16 +432,6 @@ module.exports = {
 	},
 };
 
-const getPriority = (a, b) => {
-	if (a.properties && b.properties) {
-		return 0;
-	} else if (!a.properties) {
-		return -1;
-	} else {
-		return 1;
-	}
-};
-
 const mergeSchemas = (schemaA, schemaB) => {
 	const aKeys = Object.keys(schemaA);
 	const bKeys = Object.keys(schemaB).filter(bKey => !aKeys.includes(bKey));
@@ -463,8 +445,6 @@ const mergeSchemas = (schemaA, schemaB) => {
 			result[aKey] = aValue;
 			return;
 		}
-
-		const priority = getPriority(aValue, bValue);
 
 		if (aValue.properties && bValue.properties) {
 			result[aKey] = {

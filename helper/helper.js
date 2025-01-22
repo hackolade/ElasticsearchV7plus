@@ -56,9 +56,9 @@ module.exports = {
 		const propertyNames = this.getTargetFieldLevelPropertyNames(type, data);
 
 		return propertyNames.reduce((result, propertyName) => {
-			if (Object.prototype.hasOwnProperty.call(data, propertyName)) {
+			if (Object.hasOwn(data, propertyName)) {
 				result[propertyName] = data[propertyName];
-			} else if (Object.prototype.hasOwnProperty.call(data, pseudonyms[propertyName])) {
+			} else if (Object.hasOwn(data, pseudonyms[propertyName])) {
 				result[pseudonyms[propertyName]] = data[pseudonyms[propertyName]];
 			}
 

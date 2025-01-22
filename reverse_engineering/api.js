@@ -1,7 +1,5 @@
-'use strict';
-
-const elasticsearch = require('elasticsearch');
 const fs = require('fs');
+const elasticsearch = require('elasticsearch');
 const SchemaCreator = require('./SchemaCreator');
 const inferSchemaService = require('./helpers/inferSchemaService');
 const { getAnalysisData } = require('./helpers/analysisSettingsHelper');
@@ -395,7 +393,7 @@ const getIndexTypeData = ({
 		bucketInfo,
 	};
 
-	const mappingJsonSchema = (jsonSchema || {}).mappings;
+	const mappingJsonSchema = jsonSchema?.mappings;
 	const hasJsonSchema = Boolean(mappingJsonSchema);
 
 	if (hasJsonSchema) {
@@ -483,9 +481,7 @@ const getIndexes = (client, includeSystemCollection) => {
 				}
 			})
 			.reduce((result, indexName) => {
-				return Object.assign({}, result, {
-					[indexName]: data[indexName],
-				});
+				return { ...result, [indexName]: data[indexName] };
 			}, {});
 	});
 };
