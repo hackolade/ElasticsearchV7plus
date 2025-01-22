@@ -1,4 +1,6 @@
+const _ = require('lodash');
 const fs = require('fs');
+const async = require('async');
 const elasticsearch = require('elasticsearch');
 const SchemaCreator = require('./SchemaCreator');
 const inferSchemaService = require('./helpers/inferSchemaService');
@@ -97,7 +99,6 @@ module.exports = {
 	},
 
 	getDocumentKinds: function (connectionInfo, logger, cb, app) {
-		const _ = app.require('lodash');
 		this.connect(connectionInfo, logger, async (err, client) => {
 			try {
 				if (err) {
@@ -144,7 +145,6 @@ module.exports = {
 	},
 
 	getDbCollectionsNames: function (connectionInfo, logger, cb, app) {
-		const _ = app.require('lodash');
 		this.connect(connectionInfo, logger, async (err, client) => {
 			try {
 				if (err) {
@@ -186,8 +186,6 @@ module.exports = {
 	},
 
 	getDbCollectionsData: function (data, logger, cb, app) {
-		const async = app.require('async');
-		const _ = app.require('lodash');
 		let includeEmptyCollection = data.includeEmptyCollection;
 		let { recordSamplingSettings, fieldInference, documentKinds, pluginConfiguration } = data;
 		const indices = data.collectionData.dataBaseNames;
@@ -309,7 +307,6 @@ module.exports = {
 								client,
 								async,
 								fieldLevelConfig: pluginConfiguration.fieldLevelConfig,
-								_,
 							};
 							let types = !documentKind ? [indexName] : indexTypes[indexName] || [];
 							const ignoreDocumentKinds = types.length === 1;
@@ -332,7 +329,7 @@ module.exports = {
 										ignoreDocumentKinds,
 									});
 								})
-								.filter(shouldPackageBeAdded.bind(null, _, includeEmptyCollection));
+								.filter(docPackage => shouldPackageBeAdded(includeEmptyCollection, docPackage));
 
 							return packages;
 						},
@@ -358,7 +355,7 @@ module.exports = {
 	},
 };
 
-const shouldPackageBeAdded = (_, includeEmptyCollection, docPackage) => {
+const shouldPackageBeAdded = (includeEmptyCollection, docPackage) => {
 	if (includeEmptyCollection) {
 		return true;
 	}
@@ -383,7 +380,6 @@ const getIndexTypeData = ({
 	indexName,
 	ignoreDocumentKinds,
 	fieldLevelConfig,
-	_,
 }) => {
 	const documentTemplate = documents.reduce((tpl, doc) => _.merge(tpl, doc), {});
 	let documentsPackage = {
