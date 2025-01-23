@@ -59,7 +59,7 @@ const getField = (field, data, fieldLevelConfig) => {
 			arrData = field.items[0];
 		}
 
-		schema = Object.assign(schema, getField(arrData, data, fieldLevelConfig));
+		schema = { ...schema, ...getField(arrData, data, fieldLevelConfig) };
 	}
 
 	return schema;

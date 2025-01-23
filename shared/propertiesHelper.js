@@ -31,7 +31,7 @@ const getTargetFieldLevelPropertyNames = (type, data, fieldLevelConfig) => {
 					return true;
 				} else if (!checkDependency(property.dependency, data)) {
 					return false;
-				} else if (Array.isArray(property.options) && !property.options.includes(data[property.propertyName])) {
+				} else if (Array.isArray(property.options) && !property.options.includes(data[property.fieldName])) {
 					return false;
 				} else {
 					return true;
@@ -40,7 +40,7 @@ const getTargetFieldLevelPropertyNames = (type, data, fieldLevelConfig) => {
 
 			return false;
 		})
-		.map(property => property.propertyKeyword);
+		.map(property => property.fieldKeyword);
 };
 
 module.exports = {
@@ -65,7 +65,7 @@ module.exports = {
 			tab.structure.forEach(property => {
 				if (property.isTargetProperty) {
 					properties.push({
-						propertyName: property.propertyKeyword,
+						propertyName: property.fieldKeyword,
 						isJson: property.template === 'textAreaJson',
 					});
 				}
