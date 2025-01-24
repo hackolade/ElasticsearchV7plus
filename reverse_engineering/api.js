@@ -1,7 +1,7 @@
-'use strict';
-
-const elasticsearch = require('elasticsearch');
+const _ = require('lodash');
 const fs = require('fs');
+const async = require('async');
+const elasticsearch = require('elasticsearch');
 const SchemaCreator = require('./SchemaCreator');
 const inferSchemaService = require('./helpers/inferSchemaService');
 const { getAnalysisData } = require('./helpers/analysisSettingsHelper');
@@ -99,7 +99,6 @@ module.exports = {
 	},
 
 	getDocumentKinds: function (connectionInfo, logger, cb, app) {
-		const _ = app.require('lodash');
 		this.connect(connectionInfo, logger, async (err, client) => {
 			try {
 				if (err) {
@@ -146,7 +145,6 @@ module.exports = {
 	},
 
 	getDbCollectionsNames: function (connectionInfo, logger, cb, app) {
-		const _ = app.require('lodash');
 		this.connect(connectionInfo, logger, async (err, client) => {
 			try {
 				if (err) {
@@ -188,10 +186,8 @@ module.exports = {
 	},
 
 	getDbCollectionsData: function (data, logger, cb, app) {
-		const async = app.require('async');
-		const _ = app.require('lodash');
 		let includeEmptyCollection = data.includeEmptyCollection;
-		let { recordSamplingSettings, fieldInference, documentKinds } = data;
+		let { recordSamplingSettings, fieldInference, documentKinds, pluginConfiguration } = data;
 		const indices = data.collectionData.dataBaseNames;
 		const indexTypes = data.collectionData.collections;
 
@@ -283,7 +279,11 @@ module.exports = {
 							});
 
 							let bucketInfo = Object.assign(
-								getBucketData(jsonSchemas[indexName] || {}, logger),
+								getBucketData(
+									jsonSchemas[indexName] || {},
+									logger,
+									pluginConfiguration.containerLevelConfig,
+								),
 								defaultBucketInfo,
 							);
 							const documents = await getDocuments({ client, indexName, recordSamplingSettings });
@@ -306,7 +306,7 @@ module.exports = {
 								indexName,
 								client,
 								async,
-								_,
+								fieldLevelConfig: pluginConfiguration.fieldLevelConfig,
 							};
 							let types = !documentKind ? [indexName] : indexTypes[indexName] || [];
 							const ignoreDocumentKinds = types.length === 1;
@@ -329,7 +329,7 @@ module.exports = {
 										ignoreDocumentKinds,
 									});
 								})
-								.filter(shouldPackageBeAdded.bind(null, _, includeEmptyCollection));
+								.filter(docPackage => shouldPackageBeAdded(includeEmptyCollection, docPackage));
 
 							return packages;
 						},
@@ -355,7 +355,7 @@ module.exports = {
 	},
 };
 
-const shouldPackageBeAdded = (_, includeEmptyCollection, docPackage) => {
+const shouldPackageBeAdded = (includeEmptyCollection, docPackage) => {
 	if (includeEmptyCollection) {
 		return true;
 	}
@@ -379,7 +379,7 @@ const getIndexTypeData = ({
 	documents,
 	indexName,
 	ignoreDocumentKinds,
-	_,
+	fieldLevelConfig,
 }) => {
 	const documentTemplate = documents.reduce((tpl, doc) => _.merge(tpl, doc), {});
 	let documentsPackage = {
@@ -395,13 +395,13 @@ const getIndexTypeData = ({
 		bucketInfo,
 	};
 
-	const mappingJsonSchema = (jsonSchema || {}).mappings;
+	const mappingJsonSchema = jsonSchema?.mappings;
 	const hasJsonSchema = Boolean(mappingJsonSchema);
 
 	if (hasJsonSchema) {
 		SchemaCreator.ignoreSample = documents.length === 0 || ignoreDocumentKinds;
 		documentsPackage.validation = {
-			jsonSchema: SchemaCreator.getSchema(mappingJsonSchema, documentTemplate),
+			jsonSchema: SchemaCreator.getSchema(mappingJsonSchema, documentTemplate, fieldLevelConfig),
 		};
 	}
 
@@ -483,9 +483,7 @@ const getIndexes = (client, includeSystemCollection) => {
 				}
 			})
 			.reduce((result, indexName) => {
-				return Object.assign({}, result, {
-					[indexName]: data[indexName],
-				});
+				return { ...result, [indexName]: data[indexName] };
 			}, {});
 	});
 };
@@ -584,7 +582,7 @@ function getSchemaMapping(indices, client) {
 		});
 }
 
-function getBucketData(mappingData, logger) {
+function getBucketData(mappingData, logger, containerLevelConfig) {
 	let data = {};
 	if (mappingData.settings) {
 		let settingContainer = mappingData.settings;
@@ -622,7 +620,7 @@ function getBucketData(mappingData, logger) {
 
 		if (settingContainer.analysis) {
 			try {
-				data = { ...data, ...getAnalysisData(settingContainer.analysis) };
+				data = { ...data, ...getAnalysisData(settingContainer.analysis, containerLevelConfig) };
 			} catch (error) {
 				logger.log('error', error, 'Getting analysis data');
 			}

@@ -1,12 +1,12 @@
-const helper = require('../../helper/helper');
+const propertiesHelper = require('../../shared/propertiesHelper');
 const { getAnalyzers } = require('./analyzersMapper');
 const { getFilters } = require('./filtersMapper');
 const { isObjectEmpty } = require('./mapperHelper');
 const { getTokenizers } = require('./tokenizersMapper');
 const { getIndexRefreshInterval } = require('./refreshIntervalMapper');
 
-const getIndexSettings = (indexData, logger) => {
-	const properties = helper.getContainerLevelProperties();
+const getIndexSettings = (indexData, logger, containerLevelConfig) => {
+	const properties = propertiesHelper.getContainerLevelProperties(containerLevelConfig);
 	const indexSettings = properties.reduce((settings, { propertyName, isJson }) => {
 		if (indexData[propertyName]) {
 			try {
@@ -24,7 +24,7 @@ const getIndexSettings = (indexData, logger) => {
 	}
 
 	try {
-		const analysis = getIndexAnalysisSettings(indexData);
+		const analysis = getIndexAnalysisSettings(indexData, containerLevelConfig);
 		if (analysis) {
 			indexSettings.analysis = analysis;
 		}
@@ -35,8 +35,8 @@ const getIndexSettings = (indexData, logger) => {
 	return isObjectEmpty(indexSettings) ? null : indexSettings;
 };
 
-const getIndexAnalysisSettings = indexData => {
-	const analyzer = getAnalyzers(indexData.analyzers);
+const getIndexAnalysisSettings = (indexData, containerLevelConfig) => {
+	const analyzer = getAnalyzers(indexData.analyzers, containerLevelConfig);
 	const tokenizer = getTokenizers(indexData.tokenizers);
 	const filter = getFilters(indexData.filters);
 	const charFilter = getFilters(indexData.characterFilters);

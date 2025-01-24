@@ -19,7 +19,7 @@ const snippets = {
 	'completionObject': require(snippetsPath + 'completionObject.json'),
 };
 
-const helper = require('../helper/helper');
+const helper = require('../shared/propertiesHelper');
 
 module.exports = {
 	indices: [],
@@ -81,7 +81,7 @@ module.exports = {
 		};
 	},
 
-	getSchema(elasticMapping, sample) {
+	getSchema(elasticMapping, sample, fieldLevelConfig) {
 		let schema = this.getSchemaTemplate();
 		sample = sample || {};
 
@@ -90,6 +90,7 @@ module.exports = {
 			elasticMapping.properties,
 			sample._source,
 			elasticMapping.properties,
+			fieldLevelConfig,
 		);
 
 		if (elasticMapping.dynamic) {
@@ -99,7 +100,7 @@ module.exports = {
 		return schema;
 	},
 
-	getFields(properties, sample, mapping) {
+	getFields(properties, sample, mapping, fieldLevelConfig) {
 		let schema = {};
 
 		for (let fieldName in properties) {
@@ -109,13 +110,13 @@ module.exports = {
 				continue;
 			}
 
-			schema[fieldName] = this.getField(properties[fieldName], currentSample, mapping);
+			schema[fieldName] = this.getField(properties[fieldName], currentSample, mapping, fieldLevelConfig);
 		}
 
 		return schema;
 	},
 
-	getField(fieldData, sample, mapping) {
+	getField(fieldData, sample, mapping, fieldLevelConfig) {
 		let schema = {};
 
 		if (!fieldData) {
@@ -132,6 +133,7 @@ module.exports = {
 				fieldData.properties,
 				isArrayType && Array.isArray(sample) ? sample[0] : sample,
 				mapping,
+				fieldLevelConfig,
 			);
 
 			if (isArrayType) {
@@ -165,7 +167,7 @@ module.exports = {
 			schema = this.handleCompletionSnippet(schema);
 		}
 
-		schema = this.setProperties(schema, fieldData);
+		schema = this.setProperties(schema, fieldData, fieldLevelConfig);
 
 		return schema;
 	},
@@ -253,12 +255,10 @@ module.exports = {
 							type: scalar,
 						};
 					}
+				} else if (hasProperties) {
+					return { type: 'object' };
 				} else {
-					if (hasProperties) {
-						return { type: 'object' };
-					} else {
-						return {};
-					}
+					return {};
 				}
 		}
 	},
@@ -275,16 +275,14 @@ module.exports = {
 
 		if (isFloat) {
 			return 'float';
+		} else if (value > -(byte + 1) && value < byte) {
+			return 'byte';
+		} else if (value > -(short + 1) && value < short) {
+			return 'short';
+		} else if (value > -(int + 1) && value < int) {
+			return 'integer';
 		} else {
-			if (value > -(byte + 1) && value < byte) {
-				return 'byte';
-			} else if (value > -(short + 1) && value < short) {
-				return 'short';
-			} else if (value > -(int + 1) && value < int) {
-				return 'integer';
-			} else {
-				return 'long';
-			}
+			return 'long';
 		}
 	},
 
@@ -377,17 +375,13 @@ module.exports = {
 	},
 
 	handleCompletionSnippet(schema) {
-		return Object.assign(
-			{},
-			this.handleSnippet(
-				Object.assign({}, schema, {
-					subType: schema.subType === 'array' ? 'completionArray' : 'completionObject',
-				}),
-			),
-			{
-				subType: schema.subType,
-			},
-		);
+		return {
+			...this.handleSnippet({
+				...schema,
+				subType: schema.subType === 'array' ? 'completionArray' : 'completionObject',
+			}),
+			subType: schema.subType,
+		};
 	},
 
 	handleSnippet(schema) {
@@ -437,10 +431,15 @@ module.exports = {
 		return schema;
 	},
 
-	setProperties(schema, fieldData) {
-		const properties = helper.getFieldProperties(schema.type, Object.assign({ mode: fieldData.type }, fieldData), {
-			'stringfields': 'fields',
-		});
+	setProperties(schema, fieldData, fieldLevelConfig) {
+		const properties = helper.getFieldProperties(
+			schema.type,
+			{ mode: fieldData.type, ...fieldData },
+			{
+				'stringfields': 'fields',
+			},
+			fieldLevelConfig,
+		);
 
 		for (let propName in properties) {
 			if (propName === 'fields') {
@@ -460,11 +459,9 @@ module.exports = {
 	getCopyToPath(copyToValue, mapping) {
 		const copyTo = Array.isArray(copyToValue) ? copyToValue : [copyToValue];
 
-		const result = copyTo.reduce((result, propertyName) => {
+		return copyTo.reduce((result, propertyName) => {
 			return [...result, ...findPropertiesInMapping(propertyName, mapping, ['_source'])];
 		}, []);
-
-		return result;
 	},
 };
 

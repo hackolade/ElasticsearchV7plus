@@ -1,5 +1,5 @@
 const getIndexRefreshInterval = ({ indexData }) => {
-	if (!indexData || !indexData.refresh_interval) {
+	if (!indexData?.refresh_interval) {
 		return null;
 	}
 	if (indexData.refresh_interval < 0) {
