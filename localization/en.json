@@ -145,5 +145,20 @@
 	"MODAL_WINDOW___FE_SCRIPT_OPTION_UPDATE": "CURL Script",
 	"MODAL_WINDOW___FE_SCRIPT_OPTION_CREATE": "Kibana Script",
 	"MODAL_WINDOW___SELECTION_DOCUMENT_KIND_REVERSE_ENGINEERING_TITLE": "Select Document Type field",
-	"MODAL_WINDOW___SELECTION_DOCUMENT_KIND_REVERSE_ENGINEERING": "No document type separation"
+	"MODAL_WINDOW___SELECTION_DOCUMENT_KIND_REVERSE_ENGINEERING": "No document type separation",
+
+	"MAIN_MENU___ATTRIBUTES": "Attribute in Type Boxes",
+	"MAIN_MENU___DESCRIPTIONS": "Description in Type Boxes",
+	"MAIN_MENU___HIDE_ALL_ATTRIBUTES": "Empty Type Boxes",
+	"MAIN_MENU___REQUIRED_ATTRIBUTES": "Required Attributes",
+	"MAIN_MENU___NULLABLE_ATTRIBUTES": "Nullable Attributes",
+	"TOOLBAR___ATTRIBUTES": "Attribute in type boxes",
+	"TOOLBAR___DESCRIPTIONS": "Description in type boxes",
+	"TOOLBAR___HIDE_ALL_ATTRIBUTES": "Empty type boxes",
+	"TOOLBAR___REQUIRED_ATTRIBUTES": "Required attributes",
+	"TOOLBAR___NULLABLE_ATTRIBUTES": "Nullable attributes",
+	"MODAL_WINDOW___OPTIONS_DISPLAY_ERD_V_ENTITY_BOX_CONTENT": "Display of type box content",
+	"MODAL_WINDOW___OPTIONS_DISPLAY_ERD_V_FIELDS": "Attributes",
+	"MODAL_WINDOW___OPTIONS_DISPLAY_REQUIRED_ATTRIBUTES": "Required attributes",
+	"MODAL_WINDOW___OPTIONS_DISPLAY_NULLABLE_ATTRIBUTES": "Nullable attributes"
 }
