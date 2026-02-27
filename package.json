@@ -18,7 +18,8 @@
         "features": {
             "disableMultipleTypes": true,
             "enableReverseEngineering": true,
-            "enableForwardEngineering": true
+            "enableForwardEngineering": true,
+            "restrictNestedFieldsAsPrimaryKey": false
         }
     },
     "description": "Hackolade plugin for Elasticsearch v7 and above",
