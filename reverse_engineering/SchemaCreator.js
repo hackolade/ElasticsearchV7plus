@@ -55,21 +55,25 @@ module.exports = {
 					index: this.indices,
 					type: this.types,
 				})
-				.then(resolve)
+				.then(({ body }) => resolve(body))
 				.catch(reject);
 		});
 	},
 
 	getSettings(client) {
-		return client.indices.getSettings({
-			index: this.indices,
-		});
+		return client.indices
+			.getSettings({
+				index: this.indices,
+			})
+			.then(({ body }) => body);
 	},
 
 	getAliases(client) {
-		return client.indices.getAlias({
-			index: this.indices,
-		});
+		return client.indices
+			.getAlias({
+				index: this.indices,
+			})
+			.then(({ body }) => body);
 	},
 
 	getSchemaTemplate() {

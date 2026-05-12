@@ -26,7 +26,6 @@
     "dependencies": {
         "@elastic/elasticsearch": "7.17.0",
         "async": "3.2.6",
-        "elasticsearch": "16.7.3",
         "lodash": "4.18.1"
     },
     "simple-git-hooks": {
