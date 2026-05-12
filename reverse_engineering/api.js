@@ -5,6 +5,7 @@ const SchemaCreator = require('./SchemaCreator');
 const inferSchemaService = require('./helpers/inferSchemaService');
 const { getAnalysisData } = require('./helpers/analysisSettingsHelper');
 const { getIndexRefreshInterval } = require('./helpers/refreshIntervalMapper');
+const { ConnectionType } = require('../enums/connectionTypeEnum');
 const versions = require('../package.json').contributes.target.versions;
 
 let _connectionInfo = null;
@@ -468,7 +469,10 @@ function getInfoSocket() {
 	if (!_connectionInfo) {
 		return { host: '', port: '' };
 	}
-	if (_connectionInfo.connectionType === 'Replica set or Sharded cluster' && _connectionInfo.hosts?.length) {
+	if (
+		_connectionInfo.connectionType === ConnectionType.REPLICA_SET_OR_SHARDED_CLUSTER &&
+		_connectionInfo.hosts?.length
+	) {
 		return {
 			host: _connectionInfo.hosts[0].host,
 			port: _connectionInfo.hosts[0].port,
