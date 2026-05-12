@@ -24,9 +24,8 @@
     },
     "description": "Hackolade plugin for Elasticsearch v7 and above",
     "dependencies": {
-        "@elastic/elasticsearch": "7.17.0",
+        "@elastic/elasticsearch": "7.17.14",
         "async": "3.2.6",
-        "elasticsearch": "16.7.3",
         "lodash": "4.18.1"
     },
     "simple-git-hooks": {

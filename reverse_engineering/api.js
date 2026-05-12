@@ -1,14 +1,14 @@
 const _ = require('lodash');
-const fs = require('fs');
 const async = require('async');
-const elasticsearch = require('elasticsearch');
+const { ElasticSearchClientFactory } = require('../shared/elasticsearchClientFactory');
 const SchemaCreator = require('./SchemaCreator');
 const inferSchemaService = require('./helpers/inferSchemaService');
 const { getAnalysisData } = require('./helpers/analysisSettingsHelper');
 const { getIndexRefreshInterval } = require('./helpers/refreshIntervalMapper');
+const { ConnectionType } = require('../enums/connectionTypeEnum');
 const versions = require('../package.json').contributes.target.versions;
 
-let connectionParams = {};
+let _connectionInfo = null;
 
 let _client = null;
 
@@ -17,51 +17,17 @@ module.exports = {
 		logger.clear();
 		logger.log('info', connectionInfo, 'Connection information', connectionInfo.hiddenKeys);
 
-		let authString = '';
-
 		if (_client !== null) {
 			return cb(null, _client);
 		}
 
-		if (connectionInfo.username) {
-			authString = connectionInfo.username;
+		try {
+			_connectionInfo = connectionInfo;
+			_client = ElasticSearchClientFactory.getByConnectionInfo(connectionInfo);
+			cb(null, _client);
+		} catch (err) {
+			cb(err);
 		}
-
-		if (connectionInfo.password) {
-			authString += ':' + connectionInfo.password;
-		}
-
-		if (connectionInfo.connectionType === 'Direct connection') {
-			connectionParams.host = {
-				protocol: connectionInfo.protocol,
-				host: connectionInfo.host,
-				port: connectionInfo.port,
-				path: connectionInfo.path,
-				auth: authString,
-			};
-		} else if (connectionInfo.connectionType === 'Replica set or Sharded cluster') {
-			connectionParams.hosts = connectionInfo.hosts.map(socket => {
-				return {
-					host: socket.host,
-					port: socket.port,
-					protocol: connectionInfo.protocol,
-					auth: authString,
-				};
-			});
-		} else {
-			cb('Invalid connection parameters');
-		}
-
-		if (connectionInfo.is_ssl) {
-			connectionParams.ssl = {
-				ca: fs.readFileSync(connectionInfo.ca),
-				rejectUnauthorized: connectionInfo.rejectUnauthorized,
-			};
-		}
-
-		_client = new elasticsearch.Client(connectionParams);
-
-		cb(null, _client);
 	},
 
 	disconnect: function (connectionInfo, logger, cb) {
@@ -69,27 +35,23 @@ module.exports = {
 			_client.close();
 			_client = null;
 		}
-		connectionParams = {};
+		_connectionInfo = null;
 		cb();
 	},
 
 	testConnection: function (connectionInfo, logger, cb) {
-		this.connect(connectionInfo, logger, (err, connection) => {
+		this.connect(connectionInfo, logger, async (err, connection) => {
 			if (err) {
-				cb(err);
-			} else {
-				connection.ping(
-					{
-						requestTimeout: 5000,
-					},
-					(error, success) => {
-						this.disconnect(connectionInfo, logger, () => {});
-						if (error) {
-							logger.log('error', error, 'Test connection', connectionInfo.hiddenKeys);
-						}
-						cb(!success);
-					},
-				);
+				return cb(err);
+			}
+			try {
+				await connection.ping(undefined, { requestTimeout: 5000 });
+				this.disconnect(connectionInfo, logger, () => {});
+				cb(null);
+			} catch (error) {
+				logger.log('error', error, 'Test connection', connectionInfo.hiddenKeys);
+				this.disconnect(connectionInfo, logger, () => {});
+				cb(error);
 			}
 		});
 	},
@@ -224,7 +186,7 @@ module.exports = {
 					logger.progress({ message: 'Connected to database', containerName: '', entityName: '' });
 
 					client.info().then(
-						info => {
+						({ body: info }) => {
 							const socket = getInfoSocket();
 							const modelName = info.name;
 							const version = getVersion(info.version.number, versions);
@@ -412,38 +374,15 @@ const getIndexTypeData = ({
 	return documentsPackage;
 };
 
-const getCount = (client, indexName) =>
-	new Promise((resolve, reject) => {
-		client.count(
-			{
-				index: indexName,
-			},
-			(err, response) => {
-				if (err) {
-					reject(err);
-				} else {
-					resolve(response.count);
-				}
-			},
-		);
-	});
+const getCount = async (client, indexName) => {
+	const { body } = await client.count({ index: indexName });
+	return body.count;
+};
 
-const search = (client, indexName, size) =>
-	new Promise((resolve, reject) => {
-		client.search(
-			{
-				index: indexName,
-				size,
-			},
-			(err, data) => {
-				if (err) {
-					reject(err);
-				} else {
-					resolve(data);
-				}
-			},
-		);
-	});
+const search = async (client, indexName, size) => {
+	const { body } = await client.search({ index: indexName, size });
+	return body;
+};
 
 const getSampleDocSize = (count, recordSamplingSettings) => {
 	if (recordSamplingSettings.active === 'absolute') {
@@ -473,7 +412,7 @@ const isSystemIndex = indexName => {
 };
 
 const getIndexes = (client, includeSystemCollection) => {
-	return client.indices.getMapping().then(data => {
+	return client.indices.getMapping().then(({ body: data }) => {
 		return Object.keys(data)
 			.filter(indexName => {
 				if (!includeSystemCollection && isSystemIndex(indexName)) {
@@ -527,22 +466,22 @@ function getVersion(version, versions) {
 }
 
 function getInfoSocket() {
-	if (connectionParams.host) {
+	if (!_connectionInfo) {
+		return { host: '', port: '' };
+	}
+	if (
+		_connectionInfo.connectionType === ConnectionType.REPLICA_SET_OR_SHARDED_CLUSTER &&
+		_connectionInfo.hosts?.length
+	) {
 		return {
-			host: connectionParams.host.host,
-			port: connectionParams.host.port,
-		};
-	} else if (connectionParams.hosts) {
-		return {
-			host: connectionParams.hosts[0].host,
-			port: connectionParams.hosts[0].port,
-		};
-	} else {
-		return {
-			host: '',
-			port: '',
+			host: _connectionInfo.hosts[0].host,
+			port: _connectionInfo.hosts[0].port,
 		};
 	}
+	return {
+		host: _connectionInfo.host,
+		port: _connectionInfo.port,
+	};
 }
 
 function getSchemaMapping(indices, client) {
