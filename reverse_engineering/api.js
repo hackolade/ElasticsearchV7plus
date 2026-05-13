@@ -597,7 +597,7 @@ function getBucketData(mappingData, logger, containerLevelConfig) {
 }
 
 function getMappingRoutingFromApi({ mappings } = {}) {
-	if (!mappings || !mappings._routing) {
+	if (!mappings?._routing) {
 		return null;
 	}
 
