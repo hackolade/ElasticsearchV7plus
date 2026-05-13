@@ -162,6 +162,29 @@ making sure that you maintain a proper JSON format.
 		],
 		"structure": [
 			{
+				"propertyName": "Mapping metadata",
+				"propertyType": "empty"
+			},
+			{
+				"propertyName": "Routing",
+				"propertyType": "block",
+				"propertyKeyword": "mappingRouting",
+				"propertyTooltip": "Mapping routing metadata",
+				"structure": [
+					{
+						"propertyName": "Required",
+						"propertyKeyword": "required",
+						"propertyType": "select",
+						"allowEmtyValue": true,
+						"options": ["", "true", "false"]
+					}
+				]
+			},
+			{
+				"propertyName": "Index settings",
+				"propertyType": "empty"
+			},
+			{
 				"propertyName": "Number of shards",
 				"propertyKeyword": "number_of_shards",
 				"propertyTooltip": "The number of shards that an index should have.",
@@ -281,7 +304,7 @@ making sure that you maintain a proper JSON format.
 				"isTargetProperty": true
 			},
 			{
-				"propertyName": "Routing",
+				"propertyName": "Index routing",
 				"propertyKeyword": "routing",
 				"propertyType": "details",
 				"template": "textAreaJson",

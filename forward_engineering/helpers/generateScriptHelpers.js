@@ -258,6 +258,17 @@ const getMappingScript = (indexData, typeSchema, logger, containerLevelConfig) =
 
 	mappingScript.mappings = typeSchema;
 
+	const mappingRouting = getMappingRouting(indexData);
+	if (mappingRouting) {
+		mappingScript = {
+			...mappingScript,
+			mappings: {
+				_routing: mappingRouting,
+				...mappingScript.mappings,
+			},
+		};
+	}
+
 	return mappingScript;
 };
 
@@ -330,6 +341,31 @@ const mergeSchemas = (schemaA, schemaB) => {
 	});
 
 	return result;
+};
+
+const getMappingRouting = indexData => {
+	if (!indexData.mappingRouting) {
+		return null;
+	}
+
+	const required = getBooleanValue(indexData.mappingRouting.required);
+	if (required === null) {
+		return null;
+	}
+
+	return {
+		required,
+	};
+};
+
+const getBooleanValue = value => {
+	if (value === 'true') {
+		return true;
+	}
+	if (value === 'false') {
+		return false;
+	}
+	return null;
 };
 
 module.exports = {
