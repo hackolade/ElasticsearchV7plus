@@ -588,7 +588,27 @@ function getBucketData(mappingData, logger, containerLevelConfig) {
 		data.aliases = aliases;
 	}
 
+	const mappingRouting = getMappingRoutingFromApi({ mappings: mappingData.mappings });
+	if (mappingRouting) {
+		data.mappingRouting = mappingRouting;
+	}
+
 	return data;
+}
+
+function getMappingRoutingFromApi({ mappings } = {}) {
+	if (!mappings?._routing) {
+		return null;
+	}
+
+	const required = mappings._routing.required;
+	if (typeof required !== 'boolean') {
+		return null;
+	}
+
+	return {
+		required: String(required),
+	};
 }
 
 function groupDocumentsByType(type, documents) {
