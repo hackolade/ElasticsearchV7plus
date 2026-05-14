@@ -410,6 +410,151 @@ making sure that you maintain a proper JSON format.
 				"isTargetProperty": true
 			},
 			{
+				"propertyName": "Slowlog",
+				"propertyKeyword": "slowlog",
+				"propertyType": "block",
+				"propertyTooltip": "Slow logs help track slow queries and indexing operations against the index. See index.search.slowlog.* and index.indexing.slowlog.* settings.",
+				"structure": [
+					{
+						"propertyName": "Search",
+						"propertyKeyword": "search",
+						"propertyType": "block",
+						"propertyTooltip": "Search slowlog settings: log slow search operations (query and fetch phases).",
+						"structure": [
+							{
+								"propertyName": "Include user",
+								"propertyKeyword": "include_user",
+								"propertyType": "checkbox",
+								"propertyTooltip": "If true, the user that triggered the request is included in the slowlog (index.search.slowlog.include.user)."
+							},
+							{
+								"propertyName": "Query",
+								"propertyKeyword": "query",
+								"propertyType": "group",
+								"propertyTooltip": "Slowlog settings for the query phase of a search.",
+								"structure": [
+									{
+										"propertyName": "Level",
+										"propertyKeyword": "level",
+										"propertyType": "select",
+										"allowEmtyValue": true,
+										"options": ["", "warn", "info", "debug", "trace"],
+										"propertyTooltip": "Logging level for the query slowlog."
+									},
+									{
+										"propertyName": "Threshold",
+										"propertyKeyword": "threshold",
+										"propertyType": "numeric",
+										"valueType": "integer",
+										"allowNegative": false,
+										"propertyTooltip": "Threshold value above which a query is logged."
+									},
+									{
+										"propertyName": "Threshold unit",
+										"propertyKeyword": "threshold_unit",
+										"propertyType": "select",
+										"allowEmtyValue": true,
+										"options": ["", "d", "h", "m", "s", "ms", "micros", "nanos"],
+										"propertyTooltip": "Time unit for the threshold."
+									}
+								]
+							},
+							{
+								"propertyName": "Fetch",
+								"propertyKeyword": "fetch",
+								"propertyType": "group",
+								"propertyTooltip": "Slowlog settings for the fetch phase of a search.",
+								"structure": [
+									{
+										"propertyName": "Level",
+										"propertyKeyword": "level",
+										"propertyType": "select",
+										"allowEmtyValue": true,
+										"options": ["", "warn", "info", "debug", "trace"],
+										"propertyTooltip": "Logging level for the fetch slowlog."
+									},
+									{
+										"propertyName": "Threshold",
+										"propertyKeyword": "threshold",
+										"propertyType": "numeric",
+										"valueType": "integer",
+										"allowNegative": false,
+										"propertyTooltip": "Threshold value above which a fetch is logged."
+									},
+									{
+										"propertyName": "Threshold unit",
+										"propertyKeyword": "threshold_unit",
+										"propertyType": "select",
+										"allowEmtyValue": true,
+										"options": ["", "d", "h", "m", "s", "ms", "micros", "nanos"],
+										"propertyTooltip": "Time unit for the threshold."
+									}
+								]
+							}
+						]
+					},
+					{
+						"propertyName": "Indexing",
+						"propertyKeyword": "indexing",
+						"propertyType": "block",
+						"propertyTooltip": "Indexing slowlog settings: log slow indexing operations.",
+						"structure": [
+							{
+								"propertyName": "Include user",
+								"propertyKeyword": "include_user",
+								"propertyType": "checkbox",
+								"propertyTooltip": "If true, the user that triggered the request is included in the slowlog (index.indexing.slowlog.include.user)."
+							},
+							{
+								"propertyName": "Source",
+								"propertyKeyword": "source",
+								"propertyType": "text",
+								"propertyTooltip": "Maximum number of characters of _source to include in the slowlog. Set to true to log the entire source, or false / 0 to skip logging the source."
+							},
+							{
+								"propertyName": "Reformat",
+								"propertyKeyword": "reformat",
+								"propertyType": "checkbox",
+								"defaultValue": true,
+								"propertyTooltip": "If true (default), source is reformatted to log on a single line. Set to false to log the source as-is, with embedded line breaks."
+							},
+							{
+								"propertyName": "Index",
+								"propertyKeyword": "index",
+								"propertyType": "group",
+								"propertyTooltip": "Slowlog thresholds for indexing operations.",
+								"structure": [
+									{
+										"propertyName": "Level",
+										"propertyKeyword": "level",
+										"propertyType": "select",
+										"allowEmtyValue": true,
+										"options": ["", "warn", "info", "debug", "trace"],
+										"propertyTooltip": "Logging level for the indexing slowlog."
+									},
+									{
+										"propertyName": "Threshold",
+										"propertyKeyword": "threshold",
+										"propertyType": "numeric",
+										"valueType": "integer",
+										"allowNegative": false,
+										"propertyTooltip": "Threshold value above which an indexing operation is logged."
+									},
+									{
+										"propertyName": "Threshold unit",
+										"propertyKeyword": "threshold_unit",
+										"propertyType": "select",
+										"allowEmtyValue": true,
+										"options": ["", "d", "h", "m", "s", "ms", "micros", "nanos"],
+										"propertyTooltip": "Time unit for the threshold."
+									}
+								]
+							}
+						]
+					}
+				]
+			},
+			{
 				"propertyName": "Aliases",
 				"propertyType": "group",
 				"propertyKeyword": "aliases",
