@@ -4,6 +4,7 @@ const { getFilters } = require('./filtersMapper');
 const { isObjectEmpty } = require('./mapperHelper');
 const { getTokenizers } = require('./tokenizersMapper');
 const { getIndexRefreshInterval } = require('./refreshIntervalMapper');
+const { getSlowlogSettings } = require('./slowlogMapper');
 
 const getIndexSettings = (indexData, logger, containerLevelConfig) => {
 	const properties = propertiesHelper.getContainerLevelProperties(containerLevelConfig);
@@ -32,7 +33,12 @@ const getIndexSettings = (indexData, logger, containerLevelConfig) => {
 		logger.log('error', error, 'Getting analysis settings');
 	}
 
-	return isObjectEmpty(indexSettings) ? null : indexSettings;
+	const mergedIndexSettings = {
+		...indexSettings,
+		...getSlowlogSettings({ indexData }),
+	};
+
+	return isObjectEmpty(mergedIndexSettings) ? null : mergedIndexSettings;
 };
 
 const getIndexAnalysisSettings = (indexData, containerLevelConfig) => {
