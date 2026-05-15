@@ -1,6 +1,6 @@
 {
     "name": "ElasticsearchV7plus",
-    "version": "0.2.7",
+    "version": "0.2.8",
     "author": "hackolade",
     "engines": {
         "hackolade": "4.3.1",
