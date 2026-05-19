@@ -13,7 +13,6 @@ const generateScript = (data, logger, cb, app) => {
 		jsonSchema,
 		modelData,
 		entityData,
-		isUpdateScript,
 		jsonData,
 		pluginConfiguration,
 		containerData = {},
@@ -32,8 +31,9 @@ const generateScript = (data, logger, cb, app) => {
 	let typeSchema = getTypeSchema(entityData, fieldsSchema);
 	let mappingScript = getMappingScript(containerData, typeSchema, logger, pluginConfiguration.containerLevelConfig);
 
+	const scriptFormat = data.options?.targetScriptOptions?.keyword;
 	let script = '';
-	if (isUpdateScript) {
+	if (scriptFormat === 'curlScript') {
 		script = getCurlScript(mappingScript, modelData, containerData);
 	} else {
 		script = getKibanaScript(mappingScript, containerData);

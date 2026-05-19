@@ -11,7 +11,7 @@ const {
 
 const generateContainerScript = (data, logger, cb, app) => {
 	try {
-		const { containerData, isUpdateScript, jsonData, pluginConfiguration } = data;
+		const { containerData, jsonData, pluginConfiguration } = data;
 
 		const modelData = (data.modelData || [])[0] || '';
 		const indexData = (containerData || [])[0] || '';
@@ -41,8 +41,9 @@ const generateContainerScript = (data, logger, cb, app) => {
 			pluginConfiguration.containerLevelConfig,
 		);
 
+		const scriptFormat = data.options?.targetScriptOptions?.keyword;
 		let script = '';
-		if (isUpdateScript) {
+		if (scriptFormat === 'curlScript') {
 			script = getCurlScript(mappingScript, modelData, indexData);
 		} else {
 			script = getKibanaScript(mappingScript, indexData);

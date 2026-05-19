@@ -2,11 +2,34 @@
 	"extension": "txt",
 	"filterName": "Plain text",
 	"namePrefix": "Elasticsearch Mapping",
-	"hasUpdateScript": true,
 	"level": {
 		"entity": true,
 		"container": true
 	},
+	"options": [
+		{
+			"name": "Kibana Script",
+			"keyword": "kibanaScript",
+			"supportsDeltaModel": true,
+			"fileExtensions": [
+				{
+					"label": "application/txt",
+					"value": "txt"
+				}
+			]
+		},
+		{
+			"name": "CURL Script",
+			"keyword": "curlScript",
+			"supportsDeltaModel": true,
+			"fileExtensions": [
+				{
+					"label": "application/txt",
+					"value": "txt"
+				}
+			]
+		}
+	],
 	"resolvedDefinitions": true,
 	"applyToInstanceSettings": {
 		"generateSamplesInBulk": true
