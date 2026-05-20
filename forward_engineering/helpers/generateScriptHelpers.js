@@ -207,13 +207,27 @@ const getCurlScript = (mapping, modelData, indexData) => {
 	const port = modelData.port || 9200;
 	const indexName = indexData.name || '';
 
-	return `curl -XPUT '${host}:${port}/${indexName.toLowerCase()}?pretty' -H 'Content-Type: application/json' -d '\n${JSON.stringify(mapping, null, 4)}\n'`;
+	return `curl -X PUT '${host}:${port}/${indexName.toLowerCase()}?pretty' -H 'Content-Type: application/json' -d '\n${JSON.stringify(mapping, null, 4)}\n'`;
+};
+
+const getCurlUpdateScript = (mapping, modelData, indexData) => {
+	const host = modelData.host || 'localhost';
+	const port = modelData.port || 9200;
+	const indexName = indexData.name || '';
+
+	return `curl -X PUT '${host}:${port}/${indexName.toLowerCase()}/_mapping' -H 'Content-Type: application/json' -d '\n${JSON.stringify(mapping, null, 4)}\n'`;
 };
 
 const getKibanaScript = (mapping, indexData) => {
 	const indexName = indexData.name || '';
 
 	return `PUT /${indexName.toLowerCase()}\n${JSON.stringify(mapping, null, 4)}`;
+};
+
+const getKibanaUpdateScript = (mapping, indexData) => {
+	const indexName = indexData.name || '';
+
+	return `PUT /${indexName.toLowerCase()}/_mapping\n${JSON.stringify(mapping, null, 4)}`;
 };
 
 const getFieldsSchema = data => {
@@ -272,7 +286,7 @@ const getMappingScript = (indexData, typeSchema, logger, containerLevelConfig) =
 	return mappingScript;
 };
 
-const getSampleGenerationOptions = (app, data) => {
+const getSampleGenerationOptions = data => {
 	const insertSamplesOption =
 		_.get(data, 'options.additionalOptions', []).find(option => option.id === 'INCLUDE_SAMPLES') || {};
 	const isSampleGenerationRequired = Boolean(insertSamplesOption?.value);
@@ -370,7 +384,9 @@ const getBooleanValue = value => {
 
 module.exports = {
 	getCurlScript,
+	getCurlUpdateScript,
 	getKibanaScript,
+	getKibanaUpdateScript,
 	getFieldsSchema,
 	getTypeSchema,
 	getMappingScript,
@@ -378,4 +394,5 @@ module.exports = {
 	getScriptAndSampleResponse,
 	getIndexProperties,
 	mergeSchemas,
+	getSchemaByItem,
 };

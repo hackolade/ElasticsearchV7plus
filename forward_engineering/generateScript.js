@@ -1,3 +1,4 @@
+const { generateAlterScript } = require('./alterScript/alterScriptBuilder');
 const {
 	getSampleGenerationOptions,
 	getScriptAndSampleResponse,
@@ -8,7 +9,11 @@ const {
 	getKibanaScript,
 } = require('./helpers/generateScriptHelpers');
 
-const generateScript = (data, logger, cb, app) => {
+const generateScript = (data, logger, cb) => {
+	if (data.isUpdateScript) {
+		return generateAlterScript(data, cb, logger);
+	}
+
 	const {
 		jsonSchema,
 		modelData,
@@ -39,7 +44,7 @@ const generateScript = (data, logger, cb, app) => {
 		script = getKibanaScript(mappingScript, containerData);
 	}
 
-	const sampleGenerationOptions = getSampleGenerationOptions(app, data);
+	const sampleGenerationOptions = getSampleGenerationOptions(data);
 	if (!sampleGenerationOptions.isSampleGenerationRequired) {
 		return cb(null, script);
 	}

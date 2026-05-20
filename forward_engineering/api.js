@@ -24,7 +24,7 @@ module.exports = {
 
 	generateContainerScript,
 
-	async applyToInstance(data, logger, cb, app) {
+	async applyToInstance(data, logger, cb) {
 		try {
 			const client = ElasticSearchClientFactory.getByConnectionInfo(data);
 			const elasticSearchService = new ElasticSearchService(client);
@@ -47,7 +47,7 @@ module.exports = {
 		}
 	},
 
-	async testConnection(data, logger, cb, app) {
+	async testConnection(data, logger, cb) {
 		try {
 			const client = ElasticSearchClientFactory.getByConnectionInfo(data);
 			const elasticSearchService = new ElasticSearchService(client);

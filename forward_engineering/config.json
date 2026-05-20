@@ -6,6 +6,10 @@
 		"entity": true,
 		"container": true
 	},
+	"compMode": {
+		"entity": true,
+		"container": true
+	},
 	"options": [
 		{
 			"name": "Kibana Script",
