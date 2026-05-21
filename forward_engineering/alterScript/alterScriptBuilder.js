@@ -12,6 +12,71 @@ const {
 	getScriptAndSampleResponse,
 } = require('../helpers/generateScriptHelpers');
 
+const SUPPORTED_MAPPING_PARAMETERS = [
+	'coerce',
+	'fielddata',
+	'fields',
+	'ignore_above',
+	'ignore_malformed',
+	'meta',
+	'norms',
+	'search_analyzer',
+];
+
+const ALWAYS_KEEP_PROPERTY_KEYS = ['type', 'mode'];
+
+const filterPropertyNodeForAlter = ({ newProperty = {}, oldProperty = {} } = {}) => {
+	const filteredProperty = {};
+
+	for (const parameter of SUPPORTED_MAPPING_PARAMETERS) {
+		const newParameterValue = newProperty[parameter];
+
+		if (newParameterValue !== undefined && !_.isEqual(newParameterValue, oldProperty[parameter])) {
+			filteredProperty[parameter] = newParameterValue;
+			if (parameter === 'search_analyzer') {
+				filteredProperty.analyzer = oldProperty.analyzer || newProperty.analyzer;
+			}
+		}
+	}
+
+	if (newProperty.properties) {
+		const filteredNestedProperties = filterPropertiesForAlter({
+			newProperties: newProperty.properties,
+			oldProperties: oldProperty.properties,
+		});
+
+		if (!_.isEmpty(filteredNestedProperties)) {
+			filteredProperty.properties = filteredNestedProperties;
+		}
+	}
+
+	if (_.isEmpty(filteredProperty)) {
+		return {};
+	}
+
+	for (const key of ALWAYS_KEEP_PROPERTY_KEYS) {
+		if (newProperty[key] !== undefined) {
+			filteredProperty[key] = newProperty[key];
+		}
+	}
+
+	return filteredProperty;
+};
+
+const filterPropertiesForAlter = ({ newProperties = {}, oldProperties = {} } = {}) =>
+	Object.entries(newProperties).reduce((result, [propertyName, newProperty]) => {
+		const filteredProperty = filterPropertyNodeForAlter({
+			newProperty,
+			oldProperty: oldProperties[propertyName],
+		});
+
+		if (!_.isEmpty(filteredProperty)) {
+			result[propertyName] = filteredProperty;
+		}
+
+		return result;
+	}, {});
+
 const getItems = data => [data?.items].flat().filter(Boolean);
 
 const getItemProperties = data => getItems(data).map(item => Object.values(item.properties)[0]);
@@ -54,12 +119,17 @@ const generateAlterScript = (data, callback, logger) => {
 
 	const addedContainers = getContainers(containersData?.added);
 	const addedEntities = getItemProperties(entitiesData?.added);
+	const modifiedEntities = getItemProperties(entitiesData?.modified);
 
-	const addedEntitiesScriptDataByContainer = addedEntities.reduce((result, entity) => {
-		const properties = entity.properties?._source?.properties;
+	const scriptDataItemsByContainer = {};
 
-		if (_.isEmpty(properties)) {
-			return result;
+	modifiedEntities.forEach(entity => {
+		const newProperties = entity.properties._source.properties;
+		const oldProperties = entity.role.properties._source.properties;
+		const filteredProperties = filterPropertiesForAlter({ newProperties, oldProperties });
+
+		if (_.isEmpty(filteredProperties)) {
+			return;
 		}
 
 		const schemaData = {
@@ -71,21 +141,45 @@ const generateAlterScript = (data, callback, logger) => {
 
 		const containerName = entity.role.compMod.bucketProperties.name;
 
-		if (!result[containerName]) {
-			result[containerName] = [];
+		if (!scriptDataItemsByContainer[containerName]) {
+			scriptDataItemsByContainer[containerName] = [];
 		}
 
-		result[containerName].push({
+		scriptDataItemsByContainer[containerName].push({
+			fieldsSchema: getSchemaByItem(filteredProperties, schemaData, fieldLevelConfig),
+			entityData: entity.role,
+		});
+	});
+
+	addedEntities.forEach((result, entity) => {
+		const properties = entity.properties?._source?.properties;
+
+		if (_.isEmpty(properties)) {
+			return;
+		}
+
+		const schemaData = {
+			jsonSchema: entity.role,
+			modelData,
+			fieldLevelConfig,
+			...definitions,
+		};
+
+		const containerName = entity.role.compMod.bucketProperties.name;
+
+		if (!scriptDataItemsByContainer[containerName]) {
+			scriptDataItemsByContainer[containerName] = [];
+		}
+
+		scriptDataItemsByContainer[containerName].push({
 			fieldsSchema: getSchemaByItem(properties, schemaData, fieldLevelConfig),
 			entityData: entity.role,
 		});
+	});
 
-		return result;
-	}, {});
-
-	const resultScript = Object.entries(addedEntitiesScriptDataByContainer)
-		.map(([containerName, addedEntitiesScriptData]) => {
-			const properties = addedEntitiesScriptData.reduce(
+	const resultScript = Object.entries(scriptDataItemsByContainer)
+		.map(([containerName, scriptDataItems]) => {
+			const properties = scriptDataItems.reduce(
 				(resultSchema, { fieldsSchema }) => mergeSchemas(resultSchema, fieldsSchema),
 				{},
 			);
@@ -93,7 +187,7 @@ const generateAlterScript = (data, callback, logger) => {
 			const addedContainer = addedContainers.find(({ name }) => name === containerName);
 
 			if (addedContainer) {
-				const indexMappingProperties = getIndexProperties(addedEntitiesScriptData);
+				const indexMappingProperties = getIndexProperties(scriptDataItems);
 				const mappingScript = getMappingScript(
 					addedContainer,
 					{ ...indexMappingProperties, properties },

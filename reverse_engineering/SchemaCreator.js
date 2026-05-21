@@ -447,11 +447,13 @@ module.exports = {
 
 		for (let propName in properties) {
 			if (propName === 'fields') {
-				schema['stringfields'] = JSON.stringify(properties[propName], null, 4);
+				schema.stringfields = JSON.stringify(properties[propName], null, 4);
 			} else if (propName === 'relations') {
 				schema[propName] = getRelations(properties[propName]);
 			} else if (propName === 'analyzer') {
 				schema = { ...schema, ...getAnalyzerProps(properties[propName]) };
+			} else if (propName === 'meta') {
+				schema.meta = JSON.stringify(properties[propName], null, 4);
 			} else {
 				schema[propName] = properties[propName];
 			}

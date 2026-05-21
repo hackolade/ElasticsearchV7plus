@@ -88,10 +88,10 @@ const setProperties = (schema, properties, data) => {
 	for (let propName in properties) {
 		if (propName === 'stringfields') {
 			try {
-				schema['fields'] = JSON.parse(properties[propName]);
-			} catch (e) {}
+				schema.fields = JSON.parse(properties[propName]);
+			} catch {}
 		} else if (propName === 'customAnalyzerName') {
-			schema['analyzer'] = properties[propName];
+			schema.analyzer = properties[propName];
 		} else if (isFieldList(properties[propName])) {
 			const names = schemaHelper.getNamesByIds(
 				properties[propName].map(item => item.keyId),
@@ -104,6 +104,10 @@ const setProperties = (schema, properties, data) => {
 			if (properties[propName] === false) {
 				schema[propName] = false;
 			}
+		} else if (propName === 'meta') {
+			try {
+				schema.meta = JSON.parse(properties[propName]);
+			} catch {}
 		} else {
 			schema[propName] = properties[propName];
 		}
