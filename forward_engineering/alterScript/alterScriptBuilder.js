@@ -10,7 +10,10 @@ const {
 	getKibanaScript,
 	getSampleGenerationOptions,
 	getScriptAndSampleResponse,
+	getCurlUpdateSettingsScript,
+	getKibanaUpdateSettingsScript,
 } = require('../helpers/generateScriptHelpers');
+const { getIndexSettings } = require('../mappers/indexSettingsMapper');
 
 const SUPPORTED_MAPPING_PARAMETERS = [
 	'coerce',
@@ -126,8 +129,34 @@ const generateAlterScript = (data, callback, logger) => {
 	const entitiesData = collection.properties?.entities?.properties;
 
 	const addedContainers = getContainers(containersData?.added);
+	const modifiedContainers = getContainers(containersData?.modified);
 	const addedEntities = getItemProperties(entitiesData?.added);
 	const modifiedEntities = getItemProperties(entitiesData?.modified);
+
+	const updateIndexSettingsScript = modifiedContainers.reduce((resultScript, container) => {
+		const newContainerProperties = container;
+		const oldContainerProperties = Object.entries(container.compMod).reduce(
+			(resultContainer, [property, compMod]) => {
+				resultContainer[property] = compMod.old;
+				return resultContainer;
+			},
+			{ ...container },
+		);
+
+		const newSettings = getIndexSettings(newContainerProperties, logger, containerLevelConfig);
+		const oldSettings = getIndexSettings(oldContainerProperties, logger, containerLevelConfig);
+
+		if (_.isEqual(newSettings, oldSettings)) {
+			return resultScript;
+		}
+
+		const script =
+			scriptFormat === 'curlScript'
+				? getCurlUpdateSettingsScript(newSettings, modelData, container)
+				: getKibanaUpdateSettingsScript(newSettings, container);
+
+		return `${resultScript}\n\n${script}`.trim();
+	}, '');
 
 	const scriptDataItemsByContainer = {};
 
@@ -185,7 +214,7 @@ const generateAlterScript = (data, callback, logger) => {
 		});
 	});
 
-	const resultScript = Object.entries(scriptDataItemsByContainer)
+	const updateMappingOrCreateIndexScript = Object.entries(scriptDataItemsByContainer)
 		.map(([containerName, scriptDataItems]) => {
 			const properties = scriptDataItems.reduce(
 				(resultSchema, { fieldsSchema }) => mergeSchemas(resultSchema, fieldsSchema),
@@ -216,6 +245,7 @@ const generateAlterScript = (data, callback, logger) => {
 		})
 		.join('\n\n');
 
+	const resultScript = `${updateIndexSettingsScript}\n\n${updateMappingOrCreateIndexScript}`.trim();
 	const sampleGenerationOptions = getSampleGenerationOptions(data);
 
 	if (sampleGenerationOptions.isSampleGenerationRequired) {

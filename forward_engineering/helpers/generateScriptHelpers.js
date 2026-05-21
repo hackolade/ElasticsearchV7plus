@@ -222,6 +222,14 @@ const getCurlUpdateScript = (mapping, modelData, indexData) => {
 	return `curl -X PUT '${host}:${port}/${indexName.toLowerCase()}/_mapping' -H 'Content-Type: application/json' -d '\n${JSON.stringify(mapping, null, 4)}\n'`;
 };
 
+const getCurlUpdateSettingsScript = (settings, modelData, indexData) => {
+	const host = modelData.host || 'localhost';
+	const port = modelData.port || 9200;
+	const indexName = indexData.name || '';
+
+	return `curl -X PUT '${host}:${port}/${indexName.toLowerCase()}/_settings' -H 'Content-Type: application/json' -d '\n${JSON.stringify(settings, null, 4)}\n'`;
+};
+
 const getKibanaScript = (mapping, indexData) => {
 	const indexName = indexData.name || '';
 
@@ -232,6 +240,12 @@ const getKibanaUpdateScript = (mapping, indexData) => {
 	const indexName = indexData.name || '';
 
 	return `PUT /${indexName.toLowerCase()}/_mapping\n${JSON.stringify(mapping, null, 4)}`;
+};
+
+const getKibanaUpdateSettingsScript = (settings, indexData) => {
+	const indexName = indexData.name || '';
+
+	return `PUT /${indexName.toLowerCase()}/_settings\n${JSON.stringify(settings, null, 4)}`;
 };
 
 const getFieldsSchema = data => {
@@ -389,8 +403,10 @@ const getBooleanValue = value => {
 module.exports = {
 	getCurlScript,
 	getCurlUpdateScript,
+	getCurlUpdateSettingsScript,
 	getKibanaScript,
 	getKibanaUpdateScript,
+	getKibanaUpdateSettingsScript,
 	getFieldsSchema,
 	getTypeSchema,
 	getMappingScript,
