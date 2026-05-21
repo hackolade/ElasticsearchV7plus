@@ -29,11 +29,19 @@ const filterPropertyNodeForAlter = ({ newProperty = {}, oldProperty = {} } = {})
 	const filteredProperty = {};
 
 	for (const parameter of SUPPORTED_MAPPING_PARAMETERS) {
+		const oldParameterValue = oldProperty[parameter];
 		const newParameterValue = newProperty[parameter];
 
-		if (newParameterValue !== undefined && !_.isEqual(newParameterValue, oldProperty[parameter])) {
-			filteredProperty[parameter] = newParameterValue;
-			if (parameter === 'search_analyzer') {
+		if (!_.isEqual(newParameterValue, oldParameterValue)) {
+			if (newParameterValue === undefined) {
+				if (_.isBoolean(oldParameterValue)) {
+					filteredProperty[parameter] = false;
+				}
+			} else {
+				filteredProperty[parameter] = newParameterValue;
+			}
+
+			if (newParameterValue && parameter === 'search_analyzer') {
 				filteredProperty.analyzer = oldProperty.analyzer || newProperty.analyzer;
 			}
 		}
