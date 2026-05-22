@@ -54,7 +54,7 @@ class ElasticSearchService {
 		switch (operation) {
 			case '_settings': {
 				logger.progress({
-					message: 'Updating settings',
+					message: `Updating settings for the "${indexName}" index`,
 					containerName: indexName,
 					entityName: '',
 				});
@@ -66,7 +66,7 @@ class ElasticSearchService {
 			}
 			case '_mapping': {
 				logger.progress({
-					message: 'Updating mapping',
+					message: `Updating mapping for the "${indexName}" index`,
 					containerName: indexName,
 					entityName: '',
 				});
@@ -86,7 +86,7 @@ class ElasticSearchService {
 					});
 				} else {
 					logger.progress({
-						message: 'Creating index',
+						message: `Creating "${indexName}" index`,
 						containerName: indexName,
 						entityName: '',
 					});
