@@ -201,15 +201,6 @@ making sure that you maintain a proper JSON format.
 				}
 			},
 			{
-				"propertyName": "boost",
-				"propertyKeyword": "boost",
-				"propertyValidate": false,
-				"propertyType": "numeric",
-				"valueType": "number",
-				"allowNegative": false,
-				"isTargetProperty": true
-			},
-			{
 				"propertyName": "copy_to",
 				"propertyKeyword": "copy_to",
 				"propertyType": "fieldList",
@@ -435,14 +426,6 @@ making sure that you maintain a proper JSON format.
 				"isTargetProperty": true
 			},
 			{
-				"propertyName": "boost",
-				"propertyKeyword": "boost",
-				"propertyType": "numeric",
-				"valueType": "number",
-				"allowNegative": false,
-				"isTargetProperty": true
-			},
-			{
 				"propertyName": "doc_values",
 				"propertyKeyword": "doc_values",
 				"propertyType": "checkbox",
@@ -514,14 +497,6 @@ making sure that you maintain a proper JSON format.
 			"required",
 			"default",
 			{
-				"propertyName": "boost",
-				"propertyKeyword": "boost",
-				"propertyType": "numeric",
-				"valueType": "number",
-				"allowNegative": false,
-				"isTargetProperty": true
-			},
-			{
 				"propertyName": "doc_values",
 				"propertyKeyword": "doc_values",
 				"propertyType": "checkbox",
@@ -584,14 +559,6 @@ making sure that you maintain a proper JSON format.
 			"dependencies",
 			"required",
 			"default",
-			{
-				"propertyName": "boost",
-				"propertyKeyword": "boost",
-				"propertyType": "numeric",
-				"valueType": "number",
-				"allowNegative": false,
-				"isTargetProperty": true
-			},
 			{
 				"propertyName": "doc_values",
 				"propertyKeyword": "doc_values",
@@ -677,14 +644,6 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "coerce",
 				"propertyKeyword": "coerce",
 				"propertyType": "checkbox",
-				"isTargetProperty": true
-			},
-			{
-				"propertyName": "boost",
-				"propertyKeyword": "boost",
-				"propertyType": "text",
-				"valueType": "number",
-				"allowNegative": false,
 				"isTargetProperty": true
 			},
 			{
@@ -1020,14 +979,6 @@ making sure that you maintain a proper JSON format.
 			"dependencies",
 			"required",
 			{
-				"propertyName": "boost",
-				"propertyKeyword": "boost",
-				"propertyType": "numeric",
-				"valueType": "number",
-				"allowNegative": false,
-				"isTargetProperty": true
-			},
-			{
 				"propertyName": "doc_values",
 				"propertyKeyword": "doc_values",
 				"propertyType": "checkbox",
@@ -1202,14 +1153,6 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "enable_position_increments",
 				"propertyKeyword": "enable_position_increments",
 				"propertyType": "checkbox",
-				"isTargetProperty": true
-			},
-			{
-				"propertyName": "boost",
-				"propertyKeyword": "boost",
-				"propertyType": "numeric",
-				"valueType": "number",
-				"allowNegative": false,
 				"isTargetProperty": true
 			},
 			{

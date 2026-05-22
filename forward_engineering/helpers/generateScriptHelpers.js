@@ -400,6 +400,8 @@ const getBooleanValue = value => {
 	return null;
 };
 
+const removeFirstLine = text => text.replace(/^.*(\r?\n)?/, '');
+
 module.exports = {
 	getCurlScript,
 	getCurlUpdateScript,
@@ -415,4 +417,5 @@ module.exports = {
 	getIndexProperties,
 	mergeSchemas,
 	getSchemaByItem,
+	removeFirstLine,
 };

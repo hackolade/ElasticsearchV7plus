@@ -219,8 +219,7 @@ making sure that you maintain a proper JSON format.
 				"propertyKeyword": "auto_expand_replicas",
 				"propertyTooltip": "Auto-expand the number of replicas based on the number of data nodes in the cluster.",
 				"propertyValidate": false,
-				"propertyType": "numeric",
-				"valueType": "integer",
+				"propertyType": "text",
 				"allowNegative": false,
 				"isTargetProperty": true
 			},

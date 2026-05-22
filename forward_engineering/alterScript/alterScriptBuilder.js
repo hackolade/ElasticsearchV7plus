@@ -18,7 +18,7 @@ const { getIndexSettings } = require('../mappers/indexSettingsMapper');
 const SUPPORTED_MAPPING_PARAMETERS = [
 	'coerce',
 	'fielddata',
-	'fields',
+	'stringfields',
 	'ignore_above',
 	'ignore_malformed',
 	'meta',
@@ -26,7 +26,7 @@ const SUPPORTED_MAPPING_PARAMETERS = [
 	'search_analyzer',
 ];
 
-const ALWAYS_KEEP_PROPERTY_KEYS = ['type', 'mode'];
+const ALWAYS_KEEP_PROPERTY_KEYS = ['type', 'mode', 'index_options'];
 
 const filterPropertyNodeForAlter = ({ newProperty = {}, oldProperty = {} } = {}) => {
 	const filteredProperty = {};
@@ -188,7 +188,7 @@ const generateAlterScript = (data, callback, logger) => {
 		});
 	});
 
-	addedEntities.forEach((result, entity) => {
+	addedEntities.forEach(entity => {
 		const properties = entity.properties?._source?.properties;
 
 		if (_.isEmpty(properties)) {

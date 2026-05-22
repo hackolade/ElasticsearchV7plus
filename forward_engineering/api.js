@@ -28,16 +28,25 @@ module.exports = {
 		try {
 			const client = ElasticSearchClientFactory.getByConnectionInfo(data);
 			const elasticSearchService = new ElasticSearchService(client);
-			const { script, entitiesData } = data;
+			const { entitiesData } = data;
 
-			let parsedScriptData;
-			if (script.startsWith('curl')) {
-				parsedScriptData = curlParser.parseCurlScript(script);
-			} else {
-				parsedScriptData = kibanaParser.parseKibanaScript(script);
+			const scripts = data.script.split('\n\n');
+
+			for (const script of scripts) {
+				let parsedScriptData;
+				if (script.startsWith('curl')) {
+					parsedScriptData = curlParser.parseCurlScript(script);
+				} else {
+					parsedScriptData = kibanaParser.parseKibanaScript(script);
+				}
+
+				await elasticSearchService.applyToInstance({
+					parsedScriptData,
+					entitiesData,
+					logger,
+				});
 			}
 
-			await elasticSearchService.applyToInstance(parsedScriptData, entitiesData);
 			await elasticSearchService.close();
 			return cb(null);
 		} catch (e) {

@@ -29,8 +29,8 @@ class ElasticSearchService {
 	 * @param scriptData {ParsedScriptData}
 	 * @param entitiesData {EntitiesData}
 	 * */
-	async applyToInstance(scriptData, entitiesData) {
-		await this._executeScript(scriptData);
+	async applyToInstance({ parsedScriptData, entitiesData, logger }) {
+		await this._executeScript(parsedScriptData, logger);
 		for (const typeData of Object.values(entitiesData)) {
 			const { filePath, jsonData } = typeData;
 			await this._insertExampleDocuments(JSON.parse(jsonData), filePath);
@@ -44,18 +44,67 @@ class ElasticSearchService {
 	/**
 	 * @param scriptData {ParsedScriptData}
 	 */
-	async _executeScript(scriptData) {
-		const { body, indexName } = scriptData;
+	async _executeScript(scriptData, logger) {
+		const { body, indexName, operation } = scriptData;
+
 		const existsResponse = await this._client.indices.exists({
 			index: indexName,
 		});
-		if (!existsResponse.body) {
-			await this._client.indices.create({
-				index: indexName,
-				body,
-			});
-		} else {
-			throw new Error(`Index ${indexName} already exists, index update is not supported`);
+
+		switch (operation) {
+			case '_settings': {
+				logger.progress({
+					message: 'Updating settings',
+					containerName: indexName,
+					entityName: '',
+				});
+				await this._client.indices.putSettings({
+					index: indexName,
+					body,
+				});
+				return;
+			}
+			case '_mapping': {
+				logger.progress({
+					message: 'Updating mapping',
+					containerName: indexName,
+					entityName: '',
+				});
+				await this._client.indices.putMapping({
+					index: indexName,
+					body,
+				});
+				return;
+			}
+			case null: {
+				if (existsResponse.body) {
+					logger.log('error', `The "${indexName}" index already exists`);
+					logger.progress({
+						message: `The "${indexName}" index already exists`,
+						containerName: indexName,
+						entityName: '',
+					});
+				} else {
+					logger.progress({
+						message: 'Creating index',
+						containerName: indexName,
+						entityName: '',
+					});
+					await this._client.indices.create({
+						index: indexName,
+						body,
+					});
+				}
+				return;
+			}
+			default: {
+				logger.log('error', `The "${operation}" operation is not supported`);
+				logger.progress({
+					message: `The "${operation}" operation is not supported`,
+					containerName: indexName,
+					entityName: '',
+				});
+			}
 		}
 	}
 
