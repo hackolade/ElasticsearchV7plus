@@ -62,7 +62,7 @@ class ElasticSearchService {
 					index: indexName,
 					body,
 				});
-				return;
+				break;
 			}
 			case '_mapping': {
 				logger.progress({
@@ -74,7 +74,7 @@ class ElasticSearchService {
 					index: indexName,
 					body,
 				});
-				return;
+				break;
 			}
 			case null: {
 				if (existsResponse.body) {
@@ -95,7 +95,7 @@ class ElasticSearchService {
 						body,
 					});
 				}
-				return;
+				break;
 			}
 			default: {
 				logger.log('error', `The "${operation}" operation is not supported`);
