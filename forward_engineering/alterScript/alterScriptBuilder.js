@@ -12,6 +12,8 @@ const {
 	getScriptAndSampleResponse,
 	getCurlUpdateSettingsScript,
 	getKibanaUpdateSettingsScript,
+	getCurlDeleteIndexScript,
+	getKibanaDeleteIndexScript,
 } = require('../helpers/generateScriptHelpers');
 const { getIndexSettings } = require('../mappers/indexSettingsMapper');
 
@@ -130,6 +132,7 @@ const generateAlterScript = (data, callback, logger) => {
 
 	const addedContainers = getContainers(containersData?.added);
 	const modifiedContainers = getContainers(containersData?.modified);
+	const deletedContainers = getContainers(containersData?.deleted);
 	const addedEntities = getItemProperties(entitiesData?.added);
 	const modifiedEntities = getItemProperties(entitiesData?.modified);
 
@@ -154,6 +157,15 @@ const generateAlterScript = (data, callback, logger) => {
 			scriptFormat === 'curlScript'
 				? getCurlUpdateSettingsScript(newSettings, modelData, container)
 				: getKibanaUpdateSettingsScript(newSettings, container);
+
+		return `${resultScript}\n\n${script}`.trim();
+	}, '');
+
+	const deleteIndexScript = deletedContainers.reduce((resultScript, container) => {
+		const script =
+			scriptFormat === 'curlScript'
+				? getCurlDeleteIndexScript(container, modelData)
+				: getKibanaDeleteIndexScript(container);
 
 		return `${resultScript}\n\n${script}`.trim();
 	}, '');
@@ -245,7 +257,8 @@ const generateAlterScript = (data, callback, logger) => {
 		})
 		.join('\n\n');
 
-	const resultScript = `${updateIndexSettingsScript}\n\n${updateMappingOrCreateIndexScript}`.trim();
+	const resultScript =
+		`${deleteIndexScript}\n\n${updateIndexSettingsScript}\n\n${updateMappingOrCreateIndexScript}`.trim();
 	const sampleGenerationOptions = getSampleGenerationOptions(data);
 
 	if (sampleGenerationOptions.isSampleGenerationRequired) {

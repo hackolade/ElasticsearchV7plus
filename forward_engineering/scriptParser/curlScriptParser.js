@@ -6,26 +6,6 @@
 
 const { removeFirstLine } = require('../helpers/generateScriptHelpers');
 
-const curlPostRegex = /-X\s*post/gi;
-const curlPutRegex = /-X\s*put/gi;
-
-/**
- * @param firstLine {string}
- * @throws {Error}
- * @return string
- */
-const extractHttpMethod = firstLine => {
-	const isPutRequest = curlPutRegex.test(firstLine);
-	if (isPutRequest) {
-		return 'PUT';
-	}
-	const isPostRequest = curlPostRegex.test(firstLine);
-	if (isPostRequest) {
-		return 'POST';
-	}
-	throw new Error(`Invalid curl config: ${firstLine}`);
-};
-
 /**
  * @param firstLine {string}
  * @param httpMethod {string}
@@ -75,7 +55,7 @@ const parseFirstLine = script => {
 
 	const [, httpMethod, indexName, operation] = match;
 
-	if (!['POST', 'PUT'].includes(httpMethod?.toUpperCase())) {
+	if (!['POST', 'PUT', 'DELETE'].includes(httpMethod?.toUpperCase())) {
 		throw new Error(`Invalid http method: ${httpMethod}`);
 	}
 
@@ -126,7 +106,7 @@ const parseBody = (script, firstLine) => {
  */
 const parseCurlScript = script => {
 	const { indexName, httpMethod, operation } = parseFirstLine(script);
-	const body = parseBody(script);
+	const body = httpMethod === 'DELETE' ? null : parseBody(script);
 
 	return {
 		httpMethod,

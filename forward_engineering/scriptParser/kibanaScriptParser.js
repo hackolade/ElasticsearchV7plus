@@ -23,7 +23,7 @@ const parseFirstLine = script => {
 
 	const [, httpMethod, indexName, operation] = match;
 
-	if (!['POST', 'PUT'].includes(httpMethod?.toUpperCase())) {
+	if (!['POST', 'PUT', 'DELETE'].includes(httpMethod?.toUpperCase())) {
 		throw new Error(`Invalid http method: ${httpMethod}`);
 	}
 
@@ -70,7 +70,7 @@ const parseBody = script => {
  */
 const parseKibanaScript = script => {
 	const { indexName, httpMethod, operation } = parseFirstLine(script);
-	const body = parseBody(script);
+	const body = httpMethod === 'DELETE' ? null : parseBody(script);
 
 	return {
 		httpMethod,

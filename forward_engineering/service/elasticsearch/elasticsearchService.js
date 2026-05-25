@@ -45,11 +45,18 @@ class ElasticSearchService {
 	 * @param scriptData {ParsedScriptData}
 	 */
 	async _executeScript(scriptData, logger) {
-		const { body, indexName, operation } = scriptData;
+		const { body, indexName, operation, httpMethod } = scriptData;
 
 		const existsResponse = await this._client.indices.exists({
 			index: indexName,
 		});
+
+		if (httpMethod === 'DELETE') {
+			await this._client.indices.delete({
+				index: indexName,
+			});
+			return;
+		}
 
 		switch (operation) {
 			case '_settings': {

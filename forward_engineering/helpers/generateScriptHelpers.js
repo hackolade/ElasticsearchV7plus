@@ -230,6 +230,14 @@ const getCurlUpdateSettingsScript = (settings, modelData, indexData) => {
 	return `curl -X PUT '${host}:${port}/${indexName.toLowerCase()}/_settings' -H 'Content-Type: application/json' -d '\n${JSON.stringify(settings, null, 4)}\n'`;
 };
 
+const getCurlDeleteIndexScript = (indexData, modelData) => {
+	const host = modelData.host || 'localhost';
+	const port = modelData.port || 9200;
+	const indexName = indexData.name || '';
+
+	return `curl -X DELETE '${host}:${port}/${indexName.toLowerCase()}'`;
+};
+
 const getKibanaScript = (mapping, indexData) => {
 	const indexName = indexData.name || '';
 
@@ -246,6 +254,12 @@ const getKibanaUpdateSettingsScript = (settings, indexData) => {
 	const indexName = indexData.name || '';
 
 	return `PUT /${indexName.toLowerCase()}/_settings\n${JSON.stringify(settings, null, 4)}`;
+};
+
+const getKibanaDeleteIndexScript = indexData => {
+	const indexName = indexData.name || '';
+
+	return `DELETE /${indexName.toLowerCase()}`;
 };
 
 const getFieldsSchema = data => {
@@ -406,9 +420,11 @@ module.exports = {
 	getCurlScript,
 	getCurlUpdateScript,
 	getCurlUpdateSettingsScript,
+	getCurlDeleteIndexScript,
 	getKibanaScript,
 	getKibanaUpdateScript,
 	getKibanaUpdateSettingsScript,
+	getKibanaDeleteIndexScript,
 	getFieldsSchema,
 	getTypeSchema,
 	getMappingScript,
