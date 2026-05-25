@@ -262,7 +262,7 @@ const generateAlterScript = (data, callback, logger) => {
 	const sampleGenerationOptions = getSampleGenerationOptions(data);
 
 	if (sampleGenerationOptions.isSampleGenerationRequired) {
-		callback(null, getScriptAndSampleResponse(resultScript, resultScript && '// Not supported in delta model'));
+		callback(null, getScriptAndSampleResponse(resultScript, ''));
 	} else {
 		callback(null, resultScript);
 	}

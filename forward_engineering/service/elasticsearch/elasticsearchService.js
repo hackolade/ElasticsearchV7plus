@@ -32,8 +32,10 @@ class ElasticSearchService {
 	async applyToInstance({ parsedScriptData, entitiesData, logger }) {
 		await this._executeScript(parsedScriptData, logger);
 		for (const typeData of Object.values(entitiesData)) {
-			const { filePath, jsonData } = typeData;
-			await this._insertExampleDocuments(JSON.parse(jsonData), filePath);
+			const { filePath, jsonData, name } = typeData;
+			if (name !== 'comparisonModelCollection') {
+				await this._insertExampleDocuments(JSON.parse(jsonData), filePath);
+			}
 		}
 	}
 
