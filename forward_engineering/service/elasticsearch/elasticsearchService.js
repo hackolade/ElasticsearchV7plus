@@ -51,10 +51,25 @@ class ElasticSearchService {
 			index: indexName,
 		});
 
+		const exists = existsResponse.body;
+
 		if (httpMethod === 'DELETE') {
-			await this._client.indices.delete({
-				index: indexName,
-			});
+			if (exists) {
+				logger.progress({
+					message: `Deleting the "${indexName}" index`,
+					containerName: indexName,
+					entityName: '',
+				});
+				await this._client.indices.delete({
+					index: indexName,
+				});
+			} else {
+				logger.progress({
+					message: `Cannot delete the "${indexName}" index because it does not exists`,
+					containerName: indexName,
+					entityName: '',
+				});
+			}
 			return;
 		}
 
@@ -84,7 +99,7 @@ class ElasticSearchService {
 				break;
 			}
 			case null: {
-				if (existsResponse.body) {
+				if (exists) {
 					logger.log('error', `The "${indexName}" index already exists`);
 					logger.progress({
 						message: `The "${indexName}" index already exists`,
