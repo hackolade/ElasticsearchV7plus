@@ -257,8 +257,11 @@ const generateAlterScript = (data, callback, logger) => {
 		})
 		.join('\n\n');
 
-	const resultScript =
-		`${deleteIndexScript}\n\n${updateIndexSettingsScript}\n\n${updateMappingOrCreateIndexScript}`.trim();
+	const resultScript = [deleteIndexScript, updateIndexSettingsScript, updateMappingOrCreateIndexScript]
+		.map(script => script.trim())
+		.filter(Boolean)
+		.join('\n\n');
+
 	const sampleGenerationOptions = getSampleGenerationOptions(data);
 
 	if (sampleGenerationOptions.isSampleGenerationRequired) {
