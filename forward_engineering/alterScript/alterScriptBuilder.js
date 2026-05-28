@@ -149,12 +149,11 @@ const generateAlterScript = (data, callback, logger) => {
 		const newSettings = getIndexSettings(newContainerProperties, logger, containerLevelConfig);
 		const oldSettings = getIndexSettings(oldContainerProperties, logger, containerLevelConfig);
 
-		if (_.isEqual(newSettings, oldSettings)) {
+		if (_.isEqual(newSettings, oldSettings) || !newSettings) {
 			return resultScript;
 		}
 
-		const changedSettings =
-			newSettings && _.pickBy(newSettings, (value, key) => !_.isEqual(value, oldSettings?.[key]));
+		const changedSettings = _.pickBy(newSettings, (value, key) => !_.isEqual(value, oldSettings?.[key]));
 
 		const script =
 			scriptFormat === 'curlScript'
