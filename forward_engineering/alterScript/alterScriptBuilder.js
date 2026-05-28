@@ -153,10 +153,13 @@ const generateAlterScript = (data, callback, logger) => {
 			return resultScript;
 		}
 
+		const changedSettings =
+			newSettings && _.pickBy(newSettings, (value, key) => !_.isEqual(value, oldSettings?.[key]));
+
 		const script =
 			scriptFormat === 'curlScript'
-				? getCurlUpdateSettingsScript(newSettings, modelData, container)
-				: getKibanaUpdateSettingsScript(newSettings, container);
+				? getCurlUpdateSettingsScript(changedSettings, modelData, container)
+				: getKibanaUpdateSettingsScript(changedSettings, container);
 
 		return `${resultScript}\n\n${script}`.trim();
 	}, '');
