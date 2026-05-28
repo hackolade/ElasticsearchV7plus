@@ -88,10 +88,10 @@ const setProperties = (schema, properties, data) => {
 	for (let propName in properties) {
 		if (propName === 'stringfields') {
 			try {
-				schema['fields'] = JSON.parse(properties[propName]);
-			} catch (e) {}
+				schema.fields = JSON.parse(properties[propName]);
+			} catch {}
 		} else if (propName === 'customAnalyzerName') {
-			schema['analyzer'] = properties[propName];
+			schema.analyzer = properties[propName];
 		} else if (isFieldList(properties[propName])) {
 			const names = schemaHelper.getNamesByIds(
 				properties[propName].map(item => item.keyId),
@@ -104,6 +104,10 @@ const setProperties = (schema, properties, data) => {
 			if (properties[propName] === false) {
 				schema[propName] = false;
 			}
+		} else if (propName === 'meta') {
+			try {
+				schema.meta = JSON.parse(properties[propName]);
+			} catch {}
 		} else {
 			schema[propName] = properties[propName];
 		}
@@ -207,13 +211,55 @@ const getCurlScript = (mapping, modelData, indexData) => {
 	const port = modelData.port || 9200;
 	const indexName = indexData.name || '';
 
-	return `curl -XPUT '${host}:${port}/${indexName.toLowerCase()}?pretty' -H 'Content-Type: application/json' -d '\n${JSON.stringify(mapping, null, 4)}\n'`;
+	return `curl -X PUT '${host}:${port}/${indexName.toLowerCase()}?pretty' -H 'Content-Type: application/json' -d '\n${JSON.stringify(mapping, null, 4)}\n'`;
+};
+
+const getCurlUpdateScript = (mapping, modelData, indexData) => {
+	const host = modelData.host || 'localhost';
+	const port = modelData.port || 9200;
+	const indexName = indexData.name || '';
+
+	return `curl -X PUT '${host}:${port}/${indexName.toLowerCase()}/_mapping' -H 'Content-Type: application/json' -d '\n${JSON.stringify(mapping, null, 4)}\n'`;
+};
+
+const getCurlUpdateSettingsScript = (settings, modelData, indexData) => {
+	const host = modelData.host || 'localhost';
+	const port = modelData.port || 9200;
+	const indexName = indexData.name || '';
+
+	return `curl -X PUT '${host}:${port}/${indexName.toLowerCase()}/_settings' -H 'Content-Type: application/json' -d '\n${JSON.stringify(settings, null, 4)}\n'`;
+};
+
+const getCurlDeleteIndexScript = (indexData, modelData) => {
+	const host = modelData.host || 'localhost';
+	const port = modelData.port || 9200;
+	const indexName = indexData.name || '';
+
+	return `curl -X DELETE '${host}:${port}/${indexName.toLowerCase()}'`;
 };
 
 const getKibanaScript = (mapping, indexData) => {
 	const indexName = indexData.name || '';
 
 	return `PUT /${indexName.toLowerCase()}\n${JSON.stringify(mapping, null, 4)}`;
+};
+
+const getKibanaUpdateScript = (mapping, indexData) => {
+	const indexName = indexData.name || '';
+
+	return `PUT /${indexName.toLowerCase()}/_mapping\n${JSON.stringify(mapping, null, 4)}`;
+};
+
+const getKibanaUpdateSettingsScript = (settings, indexData) => {
+	const indexName = indexData.name || '';
+
+	return `PUT /${indexName.toLowerCase()}/_settings\n${JSON.stringify(settings, null, 4)}`;
+};
+
+const getKibanaDeleteIndexScript = indexData => {
+	const indexName = indexData.name || '';
+
+	return `DELETE /${indexName.toLowerCase()}`;
 };
 
 const getFieldsSchema = data => {
@@ -272,7 +318,7 @@ const getMappingScript = (indexData, typeSchema, logger, containerLevelConfig) =
 	return mappingScript;
 };
 
-const getSampleGenerationOptions = (app, data) => {
+const getSampleGenerationOptions = data => {
 	const insertSamplesOption =
 		_.get(data, 'options.additionalOptions', []).find(option => option.id === 'INCLUDE_SAMPLES') || {};
 	const isSampleGenerationRequired = Boolean(insertSamplesOption?.value);
@@ -368,9 +414,17 @@ const getBooleanValue = value => {
 	return null;
 };
 
+const removeFirstLine = text => text.replace(/^.*(\r?\n)?/, '');
+
 module.exports = {
 	getCurlScript,
+	getCurlUpdateScript,
+	getCurlUpdateSettingsScript,
+	getCurlDeleteIndexScript,
 	getKibanaScript,
+	getKibanaUpdateScript,
+	getKibanaUpdateSettingsScript,
+	getKibanaDeleteIndexScript,
 	getFieldsSchema,
 	getTypeSchema,
 	getMappingScript,
@@ -378,4 +432,6 @@ module.exports = {
 	getScriptAndSampleResponse,
 	getIndexProperties,
 	mergeSchemas,
+	getSchemaByItem,
+	removeFirstLine,
 };

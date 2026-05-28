@@ -4,25 +4,7 @@
  * @typedef { import('../types/scriptParserTypes').ParsedScriptData } ParsedScriptData
  * */
 
-const curlPostRegex = /-X\s*post/gi;
-const curlPutRegex = /-X\s*put/gi;
-
-/**
- * @param firstLine {string}
- * @throws {Error}
- * @return string
- */
-const extractHttpMethod = firstLine => {
-	const isPutRequest = curlPutRegex.test(firstLine);
-	if (isPutRequest) {
-		return 'PUT';
-	}
-	const isPostRequest = curlPostRegex.test(firstLine);
-	if (isPostRequest) {
-		return 'POST';
-	}
-	throw new Error(`Invalid curl config: ${firstLine}`);
-};
+const { removeFirstLine } = require('../helpers/generateScriptHelpers');
 
 /**
  * @param firstLine {string}
@@ -62,19 +44,29 @@ const extractIndexName = (firstLine, httpMethod) => {
  * @return {ParsedScriptFirstLine}
  */
 const parseFirstLine = script => {
-	// See the line example below:
-	// curl -XPUT 'localhost:9200/new index?pretty' -H 'Content-Type: application/json' -d '
-	const firstLineAsArray = script.split('\n', 1);
-	if (!firstLineAsArray.length) {
+	const line = script.split('\n', 1)[0];
+
+	const regex = /-X\s+([A-Z]+)\s+['"](?:https?:\/\/)?[^/]+\/([^/?'"]+)(?:\/([^?'"]+))?/;
+	const match = regex.exec(line);
+
+	if (!match) {
 		throw new Error(`Invalid script: ${script}`);
 	}
-	const firstLine = firstLineAsArray[0];
-	const httpMethod = extractHttpMethod(firstLine);
-	const indexName = extractIndexName(firstLine, httpMethod);
+
+	const [, httpMethod, indexName, operation] = match;
+
+	if (!['POST', 'PUT', 'DELETE'].includes(httpMethod?.toUpperCase())) {
+		throw new Error(`Invalid http method: ${httpMethod}`);
+	}
+
+	if (indexName?.length < 2) {
+		throw new Error(`Invalid index name: ${indexNameWithSlash}`);
+	}
+
 	return {
 		httpMethod,
 		indexName,
-		line: firstLine,
+		operation: operation || null,
 	};
 };
 
@@ -87,7 +79,7 @@ const parseFirstLine = script => {
 const parseBody = (script, firstLine) => {
 	// We need `${script}` and not script, because script comes with new line breaks, tabulations
 	// and a bunch of other crap that has to be escaped before being passed into JSON.parse
-	const scriptBodyWithExampleAsString = `${script.substring(firstLine.length)}`;
+	const scriptBodyWithExampleAsString = `${removeFirstLine(script)}`;
 	const scriptAndExampleWithNoLeadingAndTrailingCurlyBrace = scriptBodyWithExampleAsString.split(/}\n'\n{/g);
 	if (scriptAndExampleWithNoLeadingAndTrailingCurlyBrace.length === 0) {
 		throw new Error(`Invalid curl script body: ${scriptBodyWithExampleAsString}`);
@@ -113,12 +105,13 @@ const parseBody = (script, firstLine) => {
  * @return {ParsedScriptData}
  */
 const parseCurlScript = script => {
-	const firstLineConfig = parseFirstLine(script);
-	const { indexName, httpMethod, line: firstLine } = firstLineConfig;
-	const body = parseBody(script, firstLine);
+	const { indexName, httpMethod, operation } = parseFirstLine(script);
+	const body = httpMethod === 'DELETE' ? null : parseBody(script);
+
 	return {
 		httpMethod,
 		indexName,
+		operation,
 		body,
 	};
 };

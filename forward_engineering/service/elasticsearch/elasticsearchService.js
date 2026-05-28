@@ -29,11 +29,13 @@ class ElasticSearchService {
 	 * @param scriptData {ParsedScriptData}
 	 * @param entitiesData {EntitiesData}
 	 * */
-	async applyToInstance(scriptData, entitiesData) {
-		await this._executeScript(scriptData);
+	async applyToInstance({ parsedScriptData, entitiesData, logger }) {
+		await this._executeScript(parsedScriptData, logger);
 		for (const typeData of Object.values(entitiesData)) {
-			const { filePath, jsonData } = typeData;
-			await this._insertExampleDocuments(JSON.parse(jsonData), filePath);
+			const { filePath, jsonData, name } = typeData;
+			if (name !== 'comparisonModelCollection') {
+				await this._insertExampleDocuments(JSON.parse(jsonData), filePath);
+			}
 		}
 	}
 
@@ -44,18 +46,89 @@ class ElasticSearchService {
 	/**
 	 * @param scriptData {ParsedScriptData}
 	 */
-	async _executeScript(scriptData) {
-		const { body, indexName } = scriptData;
+	async _executeScript(scriptData, logger) {
+		const { body, indexName, operation, httpMethod } = scriptData;
+
 		const existsResponse = await this._client.indices.exists({
 			index: indexName,
 		});
-		if (!existsResponse.body) {
-			await this._client.indices.create({
-				index: indexName,
-				body,
-			});
-		} else {
-			throw new Error(`Index ${indexName} already exists, index update is not supported`);
+
+		const exists = existsResponse.body;
+
+		if (httpMethod === 'DELETE') {
+			if (exists) {
+				logger.progress({
+					message: `Deleting the "${indexName}" index`,
+					containerName: indexName,
+					entityName: '',
+				});
+				await this._client.indices.delete({
+					index: indexName,
+				});
+			} else {
+				logger.progress({
+					message: `Cannot delete the "${indexName}" index because it does not exists`,
+					containerName: indexName,
+					entityName: '',
+				});
+			}
+			return;
+		}
+
+		switch (operation) {
+			case '_settings': {
+				logger.progress({
+					message: `Updating settings for the "${indexName}" index`,
+					containerName: indexName,
+					entityName: '',
+				});
+				await this._client.indices.putSettings({
+					index: indexName,
+					body,
+				});
+				break;
+			}
+			case '_mapping': {
+				logger.progress({
+					message: `Updating mapping for the "${indexName}" index`,
+					containerName: indexName,
+					entityName: '',
+				});
+				await this._client.indices.putMapping({
+					index: indexName,
+					body,
+				});
+				break;
+			}
+			case null: {
+				if (exists) {
+					logger.log('error', `The "${indexName}" index already exists`);
+					logger.progress({
+						message: `The "${indexName}" index already exists`,
+						containerName: indexName,
+						entityName: '',
+					});
+				} else {
+					logger.progress({
+						message: `Creating "${indexName}" index`,
+						containerName: indexName,
+						entityName: '',
+					});
+					await this._client.indices.create({
+						index: indexName,
+						body,
+					});
+				}
+				break;
+			}
+			default: {
+				logger.log('error', `The "${operation}" operation is not supported`);
+				logger.progress({
+					message: `The "${operation}" operation is not supported`,
+					containerName: indexName,
+					entityName: '',
+				});
+			}
 		}
 	}
 

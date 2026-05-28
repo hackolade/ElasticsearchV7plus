@@ -61,7 +61,7 @@ module.exports = {
 		cb();
 	},
 
-	getDocumentKinds: function (connectionInfo, logger, cb, app) {
+	getDocumentKinds: function (connectionInfo, logger, cb) {
 		this.connect(connectionInfo, logger, async (err, client) => {
 			try {
 				if (err) {
@@ -107,7 +107,7 @@ module.exports = {
 		});
 	},
 
-	getDbCollectionsNames: function (connectionInfo, logger, cb, app) {
+	getDbCollectionsNames: function (connectionInfo, logger, cb) {
 		this.connect(connectionInfo, logger, async (err, client) => {
 			try {
 				if (err) {
@@ -148,7 +148,7 @@ module.exports = {
 		});
 	},
 
-	getDbCollectionsData: function (data, logger, cb, app) {
+	getDbCollectionsData: function (data, logger, cb) {
 		let includeEmptyCollection = data.includeEmptyCollection;
 		let { recordSamplingSettings, fieldInference, documentKinds, pluginConfiguration } = data;
 		const indices = data.collectionData.dataBaseNames;
