@@ -45,6 +45,7 @@
 			"value": true,
 			"name": "Include sample data",
 			"align": "right",
+			"hideInDeltaModel": true,
 			"level": {
 				"entity": true
 			}
