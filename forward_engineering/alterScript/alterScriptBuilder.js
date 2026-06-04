@@ -364,7 +364,7 @@ const generateAlterScript = (data, callback, logger) => {
 		.join('\n\n');
 
 	const recreateIndexWarning = containersToRecreate.size
-		? `// The following indexes require recreation, which is not supported by Hackolade,\n// and will be ignored: ${Array.from(containersToRecreate).join(', ')}.`
+		? `//The following indexes require recreation, which Studio doesn't support.\n// As a result, they will be ignored: ${Array.from(containersToRecreate).join(', ')}.`
 		: '';
 
 	const resultScript = [
