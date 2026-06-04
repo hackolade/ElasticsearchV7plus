@@ -30,7 +30,10 @@ module.exports = {
 			const elasticSearchService = new ElasticSearchService(client);
 			const { entitiesData } = data;
 
-			const scripts = data.script.split('\n\n');
+			const scripts = data.script
+				.split('\n\n')
+				.map(part => part.replace(/^\/\/.*\r?\n?/gm, '').trim())
+				.filter(Boolean);
 
 			for (const script of scripts) {
 				let parsedScriptData;

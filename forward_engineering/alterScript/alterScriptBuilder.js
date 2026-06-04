@@ -17,7 +17,9 @@ const {
 } = require('../helpers/generateScriptHelpers');
 const { getIndexSettings } = require('../mappers/indexSettingsMapper');
 
-const SUPPORTED_MAPPING_PARAMETERS = [
+const STATIC_CHANGE = 'static_change';
+
+const DYNAMIC_MAPPING_PARAMETERS = [
 	'coerce',
 	'fielddata',
 	'stringfields',
@@ -28,12 +30,51 @@ const SUPPORTED_MAPPING_PARAMETERS = [
 	'search_analyzer',
 ];
 
+const DYNAMIC_INDEX_SETTINGS = new Set([
+	'number_of_replicas',
+	'auto_expand_replicas',
+	'refresh_interval',
+	'max_result_window',
+	'max_inner_result_window',
+	'max_rescore_window',
+	'max_docvalue_fields_search',
+	'max_script_fields',
+	'max_ngram_diff',
+	'max_shingle_diff',
+	'max_refresh_listeners',
+	'max_terms_count',
+	'max_regex_length',
+	'gc_deletes',
+	'default_pipeline',
+	'final_pipeline',
+	'blocks',
+	'index.indexing.slowlog.include.user',
+	'index.indexing.slowlog.reformat',
+	'index.indexing.slowlog.source',
+	'index.indexing.slowlog.threshold.index.warn',
+	'index.search.slowlog.include.user',
+	'index.search.slowlog.threshold.fetch.debug',
+	'index.search.slowlog.threshold.query.info',
+]);
+
 const ALWAYS_KEEP_PROPERTY_KEYS = ['type', 'mode', 'index_options'];
 
-const filterPropertyNodeForAlter = ({ newProperty = {}, oldProperty = {} } = {}) => {
+const isDynamicMappingParameter = parameter => DYNAMIC_MAPPING_PARAMETERS.includes(parameter);
+
+const getChangedKeysExcludingProperties = ({ newObject = {}, oldObject = {} } = {}) =>
+	_.union(Object.keys(newObject), Object.keys(oldObject)).filter(
+		key => key !== 'properties' && !_.isEqual(newObject[key], oldObject[key]),
+	);
+
+const hasNonDynamicMappingChange = ({ newProperty = {}, oldProperty = {} } = {}) =>
+	getChangedKeysExcludingProperties({ newObject: newProperty, oldObject: oldProperty }).some(
+		key => !isDynamicMappingParameter(key),
+	);
+
+const applyDynamicParameterChanges = ({ newProperty = {}, oldProperty = {} } = {}) => {
 	const filteredProperty = {};
 
-	for (const parameter of SUPPORTED_MAPPING_PARAMETERS) {
+	for (const parameter of DYNAMIC_MAPPING_PARAMETERS) {
 		const oldParameterValue = oldProperty[parameter];
 		const newParameterValue = newProperty[parameter];
 
@@ -52,10 +93,24 @@ const filterPropertyNodeForAlter = ({ newProperty = {}, oldProperty = {} } = {})
 		}
 	}
 
+	return filteredProperty;
+};
+
+const filterPropertyNodeForAlter = ({ newProperty = {}, oldProperty } = {}) => {
+	if (oldProperty === undefined) {
+		throw new Error(STATIC_CHANGE);
+	}
+
+	if (hasNonDynamicMappingChange({ newProperty, oldProperty })) {
+		throw new Error(STATIC_CHANGE);
+	}
+
+	const filteredProperty = applyDynamicParameterChanges({ newProperty, oldProperty });
+
 	if (newProperty.properties) {
 		const filteredNestedProperties = filterPropertiesForAlter({
 			newProperties: newProperty.properties,
-			oldProperties: oldProperty.properties,
+			oldProperties: oldProperty.properties || {},
 		});
 
 		if (!_.isEmpty(filteredNestedProperties)) {
@@ -135,8 +190,31 @@ const generateAlterScript = (data, callback, logger) => {
 	const deletedContainers = getContainers(containersData?.deleted);
 	const addedEntities = getItemProperties(entitiesData?.added);
 	const modifiedEntities = getItemProperties(entitiesData?.modified);
+	const deletedEntities = getItemProperties(entitiesData?.deleted);
+
+	const containersToRecreate = new Set([]);
+
+	deletedEntities.forEach(entity => {
+		const source = entity.properties?._source;
+		if (source) {
+			const isAnyFieldDeleted = entity.compMod?.deleted
+				? Boolean(source.properties && Object.keys(source.properties).length)
+				: source.compMod.newField.properties.length !== source.compMod.oldField.properties.length;
+
+			if (isAnyFieldDeleted) {
+				containersToRecreate.add(entity.role.compMod.bucketProperties.name);
+			}
+		}
+	});
 
 	const updateIndexSettingsScript = modifiedContainers.reduce((resultScript, container) => {
+		const hasNameChanged = container.compMod.name.old !== container.compMod.name.new;
+
+		if (hasNameChanged) {
+			containersToRecreate.add(container.compMod.name.old);
+			return resultScript;
+		}
+
 		const newContainerProperties = container;
 		const oldContainerProperties = Object.entries(container.compMod).reduce(
 			(resultContainer, [property, compMod]) => {
@@ -154,6 +232,15 @@ const generateAlterScript = (data, callback, logger) => {
 		}
 
 		const changedSettings = _.pickBy(newSettings, (value, key) => !_.isEqual(value, oldSettings?.[key]));
+
+		const hasStaticPropertyChanged = Object.keys(changedSettings).some(
+			property => !DYNAMIC_INDEX_SETTINGS.has(property),
+		);
+
+		if (hasStaticPropertyChanged) {
+			containersToRecreate.add(container.name);
+			return resultScript;
+		}
 
 		const script =
 			scriptFormat === 'curlScript'
@@ -175,11 +262,9 @@ const generateAlterScript = (data, callback, logger) => {
 	const scriptDataItemsByContainer = {};
 
 	modifiedEntities.forEach(entity => {
-		const newProperties = entity.properties._source.properties;
-		const oldProperties = entity.role.properties._source.properties;
-		const filteredProperties = filterPropertiesForAlter({ newProperties, oldProperties });
+		const containerName = entity.role.compMod.bucketProperties.name;
 
-		if (_.isEmpty(filteredProperties)) {
+		if (containersToRecreate.has(containerName)) {
 			return;
 		}
 
@@ -190,19 +275,40 @@ const generateAlterScript = (data, callback, logger) => {
 			...definitions,
 		};
 
-		const containerName = entity.role.compMod.bucketProperties.name;
+		const newProperties = getSchemaByItem(entity.properties._source.properties, schemaData, fieldLevelConfig);
+		const oldProperties = getSchemaByItem(entity.role.properties._source.properties, schemaData, fieldLevelConfig);
+		let changedProperties = {};
+
+		try {
+			changedProperties = filterPropertiesForAlter({ newProperties, oldProperties });
+		} catch (error) {
+			if (error?.message === STATIC_CHANGE) {
+				containersToRecreate.add(containerName);
+			}
+			return;
+		}
+
+		if (_.isEmpty(changedProperties)) {
+			return;
+		}
 
 		if (!scriptDataItemsByContainer[containerName]) {
 			scriptDataItemsByContainer[containerName] = [];
 		}
 
 		scriptDataItemsByContainer[containerName].push({
-			fieldsSchema: getSchemaByItem(filteredProperties, schemaData, fieldLevelConfig),
+			fieldsSchema: changedProperties,
 			entityData: entity.role,
 		});
 	});
 
 	addedEntities.forEach(entity => {
+		const containerName = entity.role.compMod.bucketProperties.name;
+
+		if (containersToRecreate.has(containerName)) {
+			return;
+		}
+
 		const properties = entity.properties?._source?.properties;
 
 		if (_.isEmpty(properties)) {
@@ -215,8 +321,6 @@ const generateAlterScript = (data, callback, logger) => {
 			fieldLevelConfig,
 			...definitions,
 		};
-
-		const containerName = entity.role.compMod.bucketProperties.name;
 
 		if (!scriptDataItemsByContainer[containerName]) {
 			scriptDataItemsByContainer[containerName] = [];
@@ -259,7 +363,16 @@ const generateAlterScript = (data, callback, logger) => {
 		})
 		.join('\n\n');
 
-	const resultScript = [deleteIndexScript, updateIndexSettingsScript, updateMappingOrCreateIndexScript]
+	const recreateIndexWarning = containersToRecreate.size
+		? `//The following indexes require recreation, which Studio doesn't support.\n// As a result, they will be ignored: ${Array.from(containersToRecreate).join(', ')}.`
+		: '';
+
+	const resultScript = [
+		recreateIndexWarning,
+		deleteIndexScript,
+		updateIndexSettingsScript,
+		updateMappingOrCreateIndexScript,
+	]
 		.map(script => script.trim())
 		.filter(Boolean)
 		.join('\n\n');
