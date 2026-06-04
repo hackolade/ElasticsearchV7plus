@@ -98,7 +98,7 @@ const applyDynamicParameterChanges = ({ newProperty = {}, oldProperty = {} } = {
 
 const filterPropertyNodeForAlter = ({ newProperty = {}, oldProperty } = {}) => {
 	if (oldProperty === undefined) {
-		return structuredClone(newProperty);
+		throw new Error(STATIC_CHANGE);
 	}
 
 	if (hasNonDynamicMappingChange({ newProperty, oldProperty })) {
