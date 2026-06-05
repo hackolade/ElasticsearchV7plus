@@ -275,8 +275,16 @@ const generateAlterScript = (data, callback, logger) => {
 			...definitions,
 		};
 
-		const newProperties = getSchemaByItem(entity.properties._source.properties, schemaData, fieldLevelConfig);
-		const oldProperties = getSchemaByItem(entity.role.properties._source.properties, schemaData, fieldLevelConfig);
+		const newProperties = getSchemaByItem(
+			entity.properties._source?.properties || {},
+			schemaData,
+			fieldLevelConfig,
+		);
+		const oldProperties = getSchemaByItem(
+			entity.role.properties._source?.properties || {},
+			schemaData,
+			fieldLevelConfig,
+		);
 		let changedProperties = {};
 
 		try {
