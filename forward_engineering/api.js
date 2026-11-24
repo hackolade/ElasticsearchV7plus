@@ -4,6 +4,7 @@ const { ElasticSearchService } = require('./service/elasticsearch/elasticsearchS
 const { ElasticSearchClientFactory } = require('./service/elasticsearch/clientFactory');
 const { generateScript } = require('./generateScript');
 const { generateContainerScript } = require('./generateContainerScript');
+const { getTemplateScopeJsonSchema } = require('./helpers/getTemplateScopeJsonSchema');
 
 /**
  * @param error {Error}
@@ -72,4 +73,6 @@ module.exports = {
 			return cb(error);
 		}
 	},
+
+	getTemplateScopeJsonSchema,
 };
