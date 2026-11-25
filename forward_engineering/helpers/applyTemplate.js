@@ -47,7 +47,7 @@ const applyTemplate = async ({ template, mappingScript, modelData, indexData, sc
 	const scope = buildTemplateContext({ mappingScript, modelData, indexData });
 	const { renderLiquidTemplate } = templateEngine;
 	const templates = await readTemplates();
-	const { rendered: result } = await renderLiquidTemplate({ template, scope, options: { templates } });
+	const { rendered: result } = await renderLiquidTemplate({ template, scope, liquidOptions: { templates } });
 
 	if (typeof result !== 'string') {
 		throw new Error('Forward-engineering template did not render to a string');
@@ -87,7 +87,7 @@ const readTemplates = () => {
 const readDefaultTemplate = async ({ scriptFormat }) => {
 	const templates = await readTemplates();
 
-	return templates[scriptFormat === 'curlScript' ? 'curl' : 'kibana'];
+	return templates[scriptFormat];
 };
 
 module.exports = {
