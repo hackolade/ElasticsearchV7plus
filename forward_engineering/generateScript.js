@@ -46,6 +46,8 @@ const generateScript = async (data, logger, cb, app) => {
 		const template = data.options?.template || (await readDefaultTemplate({ scriptFormat }));
 		const script = await applyTemplate({
 			template,
+			scriptFormat,
+			logger,
 			indexData: containerData,
 			mappingScript,
 			modelData,

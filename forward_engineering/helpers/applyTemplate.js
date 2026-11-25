@@ -1,5 +1,6 @@
 const fs = require('fs/promises');
 const path = require('path');
+const { getCurlScript, getKibanaScript } = require('./generateScriptHelpers');
 
 const buildTemplateContext = ({ mappingScript, modelData, indexData }) => ({
 	body: mappingScript,
@@ -8,11 +9,45 @@ const buildTemplateContext = ({ mappingScript, modelData, indexData }) => ({
 	indexName: (indexData?.name || '').toLowerCase(),
 });
 
-const applyTemplate = async ({ template, mappingScript, modelData, indexData, app }) => {
+const getTemplateEngine = async ({ app, logger }) => {
+	let engine;
+	let requireError;
+
+	try {
+		engine = await app.require('@hackolade/template-engine');
+	} catch (error) {
+		requireError = error;
+	}
+
+	if (engine?.renderLiquidTemplate) {
+		logger?.log('info', '@hackolade/template-engine is available', 'Forward-engineering template');
+		return engine;
+	}
+
+	logger?.log(
+		'info',
+		requireError ? { message: requireError.message } : '@hackolade/template-engine is not available',
+		'@hackolade/template-engine is not available',
+		'Forward-engineering template',
+	);
+
+	return undefined;
+};
+
+const applyTemplate = async ({ template, mappingScript, modelData, indexData, scriptFormat, app, logger }) => {
+	const templateEngine = await getTemplateEngine({ app, logger });
+
+	// Older versions of the application do not provide the template engine
+	if (!templateEngine) {
+		return scriptFormat === 'curlScript'
+			? getCurlScript(mappingScript, modelData, indexData)
+			: getKibanaScript(mappingScript, indexData);
+	}
+
 	const scope = buildTemplateContext({ mappingScript, modelData, indexData });
-	const { renderLiquidTemplate } = await app.require('@hackolade/template-engine');
+	const { renderLiquidTemplate } = templateEngine;
 	const templates = await readTemplates();
-	const { rendered: result } = await renderLiquidTemplate({ template, scope, templates });
+	const { rendered: result } = await renderLiquidTemplate({ template, scope, options: { templates } });
 
 	if (typeof result !== 'string') {
 		throw new Error('Forward-engineering template did not render to a string');

@@ -51,6 +51,8 @@ const generateContainerScript = async (data, logger, cb, app) => {
 		const template = data.options?.template || (await readDefaultTemplate({ scriptFormat }));
 		const script = await applyTemplate({
 			template,
+			scriptFormat,
+			logger,
 			mappingScript,
 			modelData,
 			indexData,
