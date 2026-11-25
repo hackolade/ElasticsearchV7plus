@@ -5,7 +5,7 @@ const { getCurlScript, getKibanaScript } = require('./generateScriptHelpers');
 const buildTemplateContext = ({ mappingScript, modelData, indexData }) => ({
 	body: mappingScript,
 	host: modelData?.host || 'localhost',
-	port: modelData?.port ?? 9200,
+	port: modelData?.port || 9200,
 	indexName: (indexData?.name || '').toLowerCase(),
 });
 
@@ -27,7 +27,6 @@ const getTemplateEngine = async ({ app, logger }) => {
 	logger?.log(
 		'info',
 		requireError ? { message: requireError.message } : '@hackolade/template-engine is not available',
-		'@hackolade/template-engine is not available',
 		'Forward-engineering template',
 	);
 
@@ -62,6 +61,10 @@ const TEMPLATES_PATH = path.join(__dirname, '..', 'templates');
 let templatesPromise;
 
 const readTemplates = () => {
+	if (typeof __BUNDLED_TEMPLATES__ !== 'undefined') {
+		return Promise.resolve(__BUNDLED_TEMPLATES__);
+	}
+
 	if (!templatesPromise) {
 		templatesPromise = fs
 			.readdir(TEMPLATES_PATH)

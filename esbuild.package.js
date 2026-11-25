@@ -9,6 +9,20 @@ const { EXCLUDED_EXTENSIONS, EXCLUDED_FILES, DEFAULT_RELEASE_FOLDER_PATH } = req
 const packageData = JSON.parse(fs.readFileSync('./package.json').toString());
 const RELEASE_FOLDER_PATH = path.join(DEFAULT_RELEASE_FOLDER_PATH, `${packageData.name}-${packageData.version}`);
 
+const TEMPLATE_EXTENSION = '.liquid';
+const TEMPLATES_DIR = path.resolve(__dirname, 'forward_engineering', 'templates');
+
+const loadBundledTemplates = () => {
+	const files = fs.readdirSync(TEMPLATES_DIR).filter(file => file.endsWith(TEMPLATE_EXTENSION));
+
+	return Object.fromEntries(
+		files.map(file => [
+			file.slice(0, -TEMPLATE_EXTENSION.length),
+			fs.readFileSync(path.join(TEMPLATES_DIR, file), 'utf8'),
+		]),
+	);
+};
+
 esbuild
 	.build({
 		entryPoints: [
@@ -24,6 +38,9 @@ esbuild
 		minify: true,
 		logLevel: 'info',
 		external: ['lodash'],
+		define: {
+			__BUNDLED_TEMPLATES__: JSON.stringify(loadBundledTemplates()),
+		},
 		plugins: [
 			clean({
 				patterns: [DEFAULT_RELEASE_FOLDER_PATH],
