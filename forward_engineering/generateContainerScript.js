@@ -1,4 +1,5 @@
 const { generateAlterScript } = require('./alterScript/alterScriptBuilder');
+const { applyTemplate, readDefaultTemplate } = require('./helpers/applyTemplate');
 const {
 	mergeSchemas,
 	getIndexProperties,
@@ -6,11 +7,9 @@ const {
 	getScriptAndSampleResponse,
 	getFieldsSchema,
 	getMappingScript,
-	getCurlScript,
-	getKibanaScript,
 } = require('./helpers/generateScriptHelpers');
 
-const generateContainerScript = (data, logger, cb) => {
+const generateContainerScript = async (data, logger, cb, app) => {
 	try {
 		if (data.isUpdateScript) {
 			data.jsonSchema = data.collections[0];
@@ -48,12 +47,17 @@ const generateContainerScript = (data, logger, cb) => {
 		);
 
 		const scriptFormat = data.options?.targetScriptOptions?.keyword;
-		let script = '';
-		if (scriptFormat === 'curlScript') {
-			script = getCurlScript(mappingScript, modelData, indexData);
-		} else {
-			script = getKibanaScript(mappingScript, indexData);
-		}
+
+		const template = data.options?.template || (await readDefaultTemplate({ scriptFormat }));
+		const script = await applyTemplate({
+			template,
+			scriptFormat,
+			logger,
+			mappingScript,
+			modelData,
+			indexData,
+			app,
+		});
 
 		const sampleGenerationOptions = getSampleGenerationOptions(data);
 		if (!sampleGenerationOptions.isSampleGenerationRequired) {

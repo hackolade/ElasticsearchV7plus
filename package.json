@@ -26,7 +26,8 @@
     "dependencies": {
         "@elastic/elasticsearch": "7.17.14",
         "async": "3.2.6",
-        "lodash": "4.18.1"
+        "lodash": "4.18.1",
+        "zod": "4.6.7"
     },
     "simple-git-hooks": {
         "pre-commit": "npm run package && npx lint-staged --config lint-staged.config.js",

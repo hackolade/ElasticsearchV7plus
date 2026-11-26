@@ -1,0 +1,3 @@
+curl -X PUT '{{ host }}:{{ port }}/{{ indexName }}?pretty' -H 'Content-Type: application/json' -d '
+{{ body | json: 4 }}
+'
